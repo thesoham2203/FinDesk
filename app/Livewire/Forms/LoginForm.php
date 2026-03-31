@@ -35,7 +35,7 @@ final class LoginForm extends Form
         /** @var array<string, string> $credentials */
         $credentials = $this->only(['email', 'password']);
 
-        if (! Auth::attempt($credentials, $this->remember)) {
+        if (!Auth::attempt($credentials, $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -51,7 +51,7 @@ final class LoginForm extends Form
      */
     private function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 4)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 4)) {
             return;
         }
 
@@ -72,6 +72,6 @@ final class LoginForm extends Form
      */
     private function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }
