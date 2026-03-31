@@ -1,98 +1,102 @@
-- Blade (this project) version: **[github.com/nunomaduro/laravel-starter-kit](https://github.com/nunomaduro/laravel-starter-kit)**
-- Inertia & React version: **[github.com/nunomaduro/laravel-starter-kit-inertia-react](https://github.com/nunomaduro/laravel-starter-kit-inertia-react)**
-- Inertia & Vue version: **[github.com/nunomaduro/laravel-starter-kit-inertia-vue](https://github.com/nunomaduro/laravel-starter-kit-inertia-vue)**
+### 1. Prerequisites
+- **PHP 8.5+** 
+- **Composer**
+- **Node.js & NPM** (or Bun)
+- **SQLite** (Default database connection, zero-config)
+- **Groq API Key** (Get one for free at [console.groq.com](https://console.groq.com/keys))
 
-
-<p align="center">
-    <a href="https://youtu.be/VhzP0XWGTC4" target="_blank">
-        <img src="/art/banner.png" alt="Overview Laravel Starter Kit" style="width:70%;">
-    </a>
-</p>
-
-<p>
-    <a href="https://github.com/nunomaduro/laravel-starter-kit/actions"><img src="https://github.com/nunomaduro/laravel-starter-kit/actions/workflows/tests.yml/badge.svg" alt="Build Status"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit"><img src="https://img.shields.io/packagist/dt/nunomaduro/laravel-starter-kit" alt="Total Downloads"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit"><img src="https://img.shields.io/packagist/v/nunomaduro/laravel-starter-kit" alt="Latest Stable Version"></a>
-    <a href="https://packagist.org/packages/nunomaduro/laravel-starter-kit"><img src="https://img.shields.io/packagist/l/nunomaduro/laravel-starter-kit" alt="License"></a>
-</p>
-
-**Laravel Starter Kit** is an ultra-strict, type-safe [Laravel](https://laravel.com) skeleton engineered for developers who refuse to compromise on code quality. This opinionated starter kit enforces rigorous development standards through meticulous tooling configuration and architectural decisions that prioritize type safety, immutability, and fail-fast principles.
-
-## Why This Starter Kit?
-
-Modern PHP has evolved into a mature, type-safe language, yet many Laravel projects still operate with loose conventions and optional typing. This starter kit changes that paradigm by enforcing:
-
-- **100% Type Coverage**: Every method, property, and parameter is explicitly typed
-- **Zero Tolerance for Code Smells**: Rector and PHPStan at maximum strictness catch issues before they become bugs
-- **Immutable-First Architecture**: Data structures favor immutability to prevent unexpected mutations
-- **Fail-Fast Philosophy**: Errors are caught at compile-time, not runtime
-- **Automated Code Quality**: Pre-configured tools ensure consistent, pristine code across your entire team
-- **Bun-Powered**: Leveraging Bun for blazing-fast dependency management...
-- **Just Better Laravel Defaults**: Thanks to **[Essentials](https://github.com/nunomaduro/essentials)** / strict models, auto eager loading, immutable dates, and more...
-
-This isn't just another Laravel boilerplate—it's a statement that PHP applications can and should be built with the same rigor as strongly-typed languages like Rust or TypeScript.
-
-## Getting Started
-
-> **Requires [PHP 8.4+](https://php.net/releases/)**, [Bun](https://bun.sh) and a code coverage driver like [xdebug](https://xdebug.org/docs/install)**.
-
-Create your type-safe Laravel application using [Composer](https://getcomposer.org):
-
+### 2. Fresh Clone Setup
 ```bash
-composer create-project nunomaduro/laravel-starter-kit --prefer-dist example-app
+# Clone the repository
+git clone <repo-url> findesk
+cd agentdesk
+
+# Install PHP and Node dependencies
+composer install
+npm install
+
+# Setup environment variables
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
 ```
 
-### Initial Setup
-
-Navigate to your project and complete the setup:
+### 3. Database & Seeding
+AgentDesk comes with a rich seeder that provisions simulated Admins, Agents, Requesters, Categories, SLA Configs, Macros, Knowledge Base articles, and sample tickets.
 
 ```bash
-cd example-app
-
-# Setup project
-composer setup
-
-# Start the development server
-composer dev
+# Create the SQLite database file
+New-Item .\database\database.sqlite -ItemType File
+# Run migrations and seed the initial data
+php artisan migrate:fresh --seed
 ```
 
-### Optional: Browser Testing Setup
+### 4. Groq Configuration
+To enable the AI subsystem, you must provide a valid Groq API key. Open your `.env` file and append/update the following:
 
-If you plan to use Pest's browser testing capabilities:
+```env
+# Tell the Laravel AI SDK to use Groq
+AI_DEFAULT_PROVIDER=groq
 
-```bash
-bun add playwright
-bunx playwright install
+# Your actual Groq API Key
+GROQ_API_KEY=gsk_your_groq_api_key_here
+
+# The model to use (recommended for agent tasks)
+GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
-### Verify Installation
+---
 
-Run the test suite to ensure everything is configured correctly:
+## 🏃‍♂️ Running the Application
 
+AgentDesk relies on background queue workers for AI tasks and a scheduler for SLA monitoring. **To fully run the application locally, you should run these processes in separate terminal tabs:**
+
+### Terminal 1: Web Server
 ```bash
+php artisan serve
+# or if you have Laravel Herd Installed then
+add the project to herd and run agestdesk.test in your browser
+```
+
+### Terminal 2: Frontend Assets (Vite)
+```bash
+npm run dev
+##  or if you have Laravel Herd Installed then
+npm run build
+```
+
+### Terminal 3: Queue Worker (Crucial for AI)
+AI operations (Triage & Reply Drafting) are dispatched to the database queue to keep the UI snappy. You **must** run the queue worker to process them.
+```bash
+php artisan queue:work --tries=3
+```
+
+### Terminal 4: Scheduler (Optional but recommended for SLA)
+The scheduler checks for tickets breaching their Service Level Agreement (SLA) response and resolution targets.
+```bash
+php artisan schedule:work
+```
+*(Alternatively, you can manually trigger the specific job via Tinker: `php artisan tinker` -> `App\Jobs\CheckOverdueTargetsJob::dispatchSync();`)*
+
+---
+```bash
+# Run the complete test suite (Pest feature & unit tests)
 composer test
+or
+composer test --parallel (for faster execution)
+
+# Run PHPStan (Strict Type Checking - Level Max)
+composer test:types 
+or 
+composer test:types --parallel (for faster execution)
+
+# Run Type Coverage Analysis
+composer test:type-coverage
+
+# Run Code Formatting (Pint, Rector)
+composer lint
 ```
+*Note: AI API calls are completely mocked/faked in the test suite, meaning running the tests will **not** consume your Groq quota.*
 
-You should see 100% test coverage and all quality checks passing.
-
-## Available Tooling
-
-### Development
-- `composer dev` - Starts Laravel server, queue worker, log monitoring, and Vite+ dev server concurrently
-
-### Code Quality
-- `composer lint` - Runs Rector (refactoring), Pint (PHP formatting), and Oxfmt (JS/TS formatting)
-- `composer test:lint` - Dry-run mode for CI/CD pipelines
-
-### Testing
-- `composer test:type-coverage` - Ensures 100% type coverage with Pest
-- `composer test:types` - Runs PHPStan at level 9 (maximum strictness)
-- `composer test:unit` - Runs Pest tests with 100% code coverage requirement
-- `composer test` - Runs the complete test suite (type coverage, unit tests, linting, static analysis)
-
-### Maintenance
-- `composer update:requirements` - Updates all PHP and Bun dependencies to latest versions
-
-## License
-
-**Laravel Starter Kit** was created by **[Nuno Maduro](https://x.com/enunomaduro)** under the **[MIT license](https://opensource.org/licenses/MIT)**.
+---
