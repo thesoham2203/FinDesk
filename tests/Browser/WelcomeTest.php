@@ -6,4 +6,3 @@ declare(strict_types=1);
 it('welcome page is tested in feature tests', function (): void {
     expect(true)->toBeTrue();
 })->skip('Browser tests require manual setup');
-
