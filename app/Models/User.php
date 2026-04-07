@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -33,6 +36,18 @@ final class User extends Authenticatable implements MustVerifyEmail
     /**
      * @var list<string>
      */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'department_id',
+        'manager_id',
+    ];
+
+    /**
+     * @var list<string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -50,8 +65,41 @@ final class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'remember_token' => 'string',
+            'role' => UserRole::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @return BelongsTo<Department, User>
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    /**
+     * @return BelongsTo<User, User>
+     */
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'manager_id');
+    }
+
+    /**
+     * @return HasMany<User>
+     */
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(self::class, 'manager_id');
+    }
+
+    /**
+     * @return HasMany<Expense>
+     */
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 }
