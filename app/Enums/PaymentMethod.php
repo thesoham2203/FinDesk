@@ -2,6 +2,22 @@
 
 declare(strict_types=1);
 
+/**
+ * PaymentMethod Enum
+ *
+ * WHAT: Defines the supported payment methods: Bank Transfer, Credit Card, Cash, Cheque, UPI, Other.
+ *
+ * WHY: FinDesk needs to track HOW a payment was made for record-keeping and reconciliation.
+ *      Using an enum ensures consistency and allows reference/tracking numbers to be stored contextually.
+ *
+ * IMPLEMENT: The label() and color() methods are complete. No additional methods needed.
+ *            This enum is cast on the Payment model and used in Livewire payment forms (Day 6).
+ *
+ * REFERENCE:
+ * - Laravel Enums: https://laravel.com/docs/13.x/eloquent#castingusing-enums
+ * - Payment model: App\Models\Payment
+ */
+
 namespace App\Enums;
 
 enum PaymentMethod: string

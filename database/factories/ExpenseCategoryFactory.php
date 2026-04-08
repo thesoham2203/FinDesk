@@ -2,6 +2,22 @@
 
 declare(strict_types=1);
 
+/**
+ * ExpenseCategoryFactory
+ *
+ * WHAT: Generates test ExpenseCategory records with varied budget caps and receipt requirements.
+ *
+ * WHY: Expense submission tests need categories with different policy rules.
+ *      Some categories mandate receipt uploads, others have per-expense limits.
+ *
+ * IMPLEMENT: Complete. max_amount is nullable (some categories have no limit).
+ *            Amount in cents/paise. requires_receipt is random (50% of categories require it).
+ *
+ * REFERENCE:
+ * - Laravel Factories: https://laravel.com/docs/13.x/eloquent-factories
+ * - Models: App\Models\ExpenseCategory
+ */
+
 namespace Database\Factories;
 
 use App\Models\ExpenseCategory;

@@ -2,12 +2,32 @@
 
 declare(strict_types=1);
 
+/**
+ * User Model
+ *
+ * WHAT: Application user with role-based authorization and organizational hierarchy.
+ *
+ * WHY: FinDesk users have roles (Admin, Manager, Employee, Accountant) determining
+ *      permissions (gates/policies). Users belong to departments and form manager/subordinate
+ *      relationships for expense review workflows.
+ *
+ * IMPLEMENT: Complete. Self-referential manager/subordinates relationships enable
+ *            organizational hierarchy. Scopes: byRole(), inDepartment() filter for
+ *            authorization and reporting. createdInvoices() tracks invoices created by this user.
+ *
+ * REFERENCE:
+ * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
+ * - Self-Referential: https://laravel.com/docs/13.x/eloquent-relationships#self-referential-relationships
+ * - Authorization (Gates/Policies): https://laravel.com/docs/13.x/authorization
+ */
+
 namespace App\Models;
 
 use App\Enums\UserRole;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -101,5 +121,37 @@ final class User extends Authenticatable implements MustVerifyEmail
     public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);
+    }
+
+    /**
+     * Get all invoices created by this user.
+     *
+     * @return HasMany<Invoice>
+     */
+    public function createdInvoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'created_by');
+    }
+
+    /**
+     * Filter users by role.
+     *
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    public function scopeByRole(Builder $query, UserRole $role): Builder
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Filter users who belong to a specific department.
+     *
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
+    public function scopeInDepartment(Builder $query, int $departmentId): Builder
+    {
+        return $query->where('department_id', $departmentId);
     }
 }

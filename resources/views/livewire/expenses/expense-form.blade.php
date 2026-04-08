@@ -42,7 +42,7 @@
                         <option value="{{ $cat->id }}">
                             {{ $cat->name }}
                             @if ($cat->max_amount !== null)
-                                (Max: {{ $cat->formatted_max_amount }})
+                                (Max: {{ $cat->max_amount }})
                             @endif
                         </option>
                     @endforeach

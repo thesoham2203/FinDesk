@@ -2,6 +2,22 @@
 
 declare(strict_types=1);
 
+/**
+ * UserFactory
+ *
+ * WHAT: Generates test User records with different roles and organizational relationships.
+ *
+ * WHY: Tests need realistic user data. This factory provides flexible role/department
+ *      assignment via state methods (admin(), manager(), employee(), accountant()).
+ *
+ * IMPLEMENT: Complete. Base definition creates an Employee in a random department.
+ *            States override role and department_id/manager_id appropriately.
+ *
+ * REFERENCE:
+ * - Laravel Factories: https://laravel.com/docs/13.x/eloquent-factories
+ * - Enums: App\Enums\UserRole
+ */
+
 namespace Database\Factories;
 
 use App\Enums\UserRole;

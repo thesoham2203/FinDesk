@@ -10,20 +10,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table): void {
+        Schema::create('organizations', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
             $table->text('address')->nullable();
-            $table->string('tax_number')->nullable();
-            $table->text('notes')->nullable();
+            $table->string('logo_path')->nullable();
+            $table->string('default_currency')->default('INR');
+            $table->integer('fiscal_year_start')->default(4);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('organizations');
     }
 };

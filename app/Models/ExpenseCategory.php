@@ -2,6 +2,23 @@
 
 declare(strict_types=1);
 
+/**
+ * ExpenseCategory Model
+ *
+ * WHAT: Categories that classify expenses (Travel, Meals, Office Supplies, etc.).
+ *
+ * WHY: Categorization enables expense reporting and policy enforcement.
+ *      Categories can mandate requirements (max_amount cap, requires_receipt flag)
+ *      to enforce company policy.
+ *
+ * IMPLEMENT: Complete. formattedMaxAmount handles null (no limit) gracefully.
+ *            Category validation rules are applied during expense submission (Day 6 — Livewire).
+ *
+ * REFERENCE:
+ * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
+ * - Eloquent Mutators: https://laravel.com/docs/13.x/eloquent-mutators
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Attribute;
@@ -42,9 +59,9 @@ final class ExpenseCategory extends Model
     public function formattedMaxAmount(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->max_amount === null
+            get: fn (): string => $this->max_amount === null
             ? 'No limit'
-            : '₹' . number_format($this->max_amount / 100, 2),
+            : '₹'.number_format($this->max_amount / 100, 2),
         );
     }
 }
