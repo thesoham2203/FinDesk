@@ -27,6 +27,7 @@ use App\Enums\UserRole;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -139,7 +140,8 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @param  Builder<User>  $query
      * @return Builder<User>
      */
-    public function scopeByRole(Builder $query, UserRole $role): Builder
+    #[Scope(visible: false)]
+    private function byRole(Builder $query, UserRole $role): Builder
     {
         return $query->where('role', $role);
     }
@@ -150,7 +152,8 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @param  Builder<User>  $query
      * @return Builder<User>
      */
-    public function scopeInDepartment(Builder $query, int $departmentId): Builder
+    #[Scope(visible: false)]
+    private function inDepartment(Builder $query, int $departmentId): Builder
     {
         return $query->where('department_id', $departmentId);
     }

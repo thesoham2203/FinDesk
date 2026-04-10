@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\PaymentMethod;
-use Illuminate\Database\Eloquent\Attributes\Attribute;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,7 +60,7 @@ final class Payment extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    public function formattedAmount(): Attribute
+    private function formattedAmount(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹'.number_format($this->amount / 100, 2),

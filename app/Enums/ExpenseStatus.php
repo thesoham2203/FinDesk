@@ -23,6 +23,12 @@ namespace App\Enums;
 
 enum ExpenseStatus: string
 {
+    //     #[Label('Draft')] protected Draft $draft;
+    //     #[Label('Submitted')] protected Submitted $submitted;
+    //     #[Label('Approved')] protected Approved $approved;
+    //     #[Label('Rejected')] protected Rejected $rejected;
+    //     #[Label('Reimbursed')] protected  Reimbursed $reimbursed;
+
     case Draft = 'draft';
     case Submitted = 'submitted';
     case Approved = 'approved';

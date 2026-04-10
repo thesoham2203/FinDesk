@@ -59,6 +59,6 @@ final class Organization extends Model
      */
     public static function current(): self
     {
-        return cache()->rememberForever('organization', fn () => self::first());
+        return cache()->rememberForever('organization', fn () => self::query()->first());
     }
 }

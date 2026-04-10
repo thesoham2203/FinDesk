@@ -11,7 +11,7 @@
     "require": {
         "php": "^8.5.0",
         "laravel/framework": "^13.2.0",
-        "livewire/livewire": "^4.2",
+        "livewire/livewire": "^4.2.4",
         "livewire/volt": "^1.10.5",
         "nunomaduro/essentials": "^1.2.0"
     },
@@ -19,17 +19,18 @@
         "driftingly/rector-laravel": "^2.2.0",
         "fakerphp/faker": "^1.24.1",
         "larastan/larastan": "^3.9.3",
-        "laravel/boost": "^2.4.1",
-        "laravel/breeze": "^2.4.1",
+        "laravel/boost": "^2.4.2",
+        "laravel/breeze": ">=2.4.1",
         "laravel/pail": "^1.2.6",
         "laravel/pint": "^1.29.0",
         "laravel/tinker": "^v3.0.0",
         "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^8.9.1",
+        "nunomaduro/collision": "^8.9.3",
         "pestphp/pest": "5.x-dev",
         "pestphp/pest-plugin-browser": "^5.0",
         "pestphp/pest-plugin-laravel": "5.x-dev",
         "pestphp/pest-plugin-type-coverage": "^5.0",
+        "phpunit/phpcov": "^13.0",
         "rector/rector": "^2.3.9",
         "roave/security-advisories": "dev-latest"
     },
@@ -84,13 +85,13 @@
             "pint --parallel",
             "bun run lint"
         ],
-        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:type-coverage": "@php -d memory_limit=2G vendor/bin/pest --type-coverage --min=100",
         "test:lint": [
             "pint --parallel --test",
             "rector --dry-run",
             "bun run test:lint"
         ],
-        "test:unit": "@php -d memory_limit=2G -d xdebug.mode=coverage vendor/bin/pest --parallel --coverage --exactly=100.0",
+        "test:unit": "set XDEBUG_MODE=coverage&&pest --coverage --exactly=100.0",
         "test:types": "phpstan --memory-limit=2G",
         "test": [
             "@test:type-coverage",

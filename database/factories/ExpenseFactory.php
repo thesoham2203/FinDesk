@@ -52,7 +52,7 @@ final class ExpenseFactory extends Factory
             'amount' => $this->faker->numberBetween(10000, 500000),
             'currency' => 'INR',
             'status' => ExpenseStatus::Draft,
-            'submission_at' => null,
+            'submitted_at' => null,
             'reviewed_at' => null,
             'reviewed_by' => null,
             'rejection_reason' => null,

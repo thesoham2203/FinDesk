@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Attachment;
+use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -40,7 +41,7 @@ final class AttachmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'attachable_type' => 'App\\Models\\Expense',
+            'attachable_type' => Expense::class,
             'attachable_id' => 1,
             'user_id' => User::factory(),
             'path' => 'attachments/'.$this->faker->uuid().'.pdf',
