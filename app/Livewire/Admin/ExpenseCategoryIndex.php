@@ -38,6 +38,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\ExpenseCategory;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -79,7 +80,7 @@ final class ExpenseCategoryIndex extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.expense-category-index');
     }

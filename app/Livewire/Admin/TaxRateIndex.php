@@ -38,6 +38,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\TaxRate;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -77,7 +78,7 @@ final class TaxRateIndex extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.tax-rate-index');
     }

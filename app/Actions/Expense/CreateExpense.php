@@ -51,12 +51,8 @@ final class CreateExpense
             'description' => $data['description'],
             'category_id' => (int) $data['category_id'],
             'date' => $data['date'],
-            'receipt_path' => $receipt ? $receipt->store('receipts') : null,
+            'receipt_path' => $receipt?->store('receipts'),
         ]);
-        if ($receipt) {
-            $expense->receipt_path = $receipt->store('receipts');
-            $expense->save();
-        }
 
         return $expense;
     }

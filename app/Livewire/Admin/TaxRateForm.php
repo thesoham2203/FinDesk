@@ -38,6 +38,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\TaxRate;
+use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -99,7 +100,7 @@ final class TaxRateForm extends Component
         $this->redirect(route('admin.tax-rates.index'), navigate: true);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.tax-rate-form');
     }

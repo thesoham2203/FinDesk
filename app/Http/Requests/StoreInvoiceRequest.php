@@ -30,6 +30,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Validator;
 
 final class StoreInvoiceRequest extends FormRequest
 {
@@ -112,9 +113,9 @@ final class StoreInvoiceRequest extends FormRequest
      *       - Validate that tax_rate_id (if provided) is active (if required)
      *       - Ensure invoice totals are calculated correctly (might be done in component)
      */
-    public function withValidator($validator)
+    public function withValidator(Validator $validator): void
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             $lineItems = $this->input('line_items', []);
             $hasValidLineItem = false;
 

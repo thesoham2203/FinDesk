@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Expenses;
 
+use App\Actions\Expense\SubmitExpense;
 use App\Enums\ExpenseStatus;
 use App\Models\Expense;
+use App\Rules\ExpenseWithinBudget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
@@ -39,10 +41,7 @@ final class ExpenseDetail extends Component
 
     public function mount(Expense $expense): void
     {
-        // TODO:
-        // 1. Authorize the view action
-        // 2. Load the expense with category, user, department, reviewer, and activities
-        // 3. Populate the locked identifier and component state
+
         $this->authorize('view', $expense);
         $this->expenseId = $expense->id;
         $this->expense = $expense->load([
@@ -56,16 +55,29 @@ final class ExpenseDetail extends Component
 
     public function submit(): void
     {
-        // TODO:
-        // 1. Ensure the current user owns the expense
-        // 2. Verify the expense is still Draft
-        // 3. Check budget and submit through the action class
-        Gate::authorize('submit', $this->expense);
+        $this->authorize('update', $this->expense);
 
         if ($this->expense->status !== ExpenseStatus::Draft) {
             throw new InvalidArgumentException('Only draft expenses can be submitted.');
         }
-        $this->expense->transitionTo(ExpenseStatus::Submitted);
+
+        // Check budget constraint
+        $budgetExceeded = false;
+        $budgetRule = new ExpenseWithinBudget($this->expense->department_id, $this->expense->amount);
+        $budgetRule->validate('amount', $this->expense->amount, function (string $message) use (&$budgetExceeded): void {
+            $budgetExceeded = true;
+            $this->addError('budget', $message);
+
+        });
+
+        if ($budgetExceeded) {
+            return;
+        }
+
+        app(SubmitExpense::class)->execute($this->expense);
+        session()->flash('success', 'Expense submitted successfully.');
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+
     }
 
     public function delete(): void

@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('/{expense}/edit', ExpenseForm::class)
             ->name('edit');
+        Route::post('/', ExpenseForm::class)->name('store');
     });
 
 // Admin Routes

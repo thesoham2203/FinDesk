@@ -29,8 +29,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\ExpenseCategory;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Validator;
 
 final class StoreExpenseRequest extends FormRequest
 {
@@ -39,8 +41,6 @@ final class StoreExpenseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Check if user can create expenses: $this->user()->can('create', Expense::class)
-        //       or use Gate::allows('create-expenses')
         Gate::authorize('create-expenses');
 
         return true;
@@ -97,13 +97,10 @@ final class StoreExpenseRequest extends FormRequest
 
     /**
      * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
      */
-    public function withValidator($validator)
+    public function withValidator(Validator $validator): void
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             $category = ExpenseCategory::find($this->category_id);
             if ($category->max_amount && $this->amount > $category->max_amount) {
                 $validator->errors()->add('amount', 'Exceeds category maximum...');

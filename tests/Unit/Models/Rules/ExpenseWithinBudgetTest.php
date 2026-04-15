@@ -25,6 +25,7 @@ test('expense exceeding budget fails validation', function () {
         'department_id' => $department->id,
         'amount' => 80000, // 800.00
         'status' => 'approved',
+        'date' => now(), // Set date to current month/year so rule finds it
     ]);
 
     $rule = new ExpenseWithinBudget(departmentId: $department->id, amount: 50000); // 500.00 more
@@ -44,6 +45,7 @@ test('expense within budget passes validation', function () {
         'department_id' => $department->id,
         'amount' => 30000, // 300.00
         'status' => 'approved',
+        'date' => now(), // Set date to current month/year so rule finds it
     ]);
 
     $rule = new ExpenseWithinBudget(departmentId: $department->id, amount: 40000); // 400.00 more = 700.00 total

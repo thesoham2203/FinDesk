@@ -70,8 +70,8 @@ final class ExpenseWithinBudget implements ValidationRule
         // to avoid multiple round-trips to the database
         $currentTotal = DB::table('expenses')
             ->where('department_id', $this->departmentId)
-            ->whereYear('created_at', now()->year)
-            ->whereMonth('created_at', now()->month)
+            ->whereYear('date', now()->year)
+            ->whereMonth('date', now()->month)
             ->whereIn('status', ['approved', 'submitted'])
             ->sum('amount');
 

@@ -37,3 +37,6 @@ GUIDE.md
 /playwright/.auth/
 /.agents
 .codex
+GEMINI.md
+.GEMINI
+.github

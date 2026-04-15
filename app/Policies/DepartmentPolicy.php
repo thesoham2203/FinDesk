@@ -15,12 +15,10 @@ final class DepartmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        // TODO: All authenticated users can view the department list
         if ($user) {
             return true;
         }
 
-        // TODO: Return true
         return true;
     }
 
@@ -29,12 +27,10 @@ final class DepartmentPolicy
      */
     public function view(User $user, Department $department): bool
     {
-        // TODO: All authenticated users can view a specific department
         if ($user) {
             return true;
         }
 
-        // TODO: Return true
         return true;
     }
 
@@ -43,11 +39,9 @@ final class DepartmentPolicy
      */
     public function create(User $user): bool
     {
-        // TODO: Only Admin role
         if ($user->role === UserRole::Admin) {
             return true;
         }
-        // TODO: Check user->role === UserRole::Admin
         if ($user->role === UserRole::Admin) {
             return true;
         }
@@ -60,11 +54,11 @@ final class DepartmentPolicy
      */
     public function update(User $user, Department $department): bool
     {
-        // TODO: Only Admin role
+
         if ($user->role === UserRole::Admin) {
             return true;
         }
-        // TODO: Check user->role === UserRole::Admin
+
         if ($user->role === UserRole::Admin) {
             return true;
         }
@@ -77,14 +71,11 @@ final class DepartmentPolicy
      */
     public function delete(User $user, Department $department): bool
     {
-        // TODO: Only Admin role
         if ($user->role === UserRole::Admin) {
-            // TODO: Also check: department has no users assigned (prevent orphaning users)
             if ($department->users()->count() === 0) {
                 return true;
             }
         }
-        // TODO: Check user->role === UserRole::Admin AND no users in department
         if ($user->role === UserRole::Admin && $department->users()->count() === 0) {
             return true;
         }

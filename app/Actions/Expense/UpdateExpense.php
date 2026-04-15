@@ -43,9 +43,11 @@ final class UpdateExpense
             throw new InvalidArgumentException('Only draft expenses can be updated.');
         }
         $expense->title = $data['title'];
-        $expense->amount = $data['amount'] * 100;
+        $expense->amount = $data['amount'];
         $expense->description = $data['description'];
         $expense->date = $data['date'];
+        $expense->category_id = (int) $data['category_id'];
+        $expense->currency = $data['currency'];
         if ($receipt) {
             // Delete old receipt if it exists
             if ($expense->receipt_path) {

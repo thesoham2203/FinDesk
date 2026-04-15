@@ -39,6 +39,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\ExpenseCategory;
+use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -126,7 +127,7 @@ final class ExpenseCategoryForm extends Component
         $this->redirect(route('admin.categories.index'), navigate: true);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.expense-category-form');
     }

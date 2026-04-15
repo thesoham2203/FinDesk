@@ -2,26 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * ExpenseForm Component
- *
- * WHAT: Class-based Livewire form scaffold for creating and editing expenses.
- *
- * WHY: Day 4 introduces the main expense submission workflow. This component shows the
- *      form shape, state properties, and Livewire hooks that will eventually drive the
- *      create/update/submit actions.
- *
- * IMPLEMENT: Wire up validation, mount/edit state, file uploads, category-aware hints,
- *            and action dispatch. This file intentionally keeps the methods as scaffolds.
- *
- * KEY CONCEPTS:
- * - Class-based Livewire components
- * - WithFileUploads
- * - Computed properties
- * - Livewire validation attributes
- * - Money input in dollars before conversion to cents
- */
-
 namespace App\Livewire\Expenses;
 
 use App\Actions\Expense\CreateExpense;
@@ -30,7 +10,6 @@ use App\Actions\Expense\UpdateExpense;
 use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
-use DateTimeImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -55,7 +34,7 @@ final class ExpenseForm extends Component
     #[Validate('nullable|string|max:2000')]
     public string $description = '';
 
-    #[Validate('required|numeric|min:0.01')]
+    #[Validate('required|numeric|min:1')]
     public string $amount = '';
 
     #[Validate('required|exists:expense_categories,id')]
@@ -68,7 +47,7 @@ final class ExpenseForm extends Component
     public ?TemporaryUploadedFile $receipt = null;
 
     #[Validate('required|date')]
-    public ?DateTimeImmutable $date = null;
+    public string $date = '';
 
     public ?string $existingReceiptPath = null;
 
@@ -88,7 +67,7 @@ final class ExpenseForm extends Component
             $this->categoryId = (string) $expense->category_id;
             $this->currency = $expense->currency->value;
             $this->existingReceiptPath = $expense->receipt_path;
-            $this->date = $expense->date;
+            $this->date = (string) $expense->date;
             $this->updatedCategoryId();
         }
     }
@@ -120,10 +99,10 @@ final class ExpenseForm extends Component
     public function updatedCategoryId(): void
     {
         $category = ExpenseCategory::query()->find((int) $this->categoryId);
-        $this->maxAmount = $category->max_amount;
-        $this->requiresReceipt = $category->requires_receipt;
-        $this->addError('amount', $category->max_amount);
-        $this->addError('receipt', $category->requires_receipt ? 'Receipt is required for this category.' : '');
+        if ($category) {
+            $this->maxAmount = $category->max_amount ? ($category->max_amount / 100) : null;
+            $this->requiresReceipt = $category->requires_receipt;
+        }
     }
 
     #[Computed]
