@@ -6,6 +6,9 @@ use App\Livewire\Admin\ExpenseCategoryForm;
 use App\Livewire\Admin\ExpenseCategoryIndex;
 use App\Livewire\Admin\TaxRateForm;
 use App\Livewire\Admin\TaxRateIndex;
+use App\Livewire\Expenses\ExpenseDetail;
+use App\Livewire\Expenses\ExpenseForm;
+use App\Livewire\Expenses\ExpenseIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -17,6 +20,24 @@ Route::view('dashboard', 'dashboard')
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+// Expense Routes
+Route::middleware(['auth', 'verified'])
+    ->prefix('expenses')
+    ->name('expenses.')
+    ->group(function (): void {
+        Route::get('/', ExpenseIndex::class)
+            ->name('index');
+
+        Route::get('/create', ExpenseForm::class)
+            ->name('create');
+
+        Route::get('/{expense}', ExpenseDetail::class)
+            ->name('show');
+
+        Route::get('/{expense}/edit', ExpenseForm::class)
+            ->name('edit');
+    });
 
 // Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function (): void {

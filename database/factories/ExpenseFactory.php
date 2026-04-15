@@ -56,6 +56,7 @@ final class ExpenseFactory extends Factory
             'reviewed_at' => null,
             'reviewed_by' => null,
             'rejection_reason' => null,
+            'date' => $this->faker->date(),
         ];
     }
 

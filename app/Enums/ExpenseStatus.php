@@ -10,9 +10,9 @@ declare(strict_types=1);
  * WHY: FinDesk uses a state machine to enforce a clear expense workflow. Only valid transitions
  *      between states are allowed. This prevents invalid status combinations and ensures data integrity.
  *
- * IMPLEMENT: The label() and color() methods are complete. Implement allowedTransitions() to return
- *            the array of valid next statuses using a match() expression. This method is called by
- *            the transitionTo() method on the Expense model (Day 4 Rules).
+ * IMPLEMENT: The label(), color(), and allowedTransitions() methods are complete. The transition
+ *            map is the state machine for expense lifecycle enforcement and is consumed by the
+ *            transitionTo() method on the Expense model (Day 4 Rules).
  *
  * REFERENCE:
  * - Laravel Enums: https://laravel.com/docs/13.x/eloquent#castingusing-enums
@@ -67,7 +67,6 @@ enum ExpenseStatus: string
      */
     public function allowedTransitions(): array
     {
-        // TODO: Implement state machine logic using match($this)
         return match ($this) {
             self::Draft => [self::Submitted],
             self::Submitted => [self::Approved, self::Rejected],

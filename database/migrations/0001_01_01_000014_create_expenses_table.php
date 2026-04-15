@@ -25,6 +25,7 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable();
             $table->unsignedBigInteger('reviewed_by')->nullable();
             $table->text('rejection_reason')->nullable();
+            $table->date('date')->nullable();
             $table->timestamps();
 
             $table->foreign('reviewed_by')

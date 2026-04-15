@@ -288,6 +288,25 @@ test('invalid transition is not in allowed list', function (): void {
         ->not->toContain(ExpenseStatus::Reimbursed);
 });
 
+test('expense can transition from draft to submitted', function (): void {
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+    ]);
+
+    $expense->transitionTo(ExpenseStatus::Submitted);
+
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
+});
+
+test('expense cannot transition from draft directly to approved', function (): void {
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+    ]);
+
+    expect(fn (): Expense => $expense->transitionTo(ExpenseStatus::Approved))
+        ->toThrow(InvalidArgumentException::class, 'Cannot transition from Draft to Approved');
+});
+
 // ============================================================================
 // SECTION 6: SCOPES — QUERY FILTERING (TODO: Scopes need public methods)
 // ============================================================================

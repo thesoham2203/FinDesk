@@ -2,31 +2,12 @@
 
 declare(strict_types=1);
 
-/**
- * Expense Model
- *
- * WHAT: Core entity representing a submitted, reviewed, and reimbursed expense.
- *
- * WHY: FinDesk's primary workflow is expense management. Expenses flow through states
- *      (Draft → Submitted → [Approved|Rejected] → Reimbursed). This model enforces
- *      that transition logic and tracks who submitted, who reviewed, and why rejected.
- *
- * IMPLEMENT: Complete. transitionTo() stub enforces state machine (Day 4).
- *            formattedAmount uses Currency::symbol() for multi-currency display.
- *            Scopes are templates—implement filter logic in the closure bodies.
- *
- * REFERENCE:
- * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
- * - Eloquent Queries (Scopes): https://laravel.com/docs/13.x/eloquent#query-scopes
- * - Enums: App\\Enums\\ExpenseStatus, Currency
- */
-
 namespace App\Models;
 
 use App\Enums\Currency;
 use App\Enums\ExpenseStatus;
-use Illuminate\Database\Eloquent\Attributes\Attribute;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -65,6 +46,7 @@ final class Expense extends Model
         'amount' => 'integer',
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'date' => 'date',
     ];
 
     /**
@@ -127,17 +109,21 @@ final class Expense extends Model
     /**
      * Transition the expense to a new status, validating via the state machine.
      *
-     * TODO: Implement state machine validation using ExpenseStatus::allowedTransitions()
-     *       - Throw InvalidExpenseTransition if the new status is not in allowed transitions
-     *       - Update timestamp fields (submitted_at, reviewed_at) based on new status
-     *       - Call Activity::create() to log this transition (Day 5 — Observers)
-     *
      * @throws InvalidArgumentException if transition is invalid
      */
     public function transitionTo(ExpenseStatus $newStatus): void
     {
-        // TODO: Implement state machine transition logic
         $allowedTransitions = $this->status->allowedTransitions();
+
+        if (! in_array($newStatus, $allowedTransitions, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot transition from %s to %s',
+                $this->status->label(),
+                $newStatus->label(),
+            ));
+        }
+
+        $this->status = $newStatus;
     }
 
     /**

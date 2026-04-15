@@ -67,7 +67,7 @@ it('stores receipt path when provided', function (): void {
         user: $user,
         title: 'Meal',
         description: '',
-        amount: 50000,
+        amount: 5000,
         currency: 'INR',
         categoryId: $category->id,
         receiptPath: 'receipts/test.jpg',
