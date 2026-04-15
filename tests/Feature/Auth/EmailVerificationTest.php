@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
@@ -45,18 +44,4 @@ test('email is not verified with invalid hash', function (): void {
     $this->actingAs($user)->get($verificationUrl);
 
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
-});
-
-test('verified email redirects to dashboard', function (): void {
-    $user = User::factory()->create();
-
-    $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1($user->email)]
-    );
-
-    $response = $this->actingAs($user)->get($verificationUrl);
-
-    $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
 });

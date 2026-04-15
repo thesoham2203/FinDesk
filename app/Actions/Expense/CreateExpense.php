@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * CreateExpense Action
+ *
+ * WHAT: Creates a new expense record in Draft status and optionally stores a receipt upload.
+ *
+ * WHY: Expense creation is a single business operation that should be reusable outside Livewire.
+ *      Keeping it in an Action keeps the component thin and makes the workflow easier to test.
+ *
+ * IMPLEMENT: Create the expense, persist the receipt if provided, and return the saved model.
+ *            The actual data mapping and file-storage details are intentionally left as TODOs.
+ *
+ * KEY CONCEPTS:
+ * - Single-purpose Action classes
+ * - UploadedFile handling
+ * - Eloquent create/save flow
+ * - Expense status state machine from the Day 1 model scaffold
+ */
+
+namespace App\Actions\Expense;
+
+use App\Models\Expense;
+use App\Models\User;
+use Illuminate\Http\UploadedFile;
+
+final class CreateExpense
+{
+    /**
+     * Create a new draft expense.
+     *
+     * @param  User  $user  The authenticated user creating the expense
+     * @param  array<string, mixed>  $data  Validated expense data from the form layer
+     * @param  UploadedFile|null  $receipt  Optional uploaded receipt file
+     */
+    public function execute(User $user, array $data, ?UploadedFile $receipt = null): Expense
+    {
+        // TODO:
+        // 1. Create Expense with status = Draft, user_id = $user->id, department_id = $user->department_id
+        // 2. Map validated data into the expense fields
+        // 3. If a receipt exists, store it and assign receipt_path
+        // 4. Save the expense and return it
+        $expense = Expense::create([
+            'title' => $data['title'],
+            'user_id' => $user->id,
+            'department_id' => $user->department_id,
+            'status' => $data['status'] ?? 'draft',
+            'amount' => $data['amount'],
+            'description' => $data['description'],
+            'category_id' => (int) $data['category_id'],
+            'date' => $data['date'],
+            'receipt_path' => $receipt?->store('receipts'),
+        ]);
+
+        return $expense;
+    }
+}
