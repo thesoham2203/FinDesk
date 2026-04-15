@@ -54,7 +54,7 @@ it('filters expenses by category', function () {
     $user = User::factory()->create();
     $cat1 = ExpenseCategory::factory()->create();
     $cat2 = ExpenseCategory::factory()->create();
-    
+
     $exp1 = Expense::factory()->create(['user_id' => $user->id, 'category_id' => $cat1->id, 'title' => 'Cat1 Expense']);
     Expense::factory()->create(['user_id' => $user->id, 'category_id' => $cat2->id, 'title' => 'Cat2 Expense']);
 
