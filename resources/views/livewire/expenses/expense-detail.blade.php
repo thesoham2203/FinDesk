@@ -29,14 +29,14 @@
                             <h2 class="text-xl font-semibold text-gray-900">Summary</h2>
                             @if ($expense)
                                 @php
-                                    $badgeClasses = match ($expense->status->color()) {
-                                        'gray' => 'bg-gray-100 text-gray-800',
-                                        'yellow' => 'bg-yellow-100 text-yellow-800',
-                                        'green' => 'bg-green-100 text-green-800',
-                                        'red' => 'bg-red-100 text-red-800',
-                                        'blue' => 'bg-blue-100 text-blue-800',
-                                        default => 'bg-gray-100 text-gray-800',
-                                    };
+    $badgeClasses = match ($expense->status->color()) {
+        'gray' => 'bg-gray-100 text-gray-800',
+        'yellow' => 'bg-yellow-100 text-yellow-800',
+        'green' => 'bg-green-100 text-green-800',
+        'red' => 'bg-red-100 text-red-800',
+        'blue' => 'bg-blue-100 text-blue-800',
+        default => 'bg-gray-100 text-gray-800',
+    };
                                 @endphp
                                 <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $badgeClasses }}">
                                     {{ $expense->status->label() }}
@@ -63,6 +63,24 @@
                                     class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
                                     Delete
                                 </button>
+                            @elseif ($expense->status === \App\Enums\ExpenseStatus::Submitted)
+                                @can('approve', $expense)
+                                    <button type="button" wire:click="approve" wire:confirm="Approve this expense?"
+                                        class="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700">
+                                        Approve
+                                    </button>
+                                    <button type="button" wire:click="openRejectModal"
+                                        class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+                                        Reject
+                                    </button>
+                                @endcan
+                            @elseif ($expense->status === \App\Enums\ExpenseStatus::Approved)
+                                @can('reimburst', $expense)
+                                    <button type="button" wire:click="reimburse" wire:confirm="Mark this expense as reimbursed?"
+                                        class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                                        Mark as Reimbursed
+                                    </button>
+                                @endcan
                             @endif
                         </div>
                     @endif
@@ -121,16 +139,58 @@
 
             <section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 class="text-lg font-semibold text-gray-900">Activity Log</h2>
-                <div class="mt-4 rounded-md border border-dashed border-gray-300 p-4 text-sm text-gray-600">
-                    {{-- TODO: Show $expense->activities timeline here in Day 5. --}}
-                    <p>Activity timeline scaffold placeholder.</p>
+                <div class="mt-4">
+                    @if ($expense?->activities->isNotEmpty())
+                        <div class="space-y-4">
+                                @foreach ($expense->activities as $activity)
+                                    <div class="flex gap-4 border-l-2 border-gray-200 py-3 pl-4">
+                                        <div class="flex-shrink-0 mt-1">
+                                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                                                <span class="text-xs font-semibold text-gray-600">{{ substr($activity->user->name, 0, 1) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="font-medium text-gray-900">{{ $activity->user->name }}</p>
+                                            <p class="text-sm text-gray-600">{{ $activity->description }}</p>
+                                            <p class="mt-1 text-xs text-gray-500">{{ $activity->created_at?->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            <p class="text-sm text-gray-600">Activity timeline scaffold — implement in Day 5.</p>
+                        </div>
+                    @else
+                        <div class="rounded-md border border-dashed border-gray-300 p-4 text-sm text-gray-600">
+                            <p>No activities yet.</p>
+                        </div>
+                    @endif
                 </div>
             </section>
 
             <section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 class="text-lg font-semibold text-gray-900">Review Actions</h2>
                 <p class="mt-2 text-sm text-gray-600">
-                    Approve and reject actions will be added in the next day of the workflow.
+                     @if ($showRejectModal)
+                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                            <div class="rounded-lg bg-white p-6 shadow-lg">
+                                <h3 class="text-lg font-semibold text-gray-900">Reject Expense</h3>
+                                <p class="mt-2 text-sm text-gray-600">Please provide a reason for rejection:</p>
+                                <textarea wire:model="rejectionReason"
+                                    class="mt-4 w-full rounded-md border border-gray-300 p-3 text-sm"
+                                    rows="4"
+                                    placeholder="Enter rejection reason..."></textarea>
+                                <div class="mt-4 flex gap-3">
+                                    <button type="button" wire:click="reject"
+                                        class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+                                        Reject
+                                    </button>
+                                    <button type="button" wire:click="$set('showRejectModal', false)"
+                                        class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </p>
             </section>
         </div>

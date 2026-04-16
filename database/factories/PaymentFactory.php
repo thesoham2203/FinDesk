@@ -40,7 +40,7 @@ final class PaymentFactory extends Factory
     public function definition(): array
     {
         return [
-            'invoice_id' => Invoice::factory(),
+            'invoice_id' => Invoice::factory()->sent(), // Invoices must be sent before payments can be recorded
             'amount' => $this->faker->numberBetween(10000, 500000), // cents
             'payment_date' => $this->faker->dateTimeBetween('-30 days', 'now')->format('Y-m-d'),
             'payment_method' => $this->faker->randomElement(PaymentMethod::cases()),

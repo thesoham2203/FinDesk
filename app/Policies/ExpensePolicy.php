@@ -29,13 +29,13 @@ final class ExpensePolicy
      */
     public function view(User $user, Expense $expense): bool
     {
-        if ($user->role === UserRole::Employee && $expense->user_id === $user->id) {
+        if ($user->role->value === UserRole::Employee->value && $expense->user_id === $user->id) {
             return true;
         }
-        if ($user->role === UserRole::Manager && $expense->department_id === $user->department_id) {
+        if ($user->role->value === UserRole::Manager->value && $expense->department_id === $user->department_id) {
             return true;
         }
-        if ($user->role === UserRole::Admin || $user->role === UserRole::Accountant) {
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value) {
             return true;
         }
 
@@ -47,8 +47,7 @@ final class ExpensePolicy
      */
     public function create(User $user): bool
     {
-        if ($user->role === UserRole::Employee || $user->role === UserRole::Manager) {
-
+        if ($user->role->value === UserRole::Employee->value || $user->role->value === UserRole::Manager->value) {
             if ($user->department_id !== null) {
                 return true;
             }
@@ -86,15 +85,12 @@ final class ExpensePolicy
 
     public function approve(User $user, Expense $expense): bool
     {
-        // TODO: Only Managers can approve
-        if ($user->role !== UserRole::Manager) {
+        if ($user->role->value !== UserRole::Manager->value) {
             return false;
         }
-        // TODO: Only for expenses in their own department
         if ($expense->department_id !== $user->department_id) {
             return false;
         }
-        // TODO: Only when expense status is Submitted
         if ($expense->status !== ExpenseStatus::Submitted) {
             return false;
         }
@@ -107,8 +103,7 @@ final class ExpensePolicy
      */
     public function reject(User $user, Expense $expense): bool
     {
-        // TODO: Same rules as approve
-        if ($user->role !== UserRole::Manager) {
+        if ($user->role->value !== UserRole::Manager->value) {
             return false;
         }
         if ($expense->department_id !== $user->department_id) {

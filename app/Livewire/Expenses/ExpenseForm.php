@@ -43,7 +43,7 @@ final class ExpenseForm extends Component
     #[Validate('required|string|in:INR,USD,EUR,GBP')]
     public string $currency = 'INR';
 
-    #[Validate('nullable|file|mimes:jpg,jpeg,png,pdf|max:5120')]
+    #[Validate('nullable|file|sometimes|mimes:jpg,jpeg,png,pdf')]
     public ?TemporaryUploadedFile $receipt = null;
 
     #[Validate('required|date')]
@@ -75,6 +75,7 @@ final class ExpenseForm extends Component
     public function save(bool $andSubmit = false): void
     {
         $this->validate();
+
         $data = [
             'title' => $this->title,
             'description' => $this->description,

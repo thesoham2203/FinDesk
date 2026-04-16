@@ -193,18 +193,11 @@ test('expense can have many activities (audit log)', function (): void {
     // WHY THIS TEST: Activities track what happened to an expense
     // (created, submitted, approved, rejected). Also polymorphic.
 
-    // ARRANGE: Create an expense and log activities against it
+    // ARRANGE: Create an expense. The ExpenseObserver automatically creates an activity.
     $expense = Expense::factory()->create();
     $user = $expense->user;
 
-    Activity::query()->create([
-        'user_id' => $user->id,
-        'subject_type' => Expense::class,
-        'subject_id' => $expense->id,
-        'description' => 'Expense created',
-        'properties' => ['amount' => $expense->amount],
-    ]);
-
+    // Manually log an additional activity (Expense submitted)
     Activity::query()->create([
         'user_id' => $user->id,
         'subject_type' => Expense::class,
@@ -213,13 +206,12 @@ test('expense can have many activities (audit log)', function (): void {
         'properties' => [],
     ]);
 
-    // ACT: Access the activities relationship
+    // ACT: Access the activities relationship (should have 2: 1 from observer + 1 manual)
     $activities = $expense->activities;
 
     // ASSERT: Both activity entries are returned
     expect($activities)->toHaveCount(2)
-        ->and($activities->pluck('description')->toArray())
-        ->toContain('Expense created', 'Expense submitted');
+        ->and($activities->pluck('description'))->toContain('Expense submitted');
 });
 
 // ============================================================================

@@ -48,6 +48,7 @@ final class CreateExpense
             'department_id' => $user->department_id,
             'status' => $data['status'] ?? 'draft',
             'amount' => $data['amount'],
+            'currency' => $data['currency'],
             'description' => $data['description'],
             'category_id' => (int) $data['category_id'],
             'date' => $data['date'],

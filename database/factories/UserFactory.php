@@ -78,7 +78,8 @@ final class UserFactory extends Factory
         return $this->state(fn (array $attributes): array => [
             'role' => UserRole::Employee,
             'department_id' => Department::factory(),
-            'manager_id' => null,
+            'manager_id' => fake()->randomElement(User::where('role', UserRole::Manager)->pluck('id')->toArray()),
+
         ]);
     }
 

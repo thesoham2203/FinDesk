@@ -147,7 +147,6 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-500">
-                                    No expenses found. The scaffold is ready for the Day 4 query and filter logic.
                                 </td>
                             </tr>
                         @endforelse

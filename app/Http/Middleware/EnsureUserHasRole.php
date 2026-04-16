@@ -19,15 +19,12 @@ final class EnsureUserHasRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        // TODO: Get the authenticated user
         $user = $request->user();
 
-        // TODO: Check if user->role matches one of the provided $roles
-        if ($user && in_array($user->role, $roles, true)) {
-            // TODO: If match found → return $next($request)
+        if ($user && in_array($user->role->value, $roles, true)) {
             return $next($request);
         }
-        // TODO: If no match → abort(403, 'Unauthorized role for this section')
-        abort(404);
+
+        abort(403, 'Unauthorized role for this section');
     }
 }

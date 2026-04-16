@@ -28,5 +28,10 @@ final class DepartmentSeeder extends Seeder
             'description' => 'Sales and client relations',
             'monthly_budget' => 4000000, // ₹40,000 in paise
         ]);
+        Department::query()->create([
+            'name' => 'Office Supplies',
+            'description' => 'Office materaials and utilities',
+            'monthly_budget' => 5000000, // ₹50,000 in paise
+        ]);
     }
 }

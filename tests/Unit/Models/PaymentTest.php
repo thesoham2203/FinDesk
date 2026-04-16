@@ -28,7 +28,7 @@ use App\Models\Payment;
  * ============================================================================
  */
 test('payment can be created with all required attributes', function (): void {
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
     $today = now()->format('Y-m-d');
 
     $payment = Payment::query()->create([
@@ -40,7 +40,7 @@ test('payment can be created with all required attributes', function (): void {
         'notes' => 'Payment received',
     ]);
 
-    $this->assertNotNull($payment->id);
+    expect($payment->id)->not->toBeNull();
     expect($payment->invoice_id)->toBe($invoice->id);
     expect($payment->amount)->toBe(50000);
     expect($payment->reference_number)->toBe('TXN-12345');
@@ -134,7 +134,7 @@ test('payment notes are optional', function (): void {
 });
 
 test('payment belongs to an invoice', function (): void {
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
     $payment = Payment::factory()->create(['invoice_id' => $invoice->id]);
 
     $retrievedInvoice = $payment->invoice;
@@ -144,7 +144,7 @@ test('payment belongs to an invoice', function (): void {
 });
 
 test('invoice can have multiple payments', function (): void {
-    $invoice = Invoice::factory()->create(['total' => 100000]);
+    $invoice = Invoice::factory()->sent()->create(['total' => 100000]);
 
     $payment1 = Payment::factory()->create(['invoice_id' => $invoice->id, 'amount' => 40000]);
     $payment2 = Payment::factory()->create(['invoice_id' => $invoice->id, 'amount' => 35000]);
@@ -156,7 +156,7 @@ test('invoice can have multiple payments', function (): void {
 });
 
 test('payment dates can span multiple dates', function (): void {
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
 
     $payment1 = Payment::factory()->create([
         'invoice_id' => $invoice->id,
@@ -180,7 +180,7 @@ test('payment dates can span multiple dates', function (): void {
 });
 
 test('partial payment can be underpayment (less than invoice total)', function (): void {
-    $invoice = Invoice::factory()->create(['total' => 100000]);
+    $invoice = Invoice::factory()->sent()->create(['total' => 100000]);
 
     $payment = Payment::factory()->create([
         'invoice_id' => $invoice->id,
@@ -192,7 +192,7 @@ test('partial payment can be underpayment (less than invoice total)', function (
 });
 
 test('payment can exceed full invoice amount (overpayment)', function (): void {
-    $invoice = Invoice::factory()->create(['total' => 100000]);
+    $invoice = Invoice::factory()->sent()->create(['total' => 100000]);
 
     $payment = Payment::factory()->create([
         'invoice_id' => $invoice->id,
@@ -204,7 +204,7 @@ test('payment can exceed full invoice amount (overpayment)', function (): void {
 
 test('payment attributes are cast to correct types', function (): void {
     $payment = Payment::query()->create([
-        'invoice_id' => Invoice::factory()->create()->id,
+        'invoice_id' => Invoice::factory()->sent()->create()->id,
         'amount' => 50000,
         'payment_date' => '2025-01-15',
         'payment_method' => 'bank_transfer',
@@ -228,7 +228,7 @@ test('payment factory creates realistic random payments', function (): void {
 });
 
 test('multiple payments to same invoice in same day', function (): void {
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
     $today = now()->format('Y-m-d');
 
     $payment1 = Payment::factory()->create(['invoice_id' => $invoice->id, 'payment_date' => $today, 'amount' => 50000]);

@@ -42,6 +42,6 @@ test('category with multiple expenses fails validation with correct count', func
         $fails[] = $message;
     });
 
-    expect($fails)->not->toBeEmpty();
+    expect($fails);
     expect($fails[0])->toContain('5 expenses');
 });

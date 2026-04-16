@@ -9,6 +9,7 @@ use App\Livewire\Admin\TaxRateIndex;
 use App\Livewire\Expenses\ExpenseDetail;
 use App\Livewire\Expenses\ExpenseForm;
 use App\Livewire\Expenses\ExpenseIndex;
+use App\Livewire\Expenses\PendingApprovals;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -38,6 +39,14 @@ Route::middleware(['auth', 'verified'])
         Route::get('/{expense}/edit', ExpenseForm::class)
             ->name('edit');
         Route::post('/', ExpenseForm::class)->name('store');
+    });
+
+Route::middleware(['auth', 'verified', 'role:manager,admin'])
+    ->prefix('approvals')
+    ->name('approvals.')
+    ->group(function (): void {
+        Route::get('/', PendingApprovals::class)
+            ->name('index');
     });
 
 // Admin Routes

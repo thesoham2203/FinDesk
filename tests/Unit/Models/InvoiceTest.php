@@ -310,7 +310,7 @@ test('invoice has many line items', function (): void {
 
 test('invoice has many payments', function (): void {
     // ARRANGE
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
     $payment1 = Payment::factory()->create(['invoice_id' => $invoice->id]);
     $payment2 = Payment::factory()->create(['invoice_id' => $invoice->id]);
 
@@ -324,7 +324,7 @@ test('invoice has many payments', function (): void {
 
 test('invoice can have multiple payments (partial payment support)', function (): void {
     // ARRANGE
-    $invoice = Invoice::factory()->create(['total' => 100000]); // $1000.00
+    $invoice = Invoice::factory()->sent()->create(['total' => 100000]); // $1000.00
 
     // ACT
     // Create 3 payments totaling $1000.00
@@ -345,7 +345,7 @@ test('invoice can have multiple payments (partial payment support)', function ()
 
 test('invoice has one latest payment via HasOne of Many relationship', function (): void {
     // ARRANGE
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()->sent()->create();
     Payment::factory()->create(['invoice_id' => $invoice->id, 'payment_date' => '2025-01-01']);
     Payment::factory()->create(['invoice_id' => $invoice->id, 'payment_date' => '2025-01-05']);
     $latestPayment = Payment::factory()->create(['invoice_id' => $invoice->id, 'payment_date' => '2025-01-10']);

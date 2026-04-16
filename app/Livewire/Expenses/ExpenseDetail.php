@@ -22,11 +22,16 @@ declare(strict_types=1);
 
 namespace App\Livewire\Expenses;
 
+use App\Actions\Expense\ApproveExpense;
+use App\Actions\Expense\ReimburseExpense;
+use App\Actions\Expense\RejectExpense;
 use App\Actions\Expense\SubmitExpense;
 use App\Enums\ExpenseStatus;
+use App\Enums\UserRole;
 use App\Models\Expense;
 use App\Rules\ExpenseWithinBudget;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Livewire\Attributes\Locked;
@@ -38,6 +43,10 @@ final class ExpenseDetail extends Component
     public int $expenseId = 0;
 
     public ?Expense $expense = null;
+
+    public string $rejectionReason = '';
+
+    public bool $showRejectModal = false;
 
     public function mount(Expense $expense): void
     {
@@ -82,11 +91,6 @@ final class ExpenseDetail extends Component
 
     public function delete(): void
     {
-        // TODO:
-        // 1. Authorize delete access
-        // 2. Ensure the expense is still Draft
-        // 3. Remove the record and receipt file
-        // 4. Redirect to the list page
         Gate::authorize('delete', $this->expense);
 
         if ($this->expense->status !== ExpenseStatus::Draft) {
@@ -96,6 +100,63 @@ final class ExpenseDetail extends Component
         $this->expense->delete();
 
         $this->redirectRoute('expenses.index');
+    }
+
+    public function approve(): void
+    {
+        $this->authorize('approve', $this->expense);
+        $this->expense = app(ApproveExpense::class)->execute($this->expense, Auth::user());
+        session()->flash('success', 'Expense approved successfully.');
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+    }
+
+    public function openRejectModal(): void
+    {
+        $this->authorize('reject', $this->expense);
+        $this->showRejectModal = true;
+    }
+
+    public function reject(): void
+    {
+        $this->authorize('reject', $this->expense);
+        $this->validate(['rejectionReason' => 'required|string|min:10'],
+            ['rejectionReason.required' => 'Please provide a valid reason'],
+            ['rejectionReason.min' => 'Minimum 10 characters please']);
+        $this->expense = app(RejectExpense::class)->execute(
+            $this->expense,
+            Auth::user(),
+            $this->rejectionReason
+        );
+
+        $this->rejectionReason = '';
+        $this->showRejectModal = false;
+        session()->flash('success', 'Expense rejected successfully');
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+
+    }
+
+    public function reimburse(): void
+    {
+        // 3. Use the ReimburseExpense action:
+        //    $this->expense = app(ReimburseExpense::class)->execute($this->expense, auth()->user())
+        //
+        // 4. Flash success and refresh:
+        //    session()->flash('success', 'Expense marked as reimbursed.')
+        //    $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities'])
+        if (! in_array(Auth::user()->role, [UserRole::Admin, UserRole::Accountant])) {
+            $this->addError('unauthorised', 'oly admins and accountants are allowed to do this');
+
+            return;
+        }
+        if ($this->expense->status !== ExpenseStatus::Approved) {
+            $this->addError('status', 'only approved statuses can be reimbursed');
+
+            return;
+        }
+        $this->expense = app(ReimburseExpense::class)->execute($this->expense, Auth::user());
+
+        session()->flash('success', 'expense marked as completed');
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
     }
 
     public function render(): View

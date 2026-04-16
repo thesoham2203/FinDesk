@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Models\Expense;
-use App\Models\User;
 use App\Enums\ExpenseStatus;
 use App\Enums\UserRole;
 use App\Models\Department;
+use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

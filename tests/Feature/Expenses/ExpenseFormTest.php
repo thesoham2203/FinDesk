@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Models\Department;
+use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\User;
-use App\Enums\ExpenseStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -84,9 +83,8 @@ it('prevents editing of non-draft expenses', function () {
     $user = User::factory()->create();
     $expense = Expense::factory()->submitted()->create(['user_id' => $user->id]);
 
-    expect(fn () => 
-        Livewire::actingAs($user)
-            ->test('expenses.expense-form', ['expense' => $expense])
+    expect(fn () => Livewire::actingAs($user)
+        ->test('expenses.expense-form', ['expense' => $expense])
     )->toThrow(Illuminate\View\ViewException::class); // Livewire wraps InvalidArgumentException
 });
 
