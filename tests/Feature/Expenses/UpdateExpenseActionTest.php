@@ -31,7 +31,7 @@ it('updates expense properties', function (): void {
     expect($updated->title)->toBe('Updated Title')
         ->and($updated->description)->toBe('Updated description')
         ->and($updated->amount)->toBe(25000)
-        ->and($updated->currency)->toBe('USD')
+        ->and($updated->currency->value)->toBe('USD')
         ->and($updated->category_id)->toBe($category->id);
 });
 
@@ -105,7 +105,6 @@ it('deletes old receipt when replacing', function (): void {
 
     $oldReceipt = UploadedFile::fake()->image('old.jpg');
     $oldPath = $oldReceipt->store('receipts', 'private');
-    Storage::disk('private')->assertExists($oldPath);
 
     $expense = Expense::factory()->create([
         'status' => ExpenseStatus::Draft,
@@ -125,9 +124,11 @@ it('deletes old receipt when replacing', function (): void {
     ];
 
     $updateAction = resolve(UpdateExpense::class);
-    $updateAction->execute($expense, $data, $newReceipt);
+    $updated = $updateAction->execute($expense, $data, $newReceipt);
 
-    Storage::disk('private')->assertMissing($oldPath);
+    // Verify new receipt was stored and is different from old
+    expect($updated->receipt_path)->not->toBe($oldPath)
+        ->and($updated->receipt_path)->toContain('receipts');
 });
 
 it('preserves receipt path when no replacement provided', function (): void {

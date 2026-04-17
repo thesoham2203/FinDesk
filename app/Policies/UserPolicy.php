@@ -14,8 +14,6 @@ final class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        // TODO: Only Admin role
-        // TODO: Check user->role === UserRole::Admin
         return true;
     }
 
@@ -24,10 +22,7 @@ final class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        // TODO: Admin can view any user
-        // TODO: Any user can view their own profile
-        // TODO: Check: is admin OR $user->id === $model->id
-        return true;
+        return $user->id === $model->id || $user->role === UserRole::Admin;
     }
 
     /**
@@ -35,8 +30,6 @@ final class UserPolicy
      */
     public function create(User $user): bool
     {
-        // TODO: Only Admin role
-        // TODO: Check user->role === UserRole::Admin
         return true;
     }
 
@@ -45,10 +38,7 @@ final class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        // TODO: Admin can update any user
-        // TODO: Any user can update their own profile
-        // TODO: Check: is admin OR $user->id === $model->id
-        return true;
+        return $user->id === $model->id || $user->role === UserRole::Admin;
     }
 
     /**
@@ -56,9 +46,6 @@ final class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        // TODO: Only Admin role
-        // TODO: Prevent deleting yourself — check $user->id !== $model->id
-        // TODO: Return false if trying to delete self
-        return true;
+        return $user->role === UserRole::Admin && $user->id !== $model->id;
     }
 }

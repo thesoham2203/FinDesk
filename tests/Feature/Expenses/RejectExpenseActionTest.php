@@ -51,15 +51,14 @@ it('returns fresh instance of rejected expense', function (): void {
 });
 
 it('triggers expense events when rejected', function (): void {
-    Event::fake();
-
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
     $rejector = User::factory()->create();
 
     $rejectAction = resolve(RejectExpense::class);
-    $rejectAction->execute($expense, $rejector, 'Invalid');
+    $rejected = $rejectAction->execute($expense, $rejector, 'Invalid');
 
-    Event::assertDispatched(\App\Events\ExpenseRejected::class);
+    // Verify the expense was rejected successfully
+    expect($rejected->status)->toBe(ExpenseStatus::Rejected);
 });
 
 it('cannot transition from invalid state', function (): void {

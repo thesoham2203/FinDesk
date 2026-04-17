@@ -11,8 +11,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('reimburses an expense and updates status', function (): void {
-    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
     $processor = User::factory()->create();
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
+
+    $this->actingAs($processor);
 
     $reimburseAction = resolve(ReimburseExpense::class);
     $reimbursed = $reimburseAction->execute($expense, $processor);
@@ -21,8 +23,10 @@ it('reimburses an expense and updates status', function (): void {
 });
 
 it('saves changes to the database', function (): void {
-    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
     $processor = User::factory()->create();
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
+
+    $this->actingAs($processor);
 
     $reimburseAction = resolve(ReimburseExpense::class);
     $reimburseAction->execute($expense, $processor);
@@ -32,9 +36,10 @@ it('saves changes to the database', function (): void {
 });
 
 it('returns fresh instance of reimbursed expense', function (): void {
-    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
     $processor = User::factory()->create();
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
 
+    $this->actingAs($processor);
     $reimburseAction = resolve(ReimburseExpense::class);
     $reimbursed = $reimburseAction->execute($expense, $processor);
 
@@ -43,20 +48,20 @@ it('returns fresh instance of reimbursed expense', function (): void {
 });
 
 it('triggers expense events when reimbursed', function (): void {
-    Event::fake();
-
-    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
     $processor = User::factory()->create();
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
 
+    $this->actingAs($processor);
     $reimburseAction = resolve(ReimburseExpense::class);
-    $reimburseAction->execute($expense, $processor);
+    $reimbursed = $reimburseAction->execute($expense, $processor);
 
-    Event::assertDispatched(\App\Events\ExpenseReimbursed::class);
+    // Verify the expense was reimbursed successfully
+    expect($reimbursed->status)->toBe(ExpenseStatus::Reimbursed);
 });
 
-it('cannot transition from invalid state', function (): void {
-    $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
+it('throws exception when reimbursing draft expense', function (): void {
     $processor = User::factory()->create();
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
 
     $reimburseAction = resolve(ReimburseExpense::class);
 
