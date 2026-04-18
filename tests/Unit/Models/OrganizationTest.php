@@ -60,7 +60,7 @@ test('organization fiscal year start is cast to integer', function (): void {
 
 test('organization::current returns cached organization on first call', function (): void {
     Cache::forget('organization');
-    
+
     $org = Organization::factory()->create([
         'name' => 'Cached Org',
     ]);
@@ -74,17 +74,17 @@ test('organization::current returns cached organization on first call', function
 
 test('organization::current returns cached value on subsequent calls', function (): void {
     Cache::forget('organization');
-    
+
     $org = Organization::factory()->create([
         'name' => 'Org for Cache Test',
     ]);
 
     // First call caches it
     $first = Organization::current();
-    
+
     // Update the database directly
     $org->update(['name' => 'Updated Name']);
-    
+
     // Second call should still return cached value
     $second = Organization::current();
 
@@ -94,9 +94,9 @@ test('organization::current returns cached value on subsequent calls', function 
 
 test('organization::current uses cache key organization', function (): void {
     Cache::forget('organization');
-    
+
     Organization::factory()->create();
-    
+
     Organization::current();
 
     expect(Cache::has('organization'))->toBeTrue();
@@ -136,7 +136,7 @@ test('organization can be created with different fiscal year starts', function (
 
 test('organization can be updated', function (): void {
     $org = Organization::factory()->create();
-    
+
     $org->update([
         'name' => 'New Name',
         'address' => 'New Address',

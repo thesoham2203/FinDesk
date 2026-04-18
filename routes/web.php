@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Admin\ClientForm;
+use App\Livewire\Admin\ClientIndex;
 use App\Livewire\Admin\ExpenseCategoryForm;
 use App\Livewire\Admin\ExpenseCategoryIndex;
 use App\Livewire\Admin\TaxRateForm;
@@ -10,6 +12,9 @@ use App\Livewire\Expenses\ExpenseDetail;
 use App\Livewire\Expenses\ExpenseForm;
 use App\Livewire\Expenses\ExpenseIndex;
 use App\Livewire\Expenses\PendingApprovals;
+use App\Livewire\Invoices\InvoiceDetail;
+use App\Livewire\Invoices\InvoiceForm;
+use App\Livewire\Invoices\InvoiceIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -49,8 +54,36 @@ Route::middleware(['auth', 'verified', 'role:manager,admin'])
             ->name('index');
     });
 
+// Invoice Routes (Admin, Manager, Accountant)
+Route::middleware(['auth', 'verified', 'role:admin,manager,accountant'])
+    ->prefix('invoices')
+    ->name('invoices.')
+    ->group(function (): void {
+        Route::get('/', InvoiceIndex::class)
+            ->name('index');
+
+        Route::get('/create', InvoiceForm::class)
+            ->name('create');
+
+        Route::get('/{invoice}', InvoiceDetail::class)
+            ->name('show');
+
+        Route::get('/{invoice}/edit', InvoiceForm::class)
+            ->name('edit');
+    });
+
 // Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function (): void {
+    // Clients
+    Route::get('/clients', ClientIndex::class)
+        ->name('clients.index');
+
+    Route::get('/clients/create', ClientForm::class)
+        ->name('clients.create');
+
+    Route::get('/clients/{client}/edit', ClientForm::class)
+        ->name('clients.edit');
+
     // Expense Categories
     Route::get('/categories', ExpenseCategoryIndex::class)
         ->name('categories.index');

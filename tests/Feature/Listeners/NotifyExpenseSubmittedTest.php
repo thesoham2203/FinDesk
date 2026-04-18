@@ -37,6 +37,6 @@ describe('NotifyExpenseSubmitted Listener', function (): void {
     it('listener implements should queue interface', function (): void {
         $listener = new NotifyExpenseSubmitted();
 
-        expect($listener)->toBeInstanceOf(\Illuminate\Contracts\Queue\ShouldQueue::class);
+        expect($listener)->toBeInstanceOf(Illuminate\Contracts\Queue\ShouldQueue::class);
     });
 });

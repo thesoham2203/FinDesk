@@ -59,7 +59,7 @@ test('client has many invoices', function (): void {
 test('client invoices relationship returns only client invoices', function (): void {
     $client1 = Client::factory()->create();
     $client2 = Client::factory()->create();
-    
+
     $invoice1 = Invoice::factory()->create(['client_id' => $client1->id]);
     sleep(1); // Avoid invoice_number collision
     $invoice2 = Invoice::factory()->create(['client_id' => $client1->id]);
@@ -96,7 +96,7 @@ test('client can be created with minimal attributes', function (): void {
 
 test('client can be updated', function (): void {
     $client = Client::factory()->create();
-    
+
     $client->update([
         'name' => 'Updated Name',
         'email' => 'updated@example.com',

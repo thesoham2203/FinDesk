@@ -13,7 +13,7 @@ describe('CategoryNotInUse Rule', function (): void {
     it('passes when category has no expenses', function (): void {
         $category = ExpenseCategory::factory()->create();
         $rule = new CategoryNotInUse();
-        
+
         $failed = false;
         $rule->validate('category_id', $category->id, function () use (&$failed) {
             $failed = true;
@@ -28,7 +28,7 @@ describe('CategoryNotInUse Rule', function (): void {
 
         $rule = new CategoryNotInUse();
         $failed = false;
-        
+
         $rule->validate('category_id', $category->id, function () use (&$failed) {
             $failed = true;
         });
@@ -39,7 +39,7 @@ describe('CategoryNotInUse Rule', function (): void {
     it('fails when category does not exist', function (): void {
         $rule = new CategoryNotInUse();
         $failed = false;
-        
+
         $rule->validate('category_id', 99999, function () use (&$failed) {
             $failed = true;
         });
@@ -50,6 +50,6 @@ describe('CategoryNotInUse Rule', function (): void {
     it('implements validation rule interface', function (): void {
         $rule = new CategoryNotInUse();
 
-        expect($rule)->toBeInstanceOf(\Illuminate\Contracts\Validation\ValidationRule::class);
+        expect($rule)->toBeInstanceOf(Illuminate\Contracts\Validation\ValidationRule::class);
     });
 });

@@ -41,7 +41,19 @@ new class extends Component {
                         {{ __('Expenses') }}
                     </x-nav-link>
 
+                    @canany(['view-invoices'])
+                        <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
+                            wire:navigate>
+                            {{ __('Invoices') }}
+                        </x-nav-link>
+                    @endcanany
+
                     @can('access-admin')
+                        <x-nav-link :href="route('admin.clients.index')"
+                            :active="request()->routeIs('admin.clients.*')" wire:navigate>
+                            {{ __('Clients') }}
+                        </x-nav-link>
+
                         <x-nav-link :href="route('admin.categories.index')"
                             :active="request()->routeIs('admin.categories.*')" wire:navigate>
                             {{ __('Categories') }}
@@ -118,7 +130,19 @@ new class extends Component {
                 {{ __('Expenses') }}
             </x-responsive-nav-link>
 
+            @canany(['view-invoices'])
+                <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
+                    wire:navigate>
+                    {{ __('Invoices') }}
+                </x-responsive-nav-link>
+            @endcanany
+
             @can('access-admin')
+                <x-responsive-nav-link :href="route('admin.clients.index')"
+                    :active="request()->routeIs('admin.clients.*')" wire:navigate>
+                    {{ __('Clients') }}
+                </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('admin.categories.index')"
                     :active="request()->routeIs('admin.categories.*')" wire:navigate>
                     {{ __('Categories') }}
