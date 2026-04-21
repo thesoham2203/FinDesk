@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;

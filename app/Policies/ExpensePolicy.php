@@ -47,7 +47,7 @@ final class ExpensePolicy
      */
     public function create(User $user): bool
     {
-        if ($user->role->value === UserRole::Employee->value || $user->role->value === UserRole::Manager->value) {
+        if ($user->role->value === UserRole::Employee->value) {
             if ($user->department_id !== null) {
                 return true;
             }
@@ -62,7 +62,7 @@ final class ExpensePolicy
     public function update(User $user, Expense $expense): bool
     {
 
-        if ($expense->user_id === $user->id && $expense->status === ExpenseStatus::Draft) {
+        if ($expense->user_id === $user->id && $expense->status === ExpenseStatus::Draft || $user->role->value === UserRole::Manager->value) {
             return true;
         }
 
@@ -99,6 +99,20 @@ final class ExpensePolicy
     }
 
     /**
+     * Determine if the user can mark an expense as partially paid.
+     */
+    public function partiallyPaid(User $user, Expense $expense): bool
+    {
+        // Only Admin and Accountant can record partial payments
+        if (! in_array($user->role->value, [UserRole::Admin->value, UserRole::Accountant->value], true)) {
+            return false;
+        }
+
+        // Can only mark as partially paid when status is Approved
+        return $expense->status === ExpenseStatus::Approved;
+    }
+
+    /**
      * Determine if the user can reject an expense.
      */
     public function reject(User $user, Expense $expense): bool
@@ -114,5 +128,19 @@ final class ExpensePolicy
         }
 
         return true;
+    }
+
+    /**
+     * Determine if the user can reimburse an expense.
+     */
+    public function reimburse(User $user, Expense $expense): bool
+    {
+        // Only Admin and Accountant can mark expenses as reimbursed
+        if (! in_array($user->role->value, [UserRole::Admin->value, UserRole::Accountant->value], true)) {
+            return false;
+        }
+
+        // Can reimburse from Approved or PartiallyPaid status
+        return $expense->status === ExpenseStatus::Approved || $expense->status === ExpenseStatus::PartiallyPaid;
     }
 }

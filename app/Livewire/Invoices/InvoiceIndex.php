@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * InvoisceIndex Livewire Component
+ * InvoiceIndex Livewire Component
  *
  * WHAT: Lists all invoices with filters (status, client, date range).
  *       Similar to ExpenseIndex but for invoices.
@@ -23,6 +23,7 @@ namespace App\Livewire\Invoices;
 
 use App\Models\Client;
 use App\Models\Invoice;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
@@ -57,7 +58,7 @@ final class InvoiceIndex extends Component
      * @return Paginator<Invoice>
      */
     #[Computed]
-    public function invoices(): Paginator
+    public function invoices(): LengthAwarePaginator
     {
         $query = Invoice::with(['client', 'creator'])
             ->when($this->search, fn ($q) => $q->where('invoice_number', 'like', "%{$this->search}%"))

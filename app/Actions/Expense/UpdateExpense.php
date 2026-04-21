@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace App\Actions\Expense;
 
 use App\Enums\ExpenseStatus;
+use App\Models\Attachment;
 use App\Models\Expense;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -38,27 +39,44 @@ final class UpdateExpense
      */
     public function execute(Expense $expense, array $data, ?UploadedFile $receipt = null): Expense
     {
-
         if ($expense->status !== ExpenseStatus::Draft) {
             throw new InvalidArgumentException('Only draft expenses can be updated.');
         }
+
         $expense->title = $data['title'];
         $expense->amount = $data['amount'];
         $expense->description = $data['description'];
         $expense->date = $data['date'];
         $expense->category_id = (int) $data['category_id'];
         $expense->currency = $data['currency'];
-        if ($receipt) {
-            // Delete old receipt if it exists
-            if ($expense->receipt_path) {
-                Storage::delete($expense->receipt_path);
-            }
-            // Store new receipt and update path
-            $expense->receipt_path = $receipt->store('receipts');
-            $expense->save();
 
-            return $expense;
+        if ($receipt !== null) {
+            foreach ($expense->attachments as $attachment) {
+                Storage::disk($attachment->disk)->delete($attachment->path);
+                $attachment->delete();
+            }
+
+            // Capture metadata BEFORE storing the file
+            $originalName = $receipt->getClientOriginalName();
+            $mimeType = $receipt->getMimeType();
+            $size = $receipt->getSize();
+
+            // Store the file
+            $path = $receipt->store('expenses');
+
+            // Create new attachment record with captured metadata
+            Attachment::create([
+                'attachable_type' => Expense::class,
+                'attachable_id' => $expense->id,
+                'user_id' => $expense->user_id,
+                'path' => $path,
+                'disk' => 'local',
+                'original_name' => $originalName,
+                'mime_type' => $mimeType,
+                'size' => $size,
+            ]);
         }
+
         $expense->save();
 
         return $expense;

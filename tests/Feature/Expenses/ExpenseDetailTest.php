@@ -174,3 +174,63 @@ it('prevents unauthorized deletion', function (): void {
 
     $component->assertForbidden();
 });
+
+it('marks approved expense as partially paid', function (): void {
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => App\Enums\UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Approved,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('markPartiallyPaid');
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::PartiallyPaid);
+});
+
+it('marks partially paid expense as reimbursed', function (): void {
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => App\Enums\UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::PartiallyPaid,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('reimburse');
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Reimbursed);
+});
+
+it('prevents non-admin from marking as partially paid', function (): void {
+    $department = Department::factory()->create();
+    $employee = User::factory()->create(['role' => App\Enums\UserRole::Employee, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Approved,
+        'user_id' => $employee->id,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->assertForbidden();
+});
+
+it('prevents non-admin from reimbursing partially paid expense', function (): void {
+    $department = Department::factory()->create();
+    $employee = User::factory()->create(['role' => App\Enums\UserRole::Employee, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::PartiallyPaid,
+        'user_id' => $employee->id,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->assertForbidden();
+});

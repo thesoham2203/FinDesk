@@ -9,21 +9,36 @@ use App\Policies\DepartmentPolicy;
 
 describe('DepartmentPolicy', function (): void {
     describe('viewAny', function (): void {
-        it('allows authenticated users to view any department', function (): void {
-            $user = User::factory()->create();
+        it('allows admin to view any department', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
             $policy = new DepartmentPolicy();
 
-            expect($policy->viewAny($user))->toBeTrue();
+            expect($policy->viewAny($admin))->toBeTrue();
+        });
+
+        it('prevents non-admin from viewing any department', function (): void {
+            $employee = User::factory()->create(['role' => UserRole::Employee]);
+            $policy = new DepartmentPolicy();
+
+            expect($policy->viewAny($employee))->toBeFalse();
         });
     });
 
     describe('view', function (): void {
-        it('allows authenticated users to view a specific department', function (): void {
-            $user = User::factory()->create();
+        it('allows admin to view a specific department', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
             $department = Department::factory()->create();
             $policy = new DepartmentPolicy();
 
-            expect($policy->view($user, $department))->toBeTrue();
+            expect($policy->view($admin, $department))->toBeTrue();
+        });
+
+        it('prevents non-admin from viewing a specific department', function (): void {
+            $employee = User::factory()->create(['role' => UserRole::Employee]);
+            $department = Department::factory()->create();
+            $policy = new DepartmentPolicy();
+
+            expect($policy->view($employee, $department))->toBeFalse();
         });
     });
 
@@ -35,18 +50,11 @@ describe('DepartmentPolicy', function (): void {
             expect($policy->create($admin))->toBeTrue();
         });
 
-        it('allows admin to create department (double check)', function (): void {
-            $admin = User::factory()->create(['role' => UserRole::Admin]);
-            $policy = new DepartmentPolicy();
-
-            expect($policy->create($admin))->toBeTrue();
-        });
-
-        it('allows any user to create department', function (): void {
+        it('prevents non-admin from creating department', function (): void {
             $employee = User::factory()->create(['role' => UserRole::Employee]);
             $policy = new DepartmentPolicy();
 
-            expect($policy->create($employee))->toBeTrue();
+            expect($policy->create($employee))->toBeFalse();
         });
     });
 

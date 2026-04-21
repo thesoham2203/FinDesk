@@ -2,31 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * Invoice Model
- *
- * WHAT: Header document issued to clients. Invoices have line items and track payments.
- *
- * WHY: FinDesk generates invoices for clients. Invoices follow a state machine
- *      (Draft → Sent → [Viewed|PartiallyPaid|Paid|Overdue|Cancelled]).
- *      All money columns denormalized for query performance.
- *      Status updates automatically when payments recorded (Observer pattern, Day 5).
- *
- * IMPLEMENT: Complete. latestPayment() uses HasOne ofMany pattern.
- *            amountDue = total - sum(payments) calculated in accessor, not stored.
- *            formattedXxx accessors use Currency::symbol() for multi-currency display.
- *
- * REFERENCE:
- * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
- * - Has One of Many: https://laravel.com/docs/13.x/eloquent-relationships#has-one-of-many
- * - Enums: App\\Enums\\InvoiceStatus, Currency
- */
-
 namespace App\Models;
 
 use App\Enums\Currency;
 use App\Enums\InvoiceStatus;
-use Illuminate\Database\Eloquent\Attributes\Attribute;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +34,15 @@ final class Invoice extends Model
         'tax_total',
         'total',
         'currency',
+    ];
+
+    /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'formatted_subtotal',
+        'formatted_tax_total',
+        'formatted_total',
     ];
 
     /**
@@ -120,25 +109,22 @@ final class Invoice extends Model
     {
         return $this->morphMany(Activity::class, 'subject');
     }
-
     public function formattedSubtotal(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->subtotal / 100, 2),
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->subtotal / 100, 2),
         );
     }
-
     public function formattedTaxTotal(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->tax_total / 100, 2),
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->tax_total / 100, 2),
         );
     }
-
     public function formattedTotal(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->total / 100, 2),
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->total / 100, 2),
         );
     }
 
@@ -151,16 +137,12 @@ final class Invoice extends Model
     public function amountDue(): Attribute
     {
         return Attribute::make(
-            get: fn (): int => $this->total - $this->payments()->sum('amount'),
+            get: fn(): int => $this->total - $this->payments()->sum('amount'),
         );
     }
 
     /**
      * Transition the invoice to a new status, validating via the state machine.
-     *
-     * TODO: Implement state machine validation using InvoiceStatus::allowedTransitions()
-     *       - Throw InvalidInvoiceTransition if the new status is not in allowed transitions
-     *       - Call Activity::create() to log this transition (Day 5 — Observers)
      *
      * @throws InvalidArgumentException if transition is invalid
      */
@@ -168,13 +150,13 @@ final class Invoice extends Model
     {
         $allowedTransitions = $this->status->allowedTransitions();
 
-        if (! in_array($newStatus, $allowedTransitions, true)) {
+        if (!in_array($newStatus, $allowedTransitions, true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Cannot transition invoice from %s to %s. Allowed transitions: %s',
                     $this->status->value,
                     $newStatus->value,
-                    implode(', ', array_map(fn (InvoiceStatus $s) => $s->value, $allowedTransitions))
+                    implode(', ', array_map(fn(InvoiceStatus $s) => $s->value, $allowedTransitions))
                 )
             );
         }
@@ -189,15 +171,6 @@ final class Invoice extends Model
         ]);
     }
 
-    /**
-     * Recalculate and update subtotal, tax_total, and total from line items.
-     *
-     * TODO: Implement calculation logic:
-     *       - subtotal = sum of all line_items.line_total
-     *       - tax_total = sum of all line_items.tax_amount
-     *       - total = subtotal + tax_total
-     *       - Save and dispatch event (Day 5)
-     */
     public function recalculateTotals(): void
     {
         $subtotal = $this->lineItems()->sum('line_total');

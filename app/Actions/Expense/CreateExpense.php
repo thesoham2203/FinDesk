@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Expense;
 
+use App\Enums\ExpenseStatus;
+use App\Models\Attachment;
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -46,14 +48,33 @@ final class CreateExpense
             'title' => $data['title'],
             'user_id' => $user->id,
             'department_id' => $user->department_id,
-            'status' => $data['status'] ?? 'draft',
+            'status' => ExpenseStatus::Draft,
             'amount' => $data['amount'],
             'currency' => $data['currency'],
             'description' => $data['description'],
             'category_id' => (int) $data['category_id'],
             'date' => $data['date'],
-            'receipt_path' => $receipt?->store('receipts'),
         ]);
+        if ($receipt !== null) {
+            // Capture metadata BEFORE storing the file
+            $originalName = $receipt->getClientOriginalName();
+            $mimeType = $receipt->getMimeType();
+            $size = $receipt->getSize();
+
+            // Store the file
+            $path = $receipt->store('expenses');
+
+            Attachment::create([
+                'attachable_type' => Expense::class,
+                'attachable_id' => $expense->id,
+                'user_id' => $user->id,
+                'path' => $path,
+                'disk' => 'local',
+                'original_name' => $originalName,
+                'mime_type' => $mimeType,
+                'size' => $size,
+            ]);
+        }
 
         return $expense;
     }

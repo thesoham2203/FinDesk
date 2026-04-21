@@ -75,12 +75,19 @@ final class UserFactory extends Factory
 
     public function employee(): self
     {
-        return $this->state(fn (array $attributes): array => [
-            'role' => UserRole::Employee,
-            'department_id' => Department::factory(),
-            'manager_id' => fake()->randomElement(User::where('role', UserRole::Manager)->pluck('id')->toArray()),
+        return $this->state(function (array $attributes): array {
+            $department = Department::inRandomOrder()->first();
+            $departmentId = $department?->id ?? Department::factory()->create()->id;
+            $manager = User::where('role', UserRole::Manager)
+                ->where('department_id', $departmentId)
+                ->first();
 
-        ]);
+            return [
+                'role' => UserRole::Employee,
+                'department_id' => $departmentId,
+                'manager_id' => $manager?->id,
+            ];
+        });
     }
 
     public function accountant(): self

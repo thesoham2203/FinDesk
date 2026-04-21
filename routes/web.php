@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AttachmentController;
 use App\Livewire\Admin\ClientForm;
 use App\Livewire\Admin\ClientIndex;
 use App\Livewire\Admin\ExpenseCategoryForm;
 use App\Livewire\Admin\ExpenseCategoryIndex;
 use App\Livewire\Admin\TaxRateForm;
 use App\Livewire\Admin\TaxRateIndex;
+use App\Livewire\Admin\UserForm;
+use App\Livewire\Admin\UserIndex;
 use App\Livewire\Expenses\ExpenseDetail;
 use App\Livewire\Expenses\ExpenseForm;
 use App\Livewire\Expenses\ExpenseIndex;
@@ -15,6 +18,7 @@ use App\Livewire\Expenses\PendingApprovals;
 use App\Livewire\Invoices\InvoiceDetail;
 use App\Livewire\Invoices\InvoiceForm;
 use App\Livewire\Invoices\InvoiceIndex;
+use App\Livewire\Notifications\NotificationIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -51,6 +55,15 @@ Route::middleware(['auth', 'verified', 'role:manager,admin'])
     ->name('approvals.')
     ->group(function (): void {
         Route::get('/', PendingApprovals::class)
+            ->name('index');
+    });
+
+// Notification Routes
+Route::middleware(['auth', 'verified'])
+    ->prefix('notifications')
+    ->name('notifications.')
+    ->group(function (): void {
+        Route::get('/', NotificationIndex::class)
             ->name('index');
     });
 
@@ -103,6 +116,21 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('/tax-rates/{taxRate}/edit', TaxRateForm::class)
         ->name('tax-rates.edit');
+
+    // Users
+    Route::get('/users', UserIndex::class)
+        ->name('users.index');
+
+    Route::get('/users/create', UserForm::class)
+        ->name('users.create');
+
+    Route::get('/users/{user}/edit', UserForm::class)
+        ->name('users.edit');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('attachments')->name('attachments.')->group(function (): void {
+    Route::get('/{attachment}/download', [AttachmentController::class, 'download'])
+        ->name('download');
 });
 
 require __DIR__.'/auth.php';

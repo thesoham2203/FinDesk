@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Events\ExpenseSubmitted;
+use App\Notifications\ExpenseSubmittedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 final class NotifyExpenseSubmitted implements ShouldQueue
@@ -16,8 +17,7 @@ final class NotifyExpenseSubmitted implements ShouldQueue
     {
         $manager = $event->expense->user->manager;
         if ($manager) {
-            $manager->notify(new ExpenseSubmitted($event->expense));
+            $manager->notify(new ExpenseSubmittedNotification($event->expense));
         }
-
     }
 }

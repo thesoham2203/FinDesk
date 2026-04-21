@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Enums\InvoiceStatus;
+use App\Events\PaymentRecorded;
 use App\Models\Payment;
 
 final class PaymentObserver
@@ -28,6 +29,9 @@ final class PaymentObserver
             $invoice->transitionTo(InvoiceStatus::Overdue);
         }
         $invoice->save();
+
+        // Dispatch event for listeners to react (notifications, activity logging)
+        PaymentRecorded::dispatch($payment, $invoice);
     }
 
     /**

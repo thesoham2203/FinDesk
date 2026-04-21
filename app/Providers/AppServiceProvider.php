@@ -8,9 +8,13 @@ use App\Events\ExpenseApproved;
 use App\Events\ExpenseReimbursed;
 use App\Events\ExpenseRejected;
 use App\Events\ExpenseSubmitted;
+use App\Events\InvoiceOverdue;
+use App\Events\PaymentRecorded;
 use App\Listeners\LogExpenseActivity;
+use App\Listeners\LogPaymentActivity;
 use App\Listeners\NotifyExpenseReviewed;
 use App\Listeners\NotifyExpenseSubmitted;
+use App\Listeners\NotifyPaymentReceived;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\User;
@@ -52,6 +56,11 @@ final class AppServiceProvider extends ServiceProvider
         Event::listen(ExpenseSubmitted::class, NotifyExpenseSubmitted::class);
         Event::listen(ExpenseApproved::class, NotifyExpenseReviewed::class);
         Event::listen(ExpenseRejected::class, NotifyExpenseReviewed::class);
+
+        // Register Event-Listener Mappings (Day 7: Payments & Notifications)
+        Event::listen(PaymentRecorded::class, LogPaymentActivity::class);
+        Event::listen(PaymentRecorded::class, NotifyPaymentReceived::class);
+        Event::listen(InvoiceOverdue::class, LogExpenseActivity::class);
 
         // Register Model Observers (Day 5: Approval Workflow)
         Expense::observe(ExpenseObserver::class);

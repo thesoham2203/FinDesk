@@ -111,4 +111,38 @@ describe('InvoicePolicy', function (): void {
             expect($policy->cancel($user, $invoice))->toBeTrue();
         });
     });
+
+    describe('recordPayment', function (): void {
+        it('allows admin and accountant to record payments on payable invoices', function (): void {
+            $policy = new InvoicePolicy();
+
+            expect($policy->recordPayment(
+                User::factory()->admin()->create(),
+                Invoice::factory()->sent()->create(),
+            ))->toBeTrue();
+
+            expect($policy->recordPayment(
+                User::factory()->accountant()->create(),
+                Invoice::factory()->overdue()->create(),
+            ))->toBeTrue();
+        });
+
+        it('denies non-privileged roles from recording payments', function (): void {
+            $policy = new InvoicePolicy();
+
+            expect($policy->recordPayment(
+                User::factory()->manager()->create(),
+                Invoice::factory()->sent()->create(),
+            ))->toBeFalse();
+        });
+
+        it('denies payment recording for ineligible invoice statuses', function (): void {
+            $policy = new InvoicePolicy();
+
+            expect($policy->recordPayment(
+                User::factory()->admin()->create(),
+                Invoice::factory()->create(),
+            ))->toBeFalse();
+        });
+    });
 });

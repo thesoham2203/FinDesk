@@ -48,15 +48,6 @@
                     @error('categoryId')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-
-                    <div class="mt-3 rounded-md bg-gray-50 p-4 text-sm text-gray-600">
-                        @if ($this->selectedCategory)
-                            <p class="font-medium text-gray-800">{{ $this->selectedCategory->name }}</p>
-                            <p class="mt-1">Category-specific rules will appear here once implemented.</p>
-                        @else
-                            <p>Select a category to see max amount and receipt requirements.</p>
-                        @endif
-                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -85,29 +76,17 @@
                     </div>
                 </div>
 
+                <!-- Receipt Upload -->
                 <div>
-                    <label for="receipt" class="mb-1 block text-sm font-medium text-gray-700">Receipt</label>
-                    <input id="receipt" type="file" wire:model="receipt" accept=".jpg,.jpeg,.png,.pdf"
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    <p class="mt-1 text-xs text-gray-500">JPG, PNG, or PDF files only.</p>
-
-                    <div class="mt-2 text-sm text-gray-600" wire:loading wire:target="receipt">
-                        Uploading receipt...
-                    </div>
-
-                    @if ($existingReceiptPath)
-                        <p class="mt-2 text-sm text-gray-600">Current receipt: {{ basename($existingReceiptPath) }}</p>
-                    @endif
-
+                    <label for="receipt" class="block text-sm font-medium text-gray-700">Receipt</label>
+                    <input type="file" wire:model="receipt" id="receipt" class="mt-1 block w-full" accept=".jpg,.jpeg,.png,.pdf">
+                    
                     @if ($receipt)
-                        <div class="mt-3 rounded-md border border-dashed border-gray-300 p-3 text-sm text-gray-600">
-                            <p>Temporary upload selected: {{ $receipt->getClientOriginalName() }}</p>
-                            <p class="mt-1">Image preview and receipt replacement will be implemented later.</p>
-                        </div>
+                        <p class="mt-2 text-sm text-green-600">✓ File ready: {{ $receipt->getClientOriginalName() }}</p>
                     @endif
-
+                    
                     @error('receipt')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <div>

@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\InvoiceStatus;
+use App\Enums\UserRole;
 use App\Models\Invoice;
 use App\Models\User;
 
@@ -30,8 +32,8 @@ final class InvoicePolicy
      */
     public function viewAny(User $user): bool
     {
-        // TODO: Most roles can view invoice lists (Managers, Accountants, Admin)
-        // TODO: Return true for most roles
+        // Most roles can view invoice lists (Managers, Accountants, Admin)
+        // Return true for most roles
         return true;
     }
 
@@ -40,11 +42,21 @@ final class InvoicePolicy
      */
     public function view(User $user, Invoice $invoice): bool
     {
-        // TODO: Admin can view all
-        // TODO: Accountant and Manager can view all (they create/manage them)
-        // TODO: Employees typically cannot view invoices (or only their own client invoices)
-        // TODO: Return true/false based on role
-        return true;
+        // Admin can view all
+        if ($user->role->value === UserRole::Admin->value) {
+            return true;
+        }
+        // Accountant and Manager can view all (they create/manage them)
+        if ($user->role->value === UserRole::Accountant->value || $user->role->value === UserRole::Manager->value) {
+            return true;
+        }
+        // Employees typically cannot view invoices (or only their own client invoices)
+        if ($user->role->value === UserRole::Employee->value) {
+            return false;
+        }
+
+        // Return true/false based on role
+        return false;
     }
 
     /**
@@ -52,10 +64,17 @@ final class InvoicePolicy
      */
     public function create(User $user): bool
     {
-        // TODO: Only Admin, Manager, and Accountant can create invoices
-        // TODO: Employees cannot create invoices
-        // TODO: Return true only for those roles
-        return true;
+        // Only Admin, Manager, and Accountant can create invoices
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Manager->value || $user->role->value === UserRole::Accountant->value) {
+            return true;
+        }
+        // Employees cannot create invoices
+        if ($user->role->value === UserRole::Employee->value) {
+            return false;
+        }
+
+        // Return true only for those roles
+        return false;
     }
 
     /**
@@ -63,10 +82,20 @@ final class InvoicePolicy
      */
     public function update(User $user, Invoice $invoice): bool
     {
-        // TODO: Only when invoice status is Draft
-        // TODO: Only Admin and Accountant (or the creator)
-        // TODO: Return false if status is not Draft
-        return true;
+        // Only when invoice status is Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return true;
+        }
+        // Only Admin and Accountant (or the creator)
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value) {
+            return true;
+        }
+        // Return false if status is not Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return false;
+        }
+
+        return false;
     }
 
     /**
@@ -74,10 +103,20 @@ final class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        // TODO: Only when invoice status is Draft
-        // TODO: Only Admin or Accountant
-        // TODO: Return false if status is not Draft
-        return true;
+        // Only when invoice status is Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return true;
+        }
+        // Only Admin or Accountant
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value) {
+            return true;
+        }
+        // Return false if status is not Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return false;
+        }
+
+        return false;
     }
 
     /**
@@ -85,10 +124,21 @@ final class InvoicePolicy
      */
     public function send(User $user, Invoice $invoice): bool
     {
-        // TODO: Only when invoice status is Draft
-        // TODO: Only Admin, Manager, or Accountant
-        // TODO: Return false if status is not Draft
-        return true;
+        // Only when invoice status is Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return true;
+        }
+        // Only Admin, Manager, or Accountant
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Manager->value || $user->role->value === UserRole::Accountant->value) {
+            return true;
+        }
+        // Return false if status is not Draft
+        if ($invoice->status !== InvoiceStatus::Draft) {
+            return false;
+        }
+
+        return false;
+
     }
 
     /**
@@ -96,10 +146,20 @@ final class InvoicePolicy
      */
     public function cancel(User $user, Invoice $invoice): bool
     {
-        // TODO: Only when status is Draft or Sent
-        // TODO: Only Admin or Accountant
-        // TODO: Return false if status is Paid or Cancelled already
-        return true;
+        // Only when status is Draft or Sent
+        if ($invoice->status !== InvoiceStatus::Draft && $invoice->status !== InvoiceStatus::Sent) {
+            return true;
+        }
+        // Only Admin or Accountant
+        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value) {
+            return true;
+        }
+        // Return false if status is Paid or Cancelled already
+        if ($invoice->status === InvoiceStatus::Paid || $invoice->status === InvoiceStatus::Cancelled) {
+            return false;
+        }
+
+        return false;
     }
 
     /**
@@ -107,9 +167,10 @@ final class InvoicePolicy
      */
     public function recordPayment(User $user, Invoice $invoice): bool
     {
-        // TODO: Only Admin or Accountant
-        // TODO: Only when invoice status is Sent, Viewed, PartiallyPaid, or Overdue
-        // TODO: Return false for Draft or Cancelled statuses
-        return true;
+        return ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value)
+            && ($invoice->status === InvoiceStatus::Sent
+                || $invoice->status === InvoiceStatus::Viewed
+                || $invoice->status === InvoiceStatus::PartiallyPaid
+                || $invoice->status === InvoiceStatus::Overdue);
     }
 }

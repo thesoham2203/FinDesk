@@ -61,10 +61,7 @@ final class ExpenseCategoryIndex extends Component
                 ->orWhere('description', 'like', "%{$this->search}%");
         }
 
-        return ExpenseCategory::query()
-            ->withCount('expenses')
-            ->orderBy('name')
-            ->paginate(15);
+        return $query->paginate(15);
     }
 
     #[Validate]

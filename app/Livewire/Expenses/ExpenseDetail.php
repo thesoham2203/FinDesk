@@ -2,24 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * ExpenseDetail Component
- *
- * WHAT: Scaffold for the single expense detail page.
- *
- * WHY: This page will host the receipt preview, status timeline, activity log, and conditional
- *      actions for later workflow steps such as submit, approve, reject, and delete.
- *
- * IMPLEMENT: Load the expense, authorize access, and wire the conditional actions.
- *            The current version only defines the component shape and view contract.
- *
- * KEY CONCEPTS:
- * - #[Locked] properties
- * - Route model binding
- * - Conditional Livewire actions
- * - Detail page composition
- */
-
 namespace App\Livewire\Expenses;
 
 use App\Actions\Expense\ApproveExpense;
@@ -27,15 +9,17 @@ use App\Actions\Expense\ReimburseExpense;
 use App\Actions\Expense\RejectExpense;
 use App\Actions\Expense\SubmitExpense;
 use App\Enums\ExpenseStatus;
-use App\Enums\UserRole;
+use App\Models\Attachment;
 use App\Models\Expense;
 use App\Rules\ExpenseWithinBudget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ExpenseDetail extends Component
 {
@@ -119,9 +103,11 @@ final class ExpenseDetail extends Component
     public function reject(): void
     {
         $this->authorize('reject', $this->expense);
-        $this->validate(['rejectionReason' => 'required|string|min:10'],
+        $this->validate(
+            ['rejectionReason' => 'required|string|min:10'],
             ['rejectionReason.required' => 'Please provide a valid reason'],
-            ['rejectionReason.min' => 'Minimum 10 characters please']);
+            ['rejectionReason.min' => 'Minimum 10 characters please']
+        );
         $this->expense = app(RejectExpense::class)->execute(
             $this->expense,
             Auth::user(),
@@ -137,26 +123,48 @@ final class ExpenseDetail extends Component
 
     public function reimburse(): void
     {
-        // 3. Use the ReimburseExpense action:
-        //    $this->expense = app(ReimburseExpense::class)->execute($this->expense, auth()->user())
-        //
-        // 4. Flash success and refresh:
-        //    session()->flash('success', 'Expense marked as reimbursed.')
-        //    $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities'])
-        if (! in_array(Auth::user()->role, [UserRole::Admin, UserRole::Accountant])) {
-            $this->addError('unauthorised', 'oly admins and accountants are allowed to do this');
+        $this->authorize('reimburse', $this->expense);
+
+        if ($this->expense->status !== ExpenseStatus::Approved && $this->expense->status !== ExpenseStatus::PartiallyPaid) {
+            $this->addError('status', 'Only approved or partially paid expenses can be reimbursed.');
 
             return;
         }
-        if ($this->expense->status !== ExpenseStatus::Approved) {
-            $this->addError('status', 'only approved statuses can be reimbursed');
 
-            return;
-        }
         $this->expense = app(ReimburseExpense::class)->execute($this->expense, Auth::user());
 
-        session()->flash('success', 'expense marked as completed');
+        session()->flash('success', 'Expense marked as reimbursed.');
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+    }
+
+    public function markPartiallyPaid(): void
+    {
+        $this->authorize('partiallyPaid', $this->expense);
+
+        if ($this->expense->status !== ExpenseStatus::Approved) {
+            $this->addError('status', 'Only approved expenses can be marked as partially paid.');
+
+            return;
+        }
+
+        $this->expense->transitionTo(ExpenseStatus::PartiallyPaid);
+        $this->expense->save();
+
+        session()->flash('success', 'Expense marked as partially paid.');
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+    }
+
+    public function downloadAttachment(Attachment $attachment): StreamedResponse
+    {
+        // Authorize the download (same check as the controller)
+        Gate::authorize('view', $attachment);
+
+        // Return the file download
+        return Storage::disk($attachment->disk)->download(
+            $attachment->path,
+            $attachment->original_name,
+            ['Content-Type' => $attachment->mime_type]
+        );
     }
 
     public function render(): View

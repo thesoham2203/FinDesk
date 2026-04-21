@@ -15,11 +15,7 @@ final class DepartmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user) {
-            return true;
-        }
-
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -27,11 +23,7 @@ final class DepartmentPolicy
      */
     public function view(User $user, Department $department): bool
     {
-        if ($user) {
-            return true;
-        }
-
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -39,14 +31,7 @@ final class DepartmentPolicy
      */
     public function create(User $user): bool
     {
-        if ($user->role === UserRole::Admin) {
-            return true;
-        }
-        if ($user->role === UserRole::Admin) {
-            return true;
-        }
-
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -54,16 +39,7 @@ final class DepartmentPolicy
      */
     public function update(User $user, Department $department): bool
     {
-
-        if ($user->role === UserRole::Admin) {
-            return true;
-        }
-
-        if ($user->role === UserRole::Admin) {
-            return true;
-        }
-
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -71,15 +47,6 @@ final class DepartmentPolicy
      */
     public function delete(User $user, Department $department): bool
     {
-        if ($user->role === UserRole::Admin) {
-            if ($department->users()->count() === 0) {
-                return true;
-            }
-        }
-        if ($user->role === UserRole::Admin && $department->users()->count() === 0) {
-            return true;
-        }
-
-        return true;
+        return $user->role === UserRole::Admin;
     }
 }

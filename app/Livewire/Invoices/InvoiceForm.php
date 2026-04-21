@@ -213,12 +213,6 @@ final class InvoiceForm extends Component
         $item['tax_amount'] = $taxAmount;
     }
 
-    /**
-     * TODO: Recalculate grand totals from all line items.
-     * 1. $this->subtotal = sum of all lineItems[*]['line_total']
-     * 2. $this->taxTotal = sum of all lineItems[*]['tax_amount']
-     * 3. $this->grandTotal = $this->subtotal + $this->taxTotal
-     */
     public function calculateTotals(): void
     {
         $this->subtotal = (int) array_sum(array_column($this->lineItems, 'line_total'));
@@ -226,21 +220,6 @@ final class InvoiceForm extends Component
         $this->grandTotal = $this->subtotal + $this->taxTotal;
     }
 
-    /**
-     * TODO: Validate and save the invoice to database.
-     * 1. Validate header fields and line items
-     * 2. DB::transaction(function() { ... }) — wrap everything in a transaction
-     * 3. If creating:
-     *    a. Generate invoice number via GenerateInvoiceNumber action
-     *    b. Create Invoice record (status = Draft)
-     * 4. If editing:
-     *    a. Delete existing line items (will recreate)
-     * 5. Create InvoiceLineItem records for each line item
-     *    - Convert unit_price from dollars to cents when saving
-     *    - Store line_total and tax_amount (already in cents)
-     * 6. Update invoice: subtotal, tax_total, total
-     * 7. Redirect to invoice detail with success message
-     */
     public function save(): void
     {
         $this->validate([
@@ -330,6 +309,16 @@ final class InvoiceForm extends Component
     public function taxRates()
     {
         return TaxRate::where('is_active', true)->get();
+    }
+
+    public function getCurrencySymbolProperty()
+    {
+        return match ($this->currency) {
+            'INR' => '₹',
+            'USD' => '$',
+            'EUR' => '€',
+            default => '$',
+        };
     }
 
     public function render(): \Illuminate\View\View

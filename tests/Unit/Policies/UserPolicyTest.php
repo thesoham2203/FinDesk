@@ -8,11 +8,18 @@ use App\Policies\UserPolicy;
 
 describe('UserPolicy', function (): void {
     describe('viewAny', function (): void {
-        it('allows any authenticated user to view any user', function (): void {
-            $user = User::factory()->create();
+        it('allows admin to view any user', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
             $policy = new UserPolicy();
 
-            expect($policy->viewAny($user))->toBeTrue();
+            expect($policy->viewAny($admin))->toBeTrue();
+        });
+
+        it('prevents non-admin from viewing any user', function (): void {
+            $employee = User::factory()->create(['role' => UserRole::Employee]);
+            $policy = new UserPolicy();
+
+            expect($policy->viewAny($employee))->toBeFalse();
         });
     });
 
@@ -42,11 +49,18 @@ describe('UserPolicy', function (): void {
     });
 
     describe('create', function (): void {
-        it('allows any authenticated user to create users', function (): void {
-            $user = User::factory()->create();
+        it('allows admin to create users', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
             $policy = new UserPolicy();
 
-            expect($policy->create($user))->toBeTrue();
+            expect($policy->create($admin))->toBeTrue();
+        });
+
+        it('prevents non-admin from creating users', function (): void {
+            $employee = User::factory()->create(['role' => UserRole::Employee]);
+            $policy = new UserPolicy();
+
+            expect($policy->create($employee))->toBeFalse();
         });
     });
 

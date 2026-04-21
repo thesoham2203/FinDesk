@@ -15,9 +15,6 @@ new class extends Component {
     }
 }; ?>
 
-{{-- Navigation scaffold for authenticated users.
-    WHY: The expense module is available to all authenticated users, while admin links remain gated.
---}}
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,16 +38,16 @@ new class extends Component {
                         {{ __('Expenses') }}
                     </x-nav-link>
 
-                    @canany(['view-invoices'])
+                    @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Employee->value, \App\Enums\UserRole::Manager->value, \App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
                             wire:navigate>
                             {{ __('Invoices') }}
                         </x-nav-link>
-                    @endcanany
+                    @endif
 
-                    @can('access-admin')
-                        <x-nav-link :href="route('admin.clients.index')"
-                            :active="request()->routeIs('admin.clients.*')" wire:navigate>
+                    @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
+                        <x-nav-link :href="route('admin.clients.index')" :active="request()->routeIs('admin.clients.*')"
+                            wire:navigate>
                             {{ __('Clients') }}
                         </x-nav-link>
 
@@ -63,12 +60,18 @@ new class extends Component {
                             wire:navigate>
                             {{ __('Tax Rates') }}
                         </x-nav-link>
-                    @endcan
+
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')"
+                            wire:navigate>
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 sm:gap-6">
+                <livewire:notifications.notification-bell />
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
@@ -130,16 +133,16 @@ new class extends Component {
                 {{ __('Expenses') }}
             </x-responsive-nav-link>
 
-            @canany(['view-invoices'])
+            @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Employee->value, \App\Enums\UserRole::Manager->value, \App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
                 <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
                     wire:navigate>
                     {{ __('Invoices') }}
                 </x-responsive-nav-link>
-            @endcanany
+            @endif
 
-            @can('access-admin')
-                <x-responsive-nav-link :href="route('admin.clients.index')"
-                    :active="request()->routeIs('admin.clients.*')" wire:navigate>
+            @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
+                <x-responsive-nav-link :href="route('admin.clients.index')" :active="request()->routeIs('admin.clients.*')"
+                    wire:navigate>
                     {{ __('Clients') }}
                 </x-responsive-nav-link>
 
@@ -152,7 +155,12 @@ new class extends Component {
                     :active="request()->routeIs('admin.tax-rates.*')" wire:navigate>
                     {{ __('Tax Rates') }}
                 </x-responsive-nav-link>
-            @endcan
+
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')"
+                    wire:navigate>
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

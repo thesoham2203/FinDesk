@@ -1,9 +1,9 @@
 {{-- ExpenseIndex View
-    WHAT: Scaffold for the authenticated "My Expenses" list.
-    WHY: This view introduces the filter bar, table shell, pagination slot, and empty state
-    for the expense listing workflow.
-    IMPLEMENT: Connect the table rows, filter actions, and status formatting to the component data.
-    KEY CONCEPTS: Livewire pagination, URL-persisted filters, role-aware lists, Tailwind cards/tables.
+WHAT: Scaffold for the authenticated "My Expenses" list.
+WHY: This view introduces the filter bar, table shell, pagination slot, and empty state
+for the expense listing workflow.
+IMPLEMENT: Connect the table rows, filter actions, and status formatting to the component data.
+KEY CONCEPTS: Livewire pagination, URL-persisted filters, role-aware lists, Tailwind cards/tables.
 --}}
 <div class="py-12">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -14,11 +14,12 @@
                     Browse your expenses, filter by status or category, and open any submission for details.
                 </p>
             </div>
-
-            <a href="{{ route('expenses.create') }}" wire:navigate
-                class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
-                Create Expense
-            </a>
+            @can('create', \App\Models\Expense::class)
+                <a href="{{ route('expenses.create') }}" wire:navigate
+                    class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                    Create Expense
+                </a>
+            @endcan
         </div>
 
         @if (session()->has('success'))
@@ -72,15 +73,13 @@
 
                 <div>
                     <label for="amountMin" class="mb-1 block text-sm font-medium text-gray-700">Amount Min</label>
-                    <input id="amountMin" type="number" step="0.01" wire:model.live="amountMin"
-                        placeholder="In dollars"
+                    <input id="amountMin" type="number" step="0.01" wire:model.live="amountMin" placeholder="In dollars"
                         class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
 
                 <div>
                     <label for="amountMax" class="mb-1 block text-sm font-medium text-gray-700">Amount Max</label>
-                    <input id="amountMax" type="number" step="0.01" wire:model.live="amountMax"
-                        placeholder="In dollars"
+                    <input id="amountMax" type="number" step="0.01" wire:model.live="amountMax" placeholder="In dollars"
                         class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
 
@@ -104,12 +103,18 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Title</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Title</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Amount</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
@@ -129,16 +134,20 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $expense->formatted_amount }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $expense->category?->name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm">
-                                    <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $badgeClasses }}">
+                                    <span
+                                        class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $badgeClasses }}">
                                         {{ $expense->status->label() }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">{{ $expense->created_at?->format('M d, Y') ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    {{ $expense->created_at?->format('M d, Y') ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex flex-wrap gap-3">
-                                        <a href="{{ route('expenses.show', $expense) }}" wire:navigate class="text-blue-600 hover:text-blue-800">View</a>
+                                        <a href="{{ route('expenses.show', $expense) }}" wire:navigate
+                                            class="text-blue-600 hover:text-blue-800">View</a>
                                         @if ($expense->status === \App\Enums\ExpenseStatus::Draft)
-                                            <a href="{{ route('expenses.edit', $expense) }}" wire:navigate class="text-amber-600 hover:text-amber-800">Edit</a>
+                                            <a href="{{ route('expenses.edit', $expense) }}" wire:navigate
+                                                class="text-amber-600 hover:text-amber-800">Edit</a>
                                             <button type="button" class="text-red-600 hover:text-red-800">Delete</button>
                                         @endif
                                     </div>

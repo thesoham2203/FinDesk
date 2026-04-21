@@ -1,16 +1,15 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Clients</h1>
-        <a href="{{ route('admin.clients.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <a href="{{ route('admin.clients.create') }}"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             + Create Client
         </a>
     </div>
 
     <!-- Search Bar -->
     <div class="flex gap-4">
-        <input type="text" 
-            wire:model.live="search" 
-            placeholder="Search by name or email..." 
+        <input type="text" wire:model.live="search" placeholder="Search by name or email..."
             class="flex-1 px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
     </div>
 
@@ -36,8 +35,10 @@
                         <td class="px-6 py-3 text-gray-600 dark:text-gray-300">{{ $client->tax_number ?? '-' }}</td>
                         <td class="px-6 py-3 text-gray-600 dark:text-gray-300">{{ $client->invoices_count ?? 0 }}</td>
                         <td class="px-6 py-3 text-center space-x-2">
-                            <a href="{{ route('admin.clients.edit', $client) }}" class="text-blue-600 hover:underline">Edit</a>
-                            <button wire:click="delete({{ $client->id }})" wire:confirm="Delete this client?" class="text-red-600 hover:underline">
+                            <a href="{{ route('admin.clients.edit', $client) }}"
+                                class="text-blue-600 hover:underline">Edit</a>
+                            <button wire:click="delete({{ $client->id }})" wire:confirm="Delete this client?"
+                                class="text-red-600 hover:underline">
                                 Delete
                             </button>
                         </td>

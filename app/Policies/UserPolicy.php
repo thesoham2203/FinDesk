@@ -14,7 +14,7 @@ final class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -30,7 +30,7 @@ final class UserPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->role === UserRole::Admin;
     }
 
     /**
