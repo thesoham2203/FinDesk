@@ -3,7 +3,6 @@
 - **Composer**
 - **Node.js & NPM** (or Bun)
 - **SQLite** (Default database connection, zero-config)
-- **Groq API Key** (Get one for free at [console.groq.com](https://console.groq.com/keys))
 
 ### 2. Fresh Clone Setup
 ```bash
@@ -31,21 +30,6 @@ New-Item .\database\database.sqlite -ItemType File
 # Run migrations and seed the initial data
 php artisan migrate:fresh --seed
 ```
-
-### 4. Groq Configuration
-To enable the AI subsystem, you must provide a valid Groq API key. Open your `.env` file and append/update the following:
-
-```env
-# Tell the Laravel AI SDK to use Groq
-AI_DEFAULT_PROVIDER=groq
-
-# Your actual Groq API Key
-GROQ_API_KEY=gsk_your_groq_api_key_here
-
-# The model to use (recommended for agent tasks)
-GROQ_MODEL=llama-3.3-70b-versatile
-```
-
 ---
 
 ## 🏃‍♂️ Running the Application
@@ -97,6 +81,3 @@ composer test:type-coverage
 # Run Code Formatting (Pint, Rector)
 composer lint
 ```
-*Note: AI API calls are completely mocked/faked in the test suite, meaning running the tests will **not** consume your Groq quota.*
-
----
