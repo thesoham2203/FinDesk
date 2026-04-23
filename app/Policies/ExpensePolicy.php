@@ -103,7 +103,6 @@ final class ExpensePolicy
      */
     public function partiallyPaid(User $user, Expense $expense): bool
     {
-        // Only Admin and Accountant can record partial payments
         if (! in_array($user->role->value, [UserRole::Admin->value, UserRole::Accountant->value], true)) {
             return false;
         }

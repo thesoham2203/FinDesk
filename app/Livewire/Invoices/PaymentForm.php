@@ -2,31 +2,13 @@
 
 declare(strict_types=1);
 
-/**
- * PaymentForm Livewire Component
- *
- * WHAT: Inline nested payment recording form embedded in InvoiceDetail. Shows remaining balance
- *       and allows user to record a payment against an invoice.
- *
- * WHY: Payments are recorded in-context on the invoice detail page. This is a nested component
- *      (lives inside InvoiceDetail) that dispatches events to the parent component to refresh
- *      invoice data after a payment is successfully recorded.
- *
- * IMPLEMENT: Load invoice, calculate balances, handle payment validation, dispatch parent event
- *            to trigger refresh. Use #[Locked] to prevent client tampering with invoiceId.
- *
- * REFERENCE:
- * - Nested Components: https://livewire.laravel.com/docs/nesting
- * - Component Events: https://livewire.laravel.com/docs/events
- * - Locked Properties: https://livewire.laravel.com/docs/security#locked-properties
- * - #[Computed]: https://livewire.laravel.com/docs/computed
- */
 
 namespace App\Livewire\Invoices;
 
 use App\Actions\Payment\RecordPayment;
 use App\Enums\PaymentMethod;
 use App\Models\Invoice;
+use Illuminate\View\View;
 use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -53,10 +35,13 @@ final class PaymentForm extends Component
     #[Validate('nullable|string|max:500')]
     public string $notes = '';
 
+    #[Computed]
     public int $invoiceTotal = 0;
 
+    #[Computed]
     public int $totalPaid = 0;
 
+    #[Computed]
     public int $remaining = 0;
 
     /**
@@ -118,7 +103,7 @@ final class PaymentForm extends Component
         return PaymentMethod::cases();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.invoices.payment-form');
     }

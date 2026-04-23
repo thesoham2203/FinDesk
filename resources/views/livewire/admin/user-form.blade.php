@@ -41,17 +41,17 @@
                     <label for="password" class="block text-sm font-medium text-gray-700">
                         Password {{ !$this->userId ? '*' : '(leave empty to keep current)' }}
                     </label>
-                    <input type="text" id="password" wire:model="password"
+                    <input type="text" id="password"  wire:model="password"
                         placeholder="{{ $this->userId ? '(leave empty to keep current)' : 'Enter password' }}"
                         class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {{ !$this->userId ? 'required' : '' }}>
                     <p class="mt-1 text-sm text-gray-500">Minimum 8 characters</p>
-                    {{-- @error('password')
+                    @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror    --}}
+                    @enderror   
                 </div>
 
-                {{-- <!-- Password Confirmation -->
+                <!-- Password Confirmation -->
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
                         Confirm Password
@@ -62,7 +62,7 @@
                     @error('password_confirmation')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div> --}}
+                </div>
 
                 <!-- Role -->
                 <div>

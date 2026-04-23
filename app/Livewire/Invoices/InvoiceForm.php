@@ -2,29 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceForm Livewire Component (DYNAMIC LINE ITEMS)
- *
- * WHAT: The most complex Livewire component in the project. Handles invoice creation/edit
- *       with DYNAMIC LINE ITEMS. Users can add/remove rows, and all calculations happen
- *       server-side in real-time as they type.
- *
- * WHY: This is the main invoice creation interface. It teaches:
- *      - Array-based Livewire properties (line items as array of arrays)
- *      - Dynamic form rows (add/remove from array)
- *      - Computed recalculation (totals update when inputs change)
- *      - wire:model.live with debounce for performance
- *      - Money handling: user enters dollars, stored as cents, displayed formatted
- *
- * IMPLEMENT: Every method has detailed TODOs explaining the logic.
- *            Line items array, calculations, database save with transaction.
- *
- * REFERENCE:
- * - Livewire Properties & Array Binding: https://livewire.laravel.com/docs/properties
- * - Livewire Lifecycle & Updated Hook: https://livewire.laravel.com/docs/lifecycle
- * - Database Transactions: https://laravel.com/docs/13.x/database#transactions
- * - Money Calculations: Always use cents (integers) for precision
- */
 
 namespace App\Livewire\Invoices;
 
@@ -32,6 +9,7 @@ use App\Actions\Invoice\GenerateInvoiceNumber;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\TaxRate;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -64,19 +42,6 @@ final class InvoiceForm extends Component
 
     public int $grandTotal = 0;
 
-    /**
-     * TODO: Mount the component. Handle both create and edit modes.
-     * If creating:
-     *   1. Set default dates (issue = today, due = today + 30 days)
-     *   2. Add one empty line item via addLineItem()
-     *   3. Recalculate totals
-     * If editing:
-     *   1. Authorize: Check user can edit (must be Draft status)
-     *   2. Load invoice with lineItems
-     *   3. Populate all form fields from invoice
-     *   4. Convert money from cents to dollars for display (unit_price)
-     *   5. Recalculate totals
-     */
     public function mount(?Invoice $invoice = null): void
     {
         if ($invoice === null) {
@@ -115,10 +80,6 @@ final class InvoiceForm extends Component
         }
     }
 
-    /**
-     * TODO: Add a new empty line item row to the lineItems array.
-     * Default quantity = 1, unit_price = '', tax_rate_id = default or ''
-     */
     public function addLineItem(): void
     {
         $defaultTaxRate = TaxRate::where('is_default', true)->first();
@@ -133,12 +94,6 @@ final class InvoiceForm extends Component
         ];
     }
 
-    /**
-     * TODO: Remove a line item at the given index.
-     * Prevent removing if only 1 line item remains.
-     * Re-index the array after removal.
-     * Recalculate totals.
-     */
     public function removeLineItem(int $index): void
     {
         if (count($this->lineItems) <= 1) {
@@ -152,13 +107,6 @@ final class InvoiceForm extends Component
         $this->calculateTotals();
     }
 
-    /**
-     * TODO: Livewire lifecycle hook that fires when ANY property changes.
-     * If property name is in lineItems array (e.g., 'lineItems.0.quantity'),
-     * parse the index and recalculate that line item and totals.
-     *
-     * HINT: Use str_starts_with('lineItems.') and explode('-') to parse index.
-     */
     public function updated(string $propertyName): void
     {
         if (str_starts_with($propertyName, 'lineItems.')) {
@@ -172,15 +120,6 @@ final class InvoiceForm extends Component
         }
     }
 
-    /**
-     * TODO: Calculate totals for a single line item at given index.
-     * 1. Get quantity and unit_price from $this->lineItems[$index]
-     * 2. Convert unit_price from dollars to cents: (int)round(floatval($unitPrice) * 100)
-     * 3. Calculate line_total = quantity × unit_price_in_cents (round to nearest cent)
-     * 4. Look up tax rate percentage from TaxRate model
-     * 5. Calculate tax_amount = line_total × (percentage / 100) (round to nearest cent)
-     * 6. Update $this->lineItems[$index]['line_total'] and ['tax_amount']
-     */
     public function calculateLineItem(int $index): void
     {
         if (! isset($this->lineItems[$index])) {
@@ -295,7 +234,7 @@ final class InvoiceForm extends Component
      * @return \Illuminate\Database\Eloquent\Collection<Client>
      */
     #[Computed]
-    public function clients()
+    public function clients(): Collection
     {
         return Client::all();
     }
@@ -306,12 +245,12 @@ final class InvoiceForm extends Component
      * @return \Illuminate\Database\Eloquent\Collection<TaxRate>
      */
     #[Computed]
-    public function taxRates()
+    public function taxRates(): Collection
     {
         return TaxRate::where('is_active', true)->get();
     }
 
-    public function getCurrencySymbolProperty()
+    public function getCurrencySymbolProperty(): string
     {
         return match ($this->currency) {
             'INR' => '₹',

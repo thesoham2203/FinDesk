@@ -43,7 +43,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-
+use Livewire\Attributes\Validate;
 final class ExpenseCategoryIndex extends Component
 {
     use WithPagination;

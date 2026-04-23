@@ -21,6 +21,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Client;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 final class ClientForm extends Component
@@ -28,14 +29,19 @@ final class ClientForm extends Component
     #[Locked]
     public ?int $clientId = null;
 
+    #[Validate('required|string|max:255')]
     public string $name = '';
 
+    #[Validate('required|email|max:255')]
     public string $email = '';
 
+    #[Validate('required|integer|max:10')]
     public string $phone = '';
 
+    #[Validate('required|string|max:255')]
     public string $address = '';
 
+    #[Validate('required|string|max:255')]
     public string $taxNumber = '';
 
     public string $notes = '';
@@ -69,9 +75,9 @@ final class ClientForm extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-            'taxNumber' => 'nullable|string|max:50',
+            'phone' => 'string|max:10',
+            'address' => 'string|max:500',
+            'taxNumber' => 'string|max:50',
             'notes' => 'nullable|string|max:1000',
         ]);
 

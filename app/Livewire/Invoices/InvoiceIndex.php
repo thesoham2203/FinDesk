@@ -2,23 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceIndex Livewire Component
- *
- * WHAT: Lists all invoices with filters (status, client, date range).
- *       Similar to ExpenseIndex but for invoices.
- *
- * WHY: Users need to view, filter, and manage invoices. Accessible to Admin,
- *      Manager, and Accountant. Filters help find invoices quickly.
- *
- * IMPLEMENT: Add search, status filter, client filter, date range filters.
- *            Show invoice number, client, status badge, dates, total, and actions.
- *
- * REFERENCE:
- * - Livewire URL Properties: https://livewire.laravel.com/docs/properties#url
- * - Livewire Pagination: https://livewire.laravel.com/docs/pagination
- */
-
 namespace App\Livewire\Invoices;
 
 use App\Models\Client;
@@ -50,10 +33,14 @@ final class InvoiceIndex extends Component
     public string $dateTo = '';
 
     /**
-     * TODO: Query all invoices with client and creator relationships.
-     * Apply all filters (search, status, client, date range).
-     * Show: invoice_number, client name, status badge, issue_date, due_date, total (formatted), actions.
-     * Paginate by 15 per page.
+     * @var array<int, array{
+     * description: string,
+     *     quantity: string,
+     *     unit_price: string,
+     *     tax_rate_id: string,
+     *     line_total: mixed,
+     *     tax_amount: mixed
+     * }>
      *
      * @return Paginator<Invoice>
      */

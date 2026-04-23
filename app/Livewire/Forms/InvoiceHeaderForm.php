@@ -2,23 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceHeaderForm — Livewire Form Object
- *
- * WHAT: A reusable Livewire Form Object for invoice header fields.
- *       Form Objects group related properties and validation rules.
- *
- * WHY: The HLD requires at least one Form Object. This extracts invoice header
- *      field properties and validation out of the InvoiceForm component.
- *      Makes code more organized and reusable.
- *
- * IMPLEMENT: Define properties with validation attributes. Parent component
- *            accesses via $this->form->propertyName.
- *
- * REFERENCE:
- * - Livewire Form Objects: https://livewire.laravel.com/docs/forms#form-objects
- * - Validation Attributes: https://livewire.laravel.com/docs/validation#validate-attribute
- */
 
 namespace App\Livewire\Forms;
 

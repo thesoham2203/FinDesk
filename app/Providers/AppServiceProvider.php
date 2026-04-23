@@ -48,7 +48,7 @@ final class AppServiceProvider extends ServiceProvider
         Gate::define('view-reports', fn (User $user) => in_array($user->role, ['admin', 'manager'], true));
         Gate::define('create-expenses', fn (User $user) => in_array($user->role, ['employee'], true));
 
-        // Register Event-Listener Mappings (Day 5: Approval Workflow)
+        // Register Event-Listener Mappings
         Event::listen(ExpenseSubmitted::class, LogExpenseActivity::class);
         Event::listen(ExpenseApproved::class, LogExpenseActivity::class);
         Event::listen(ExpenseRejected::class, LogExpenseActivity::class);
@@ -57,12 +57,12 @@ final class AppServiceProvider extends ServiceProvider
         Event::listen(ExpenseApproved::class, NotifyExpenseReviewed::class);
         Event::listen(ExpenseRejected::class, NotifyExpenseReviewed::class);
 
-        // Register Event-Listener Mappings (Day 7: Payments & Notifications)
+        // Register Event-Listener Mappings 
         Event::listen(PaymentRecorded::class, LogPaymentActivity::class);
         Event::listen(PaymentRecorded::class, NotifyPaymentReceived::class);
         Event::listen(InvoiceOverdue::class, LogExpenseActivity::class);
 
-        // Register Model Observers (Day 5: Approval Workflow)
+        // Register Model Observers 
         Expense::observe(ExpenseObserver::class);
         Payment::observe(PaymentObserver::class);
     }

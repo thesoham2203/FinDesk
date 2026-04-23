@@ -2,24 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * PaymentReceivedNotification
- *
- * WHAT: Notification sent to the invoice creator when a payment is received.
- *       Includes payment amount and remaining balance due.
- *
- * WHY: Invoice creators need to know when payments arrive. This notification
- *      is queued to avoid blocking the request.
- *
- * IMPLEMENT: Sends via database channel. Data includes title, message, invoice ID,
- *            and action URL to navigate to the invoice.
- *
- * REFERENCE:
- * - Notifications: https://laravel.com/docs/13.x/notifications
- * - Database Notifications: https://laravel.com/docs/13.x/notifications#database-notifications
- * - Queueable Notifications: https://laravel.com/docs/13.x/notifications#queueing
- */
-
 namespace App\Notifications;
 
 use App\Models\Invoice;

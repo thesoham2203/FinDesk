@@ -2,22 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceDetail Livewire Component
- *
- * WHAT: Displays full invoice details including header, line items, totals, and action buttons.
- *       Shows status, line items table, payment history placeholder, and activity log.
- *
- * WHY: Users need to view complete invoice information and perform actions like Send, Cancel.
- *      This is the detail/view page for a single invoice.
- *
- * IMPLEMENT: Load invoice with relationships, implement send() and cancel() methods,
- *            show modal for cancel reason.
- *
- * REFERENCE:
- * - Livewire Component Lifecycle: https://livewire.laravel.com/docs/lifecycle#mount
- * - Livewire Dialog Modal: https://livewire.laravel.com/docs/modals
- */
 
 namespace App\Livewire\Invoices;
 
@@ -36,6 +20,12 @@ final class InvoiceDetail extends Component
 
     public bool $showCancelModal = false;
 
+    public string $partialPaymentAmount = '';
+
+    public string $dueAmount = '';
+
+    public bool $showPartialPaymentModal = false;
+
     /**
      * TODO: Mount the component and load invoice with all relationships.
      * 1. Load invoice with: client, creator, lineItems, payments, activities
@@ -49,13 +39,6 @@ final class InvoiceDetail extends Component
         $this->invoice = $invoice->load(['client', 'creator', 'lineItems', 'payments', 'activities']);
     }
 
-    /**
-     * TODO: Send the invoice (transition from Draft to Sent).
-     * 1. Authorize: $this->authorize('send', $this->invoice)
-     * 2. Call $this->invoice->transitionTo(InvoiceStatus::Sent)
-     * 3. Flash success message
-     * 4. Refresh invoice data
-     */
     public function send(): void
     {
         $this->authorize('update', $this->invoice);
@@ -74,15 +57,6 @@ final class InvoiceDetail extends Component
         $this->showCancelModal = true;
     }
 
-    /**
-     * TODO: Cancel the invoice (transition to Cancelled).
-     * 1. Authorize: $this->authorize('update', $this->invoice)
-     * 2. Validate cancelReason is provided
-     * 3. Call $this->invoice->transitionTo(InvoiceStatus::Cancelled)
-     * 4. Log activity with cancel reason
-     * 5. Flash success message
-     * 6. Refresh invoice data and close modal
-     */
     public function cancel(): void
     {
         $this->authorize('update', $this->invoice);

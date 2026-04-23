@@ -2,7 +2,7 @@
     use Livewire\Volt\Component;
 @endphp
 
-<div class="relative" wire:poll.60s>
+<div class="relative" wire:poll.30s>
     <!-- Notification Bell Icon -->
     <a href="{{ route('notifications.index') }}" wire:navigate
         class="relative inline-flex items-center text-gray-600 hover:text-gray-900">

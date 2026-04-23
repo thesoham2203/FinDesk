@@ -2,22 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * RecordPayment Action
- *
- * WHAT: Records a payment against an invoice with overpayment prevention and validation.
- *
- * WHY: Payments follow strict business rules: invoice must be in a payable state, amount
- *      cannot exceed remaining balance, and each payment is tracked individually for
- *      reconciliation. The PaymentObserver (Day 5) automatically updates invoice status.
- *
- * IMPLEMENT: Validates invoice state, calculates remaining balance, prevents overpayment,
- *            creates Payment record. Observer fires PaymentRecorded event automatically.
- *
- * REFERENCE:
- * - Action Pattern: https://laravel.com/docs/13.x/eloquent
- * - Invoice State Machine: App\Enums\InvoiceStatus::allowedTransitions()
- */
 
 namespace App\Actions\Payment;
 

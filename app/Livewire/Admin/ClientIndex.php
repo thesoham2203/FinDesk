@@ -23,11 +23,11 @@ namespace App\Livewire\Admin;
 
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder as Bob;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Database\Eloquent\Builder as Bob;
 
 final class ClientIndex extends Component
 {
@@ -46,8 +46,8 @@ final class ClientIndex extends Component
     public function clients(): LengthAwarePaginator
     {
         return Client::query()
-            ->when($this->search,fn(Bob $query) =>$query->where('name', 'like', "%{$this->search}%")
-                    ->orWhere('email', 'like', "%{$this->search}%")
+            ->when($this->search, fn (Bob $query) => $query->where('name', 'like', "%{$this->search}%")
+                ->orWhere('email', 'like', "%{$this->search}%")
             )
             ->withCount('invoices')
             ->paginate(15);

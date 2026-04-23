@@ -2,22 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceOverdueNotification
- *
- * WHAT: Notification sent to accountants and admins when an invoice becomes overdue.
- *       Includes invoice number, client, total amount, and days overdue.
- *
- * WHY: Accounting team needs to follow up on overdue invoices. The scheduled command
- *      (CheckOverdueInvoices) fires the InvoiceOverdue event, triggering this notification.
- *
- * IMPLEMENT: Queued notification sent via database channel. Data includes action URL
- *            to navigate to the invoice for follow-up.
- *
- * REFERENCE:
- * - Notifications: https://laravel.com/docs/13.x/notifications
- * - Database Notifications: https://laravel.com/docs/13.x/notifications#database-notifications
- */
 
 namespace App\Notifications;
 

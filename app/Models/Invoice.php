@@ -109,22 +109,25 @@ final class Invoice extends Model
     {
         return $this->morphMany(Activity::class, 'subject');
     }
+
     public function formattedSubtotal(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->subtotal / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->subtotal / 100, 2),
         );
     }
+
     public function formattedTaxTotal(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->tax_total / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->tax_total / 100, 2),
         );
     }
+
     public function formattedTotal(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->total / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->total / 100, 2),
         );
     }
 
@@ -137,7 +140,7 @@ final class Invoice extends Model
     public function amountDue(): Attribute
     {
         return Attribute::make(
-            get: fn(): int => $this->total - $this->payments()->sum('amount'),
+            get: fn (): int => $this->total - $this->payments()->sum('amount'),
         );
     }
 
@@ -150,13 +153,13 @@ final class Invoice extends Model
     {
         $allowedTransitions = $this->status->allowedTransitions();
 
-        if (!in_array($newStatus, $allowedTransitions, true)) {
+        if (! in_array($newStatus, $allowedTransitions, true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Cannot transition invoice from %s to %s. Allowed transitions: %s',
                     $this->status->value,
                     $newStatus->value,
-                    implode(', ', array_map(fn(InvoiceStatus $s) => $s->value, $allowedTransitions))
+                    implode(', ', array_map(fn (InvoiceStatus $s) => $s->value, $allowedTransitions))
                 )
             );
         }

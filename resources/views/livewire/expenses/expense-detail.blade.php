@@ -76,12 +76,11 @@
                                         </button>
                                     @endcan
                                 @can('partiallyPaid', $expense)
-                                    <button type="button" wire:click="markPartiallyPaid" wire:confirm="Mark this expense as partially paid?"
-                                        class="inline-flex items-center rounded-md bg-grey-600 px-4 py-2 text-sm font-medium text-black transition hover:bg-grey-700">
+                                    <button type="button" wire:click="openPartialReimbursementModal"class="inline-flex items-center rounded-md bg-gray-500 hover:bg-gray-600 px-4 py-2 text-sm font-medium text-white transition">
                                         Mark as Partially Paid
                                     </button>
                                 @endcan
-                            @elseif ($expense->status === \App\Enums\ExpenseStatus::PartiallyPaid)
+                            @elseif ($expense->status === \App\Enums\ExpenseStatus::Reimbursed)
                                 @can('reimburse', $expense)
                                     <button type="button" wire:click="reimburse" wire:confirm="Mark this expense as fully reimbursed?"
                                         class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
@@ -119,6 +118,16 @@
                             {{ $expense?->description ?? '-' }}
                         </dd>
                     </div>
+                    @if($expense?->status->value === 'partially_paid' || $expense?->reimbursed_amount > 0)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Amount Reimbursed</dt>
+                            <dd class="mt-1 text-sm font-semibold text-green-600">{{ $expense?->currency?->symbol() ?? '' }}{{ number_format($expense?->reimbursed_amount / 100 ?? 0, 2) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Amount Due</dt>
+                            <dd class="mt-1 text-sm font-semibold text-red-600">{{ $expense?->currency?->symbol() ?? '' }}{{ number_format($expense?->due_amount / 100 ?? 0, 2) }}</dd>
+                        </div>
+                    @endif
                 </dl>
             </section>
             <section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -203,6 +212,40 @@
                                     <button type="button" wire:click="$set('showRejectModal', false)"
                                         class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                                         Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($showPartialReimbursementModal)
+                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                            <div class="rounded-lg bg-white p-6 shadow-lg max-w-md w-full mx-4">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Record Partial Reimbursement</h3>
+                                <p class="text-gray-600 mb-4">
+                                    Expense Total: <span class="font-semibold">{{ $expense?->formatted_amount ?? '-' }}</span>
+                                </p>
+
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 font-semibold mb-2">
+                                        Reimbursement Amount ({{ $expense?->currency?->symbol() ?? '' }})
+                                    </label>
+                                    <input wire:model="partialReimbursementAmount" type="number" step="0.01" min="0" 
+                                        placeholder="Enter amount..."
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 mb-2">
+                                </div>
+                                @error('partialReimbursementAmount')
+                                    <p class="text-sm text-red-600 mb-4">{{ $message }}</p>
+                                @enderror
+
+                                <div class="flex gap-3 justify-end">
+                                    <button type="button" wire:click="$set('showPartialReimbursementModal', false)" 
+                                        class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                    <button type="button" wire:click="recordPartialReimbursement" 
+                                        class="rounded-md px-4 py-2 text-sm font-medium text-white transition bg-gray-500 hover:bg-gray-600">
+                                        Record Reimbursement
                                     </button>
                                 </div>
                             </div>

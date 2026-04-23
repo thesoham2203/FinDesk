@@ -28,6 +28,8 @@ final class Expense extends Model
         'title',
         'description',
         'amount',
+        'reimbursed_amount',
+        'due_amount',
         'currency',
         'status',
         'receipt_path',
@@ -35,6 +37,7 @@ final class Expense extends Model
         'reviewed_at',
         'reviewed_by',
         'rejection_reason',
+        'date',
     ];
 
     /**
@@ -47,6 +50,8 @@ final class Expense extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'date' => 'date',
+        'reimbursed_amount' => 'integer',
+        'due_amount' => 'integer',
     ];
 
     /**
@@ -106,6 +111,20 @@ final class Expense extends Model
         );
     }
 
+    public function formattedReimbursedAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->reimbursed_amount / 100, 2),
+        );
+    }
+
+    public function formattedDueAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->due_amount / 100, 2),
+        );
+    }
+
     /**
      * Transition the expense to a new status, validating via the state machine.
      *
@@ -132,7 +151,6 @@ final class Expense extends Model
      */
     public function scopeForDepartment(Builder $query, int $departmentId): Builder
     {
-        // TODO: Filter expenses by department_id
         return $query->where('department_id', $departmentId);
     }
 
@@ -142,7 +160,6 @@ final class Expense extends Model
      */
     public function scopeWithStatus(Builder $query, ExpenseStatus $status): Builder
     {
-        // TODO: Filter expenses by status
         return $query->where('status', $status);
     }
 
@@ -152,7 +169,6 @@ final class Expense extends Model
      */
     public function scopeSubmittedInMonth(Builder $query, int $year, int $month): Builder
     {
-        // TODO: Filter expenses submitted in a specific year/month for budget calculations
         return $query->whereYear('submitted_at', $year)
             ->whereMonth('submitted_at', $month);
     }

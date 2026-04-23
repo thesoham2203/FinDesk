@@ -2,22 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * Payment Model
- *
- * WHAT: Records payments received against invoices (supports partial payments).
- *
- * WHY: One invoice can have multiple payments. They must be tracked individually for
- *      reconciliation and audit purposes. Sum of payments determines invoice status.
- *
- * IMPLEMENT: Complete. Observer (Day 5) fires PaymentCreated event to update parent
- *            invoice status after a payment is recorded.
- *
- * REFERENCE:
- * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
- * - Enums: App\\Enums\\PaymentMethod
- * - Observers: https://laravel.com/docs/13.x/eloquent#events-using-observers
- */
 
 namespace App\Models;
 

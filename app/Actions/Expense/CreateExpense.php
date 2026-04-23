@@ -2,23 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * CreateExpense Action
- *
- * WHAT: Creates a new expense record in Draft status and optionally stores a receipt upload.
- *
- * WHY: Expense creation is a single business operation that should be reusable outside Livewire.
- *      Keeping it in an Action keeps the component thin and makes the workflow easier to test.
- *
- * IMPLEMENT: Create the expense, persist the receipt if provided, and return the saved model.
- *            The actual data mapping and file-storage details are intentionally left as TODOs.
- *
- * KEY CONCEPTS:
- * - Single-purpose Action classes
- * - UploadedFile handling
- * - Eloquent create/save flow
- * - Expense status state machine from the Day 1 model scaffold
- */
 
 namespace App\Actions\Expense;
 

@@ -2,24 +2,12 @@
 
 declare(strict_types=1);
 
-/**
- * UserForm Component
- *
- * WHAT: Livewire component for creating or editing a user.
- *       Handles role assignment, department assignment, and manager assignment.
- *
- * WHY: User management is critical for FinDesk. Admins need to:
- *      - Create users with email and password
- *      - Assign roles (Admin, Manager, Employee, Accountant)
- *      - Assign to departments (except Admin)
- *      - Assign managers (for Employee and Manager roles)
- */
-
 namespace App\Livewire\Admin;
 
 use App\Enums\UserRole;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
@@ -33,8 +21,10 @@ final class UserForm extends Component
     #[Validate('required|email|max:255')]
     public string $email = '';
 
-    #[Validate('required|string|min:8')]
+    #[Validate('required|string|min:8|confirmed')]
     public string $password = '';
+
+    public string $password_confirmation = '';
 
     #[Validate('required|string')]
     public string $role = '';
@@ -110,7 +100,7 @@ final class UserForm extends Component
     /**
      * Get all departments for dropdown.
      */
-    public function getDepartmentsProperty()
+    public function getDepartmentsProperty(): Collection
     {
         return Department::query()->orderBy('name')->pluck('name', 'id');
     }
@@ -119,7 +109,7 @@ final class UserForm extends Component
      * Get available managers based on role.
      * Only show users who are in roles that can manage others (Manager, Admin).
      */
-    public function getManagersProperty()
+    public function getManagersProperty(): Collection
     {
         return User::query()
             ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value])

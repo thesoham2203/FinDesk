@@ -2,21 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * LogPaymentActivity Listener
- *
- * WHAT: Listens for PaymentRecorded event and logs the payment action to the activity log.
- *
- * WHY: Every business action on an invoice should be audited. This listener creates
- *      an Activity record for reconciliation and compliance.
- *
- * IMPLEMENT: Listen for PaymentRecorded event, create Activity record with details
- *            of the payment (amount, method, reference).
- *
- * REFERENCE:
- * - Event Listeners: https://laravel.com/docs/13.x/events#event-listeners
- * - Activity Model: App\Models\Activity (polymorphic audit log)
- */
 
 namespace App\Listeners;
 

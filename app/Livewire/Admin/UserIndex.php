@@ -17,6 +17,7 @@ namespace App\Livewire\Admin;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
@@ -77,7 +78,7 @@ final class UserIndex extends Component
     /**
      * Get available role filters.
      */
-    public function getRoleFiltersProperty()
+    public function getRoleFiltersProperty(): Collection
     {
         return collect(UserRole::cases())
             ->mapWithKeys(fn (UserRole $role) => [$role->value => $role->label()]);

@@ -2,29 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * Department Model
- *
- * WHAT: Organizational units (Sales, Engineering, Admin, etc.) with monthly budgets.
- *
- * WHY: FinDesk tracks expenses per department. Departments have budget limits for
- *      reporting and policy enforcement. Organization manages departments centrally.
- *
- * IMPLEMENT: Complete. HasManyThrough relates expenses (Department → Users → Expenses).
- *            formattedBudget displays from cents (50000_00 paise = ₹500.00).
- *            scopeWithBudgetUsage is a stub—implement in Day 4 to add subquery for
- *            current month's spent total.
- *
- * REFERENCE:
- * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
- * - Has Many Through: https://laravel.com/docs/13.x/eloquent-relationships#has-many-through
- * - Query Builder Subqueries: https://laravel.com/docs/13.x/queries#subqueries
- */
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Attribute;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -80,14 +62,6 @@ final class Department extends Model
     /**
      * Scope that adds budget usage (current month's expenses) as a subquery.
      *
-     * TODO: Implement subquery to calculate current month's total expenses for budget reporting.
-     *       Example:
-     *       $query->addSelect(['monthly_spent' => Expense::query()
-     *           ->whereBelongsTo($this)
-     *           ->whereYear('submitted_at', now()->year)
-     *           ->whereMonth('submitted_at', now()->month)
-     *           ->select(\DB::raw('sum(amount)'))
-     *       ]);
      *
      * @param  Builder<Department>  $query
      * @return Builder<Department>

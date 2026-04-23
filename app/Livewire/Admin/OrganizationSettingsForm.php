@@ -16,6 +16,7 @@ namespace App\Livewire\Admin;
 
 use App\Enums\Currency;
 use App\Models\Organization;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -93,7 +94,7 @@ final class OrganizationSettingsForm extends Component
     /**
      * Get available currencies.
      */
-    public function getCurrenciesProperty()
+    public function getCurrenciesProperty(): Collection
     {
         return collect(Currency::cases())
             ->mapWithKeys(fn (Currency $currency) => [$currency->value => $currency->label()]);
@@ -102,7 +103,7 @@ final class OrganizationSettingsForm extends Component
     /**
      * Get available months for fiscal year start.
      */
-    public function getMonthsProperty()
+    public function getMonthsProperty(): array
     {
         return [
             1 => 'January',

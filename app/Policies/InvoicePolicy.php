@@ -2,21 +2,7 @@
 
 declare(strict_types=1);
 
-/**
- * InvoicePolicy
- *
- * WHAT: Determines who can view, create, update, delete, send, cancel, or record payments on invoices.
- *
- * WHY: Invoices are created by accountants/managers and managed through a workflow (Draft → Sent → Paid).
- *      Different roles have different permissions at each stage. Policies enforce these rules.
- *
- * IMPLEMENT: Each method checks user role and invoice status. Draft invoices can be edited/deleted.
- *            Sent/Paid invoices are read-only or payment-only. Implement authorization per method docstring.
- *
- * REFERENCE:
- * - Laravel Policies: https://laravel.com/docs/13.x/authorization#creating-policies
- * - Invoice Workflow: See InvoiceStatus enum for available statuses
- */
+
 
 namespace App\Policies;
 

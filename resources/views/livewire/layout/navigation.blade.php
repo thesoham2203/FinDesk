@@ -2,7 +2,7 @@
 
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
-
+use App\Enums\UserRole;
 new class extends Component {
     /**
      * Log the current user out of the application.
@@ -133,7 +133,7 @@ new class extends Component {
                 {{ __('Expenses') }}
             </x-responsive-nav-link>
 
-            @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Employee->value, \App\Enums\UserRole::Manager->value, \App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
+            @if(in_array(auth()->user()->role->value, [UserRole::Manager->value, UserRole::Admin->value, UserRole::Accountant->value]))
                 <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
                     wire:navigate>
                     {{ __('Invoices') }}

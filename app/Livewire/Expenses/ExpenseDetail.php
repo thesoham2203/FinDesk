@@ -32,6 +32,10 @@ final class ExpenseDetail extends Component
 
     public bool $showRejectModal = false;
 
+    public string $partialReimbursementAmount = '';
+
+    public bool $showPartialReimbursementModal = false;
+
     public function mount(Expense $expense): void
     {
 
@@ -137,7 +141,7 @@ final class ExpenseDetail extends Component
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
     }
 
-    public function markPartiallyPaid(): void
+    public function openPartialReimbursementModal(): void
     {
         $this->authorize('partiallyPaid', $this->expense);
 
@@ -147,10 +151,48 @@ final class ExpenseDetail extends Component
             return;
         }
 
-        $this->expense->transitionTo(ExpenseStatus::PartiallyPaid);
-        $this->expense->save();
+        $this->showPartialReimbursementModal = true;
+    }
 
-        session()->flash('success', 'Expense marked as partially paid.');
+    public function recordPartialReimbursement(): void
+    {
+        $this->authorize('partiallyPaid', $this->expense);
+
+        $this->validate([
+            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:'.($this->expense->amount / 100),
+        ], [
+            'partialReimbursementAmount.max' => 'Reimbursement amount cannot exceed the expense amount.',
+        ]);
+
+        // Convert from currency display (e.g., 100.50) to paise/cents (e.g., 10050)
+        $amountInPaise = (int) round((float) ($this->partialReimbursementAmount) * 100);
+
+        // Calculate new amounts
+        $newDueAmount = $this->expense->amount - $amountInPaise;
+
+        // Update expense with reimbursed and due amounts
+        $this->expense->update([
+            'reimbursed_amount' => $amountInPaise,
+            'due_amount' => $newDueAmount,
+        ]);
+
+        // Transition to PartiallyPaid status
+        $this->expense->transitionTo(ExpenseStatus::PartiallyPaid);
+
+        // Log the activity
+        \App\Models\Activity::create([
+            'user_id' => auth()->id(),
+            'subject_type' => Expense::class,
+            'subject_id' => $this->expense->id,
+            'description' => 'Partial reimbursement recorded: '.number_format($amountInPaise / 100, 2),
+        ]);
+
+        // Reset form and close modal
+        session()->flash('success', 'Partial reimbursement recorded successfully.');
+        $this->partialReimbursementAmount = '';
+        $this->showPartialReimbursementModal = false;
+
+        // Refresh expense data
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
     }
 

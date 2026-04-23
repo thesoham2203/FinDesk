@@ -2,23 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * InvoiceLineItem Model
- *
- * WHAT: Line-item detail row on an invoice (quantity, unit price, tax, totals).
- *
- * WHY: Invoices comprise multiple line items. Each tracks quantity, unit_price,
- *      optional tax rate, and calculated totals (line_total, tax_amount).
- *      Supports fractional quantities (e.g., 1.5 hours).
- *
- * IMPLEMENT: Complete. All calculations happen in Livewire (Day 6).
- *            formattedXxx accessors use hardcoded ₹ symbol—converted to multi-currency in Day 6.
- *            Attachments allow per-item supporting documents (e.g., receipt, invoice scan).
- *
- * REFERENCE:
- * - Eloquent Relationships: https://laravel.com/docs/13.x/eloquent-relationships
- * - Polymorphic Attachments: https://laravel.com/docs/13.x/eloquent-relationships#polymorphic-relationships
- */
 
 namespace App\Models;
 
