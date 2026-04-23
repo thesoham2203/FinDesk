@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-
 namespace App\Livewire\Invoices;
 
 use App\Actions\Invoice\GenerateInvoiceNumber;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\InvoiceLineItem;
 use App\Models\TaxRate;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -31,10 +32,6 @@ final class InvoiceForm extends Component
 
     public string $currency = 'INR';
 
-    // Line items — ARRAY OF ARRAYS
-    // Each element: ['description' => '', 'quantity' => '1', 'unit_price' => '', 'tax_rate_id' => '', 'line_total' => 0, 'tax_amount' => 0]
-    public array $lineItems = [];
-
     // Calculated totals (in cents)
     public int $subtotal = 0;
 
@@ -42,9 +39,21 @@ final class InvoiceForm extends Component
 
     public int $grandTotal = 0;
 
+    /**
+     * @var array<int, array{
+     *     description: string,
+     *     quantity: string,
+     *     unit_price: string,
+     *     tax_rate_id: string,
+     *     line_total: int,
+     *     tax_amount: int
+     * }>
+     */
+    public array $lineItems = [];
+
     public function mount(?Invoice $invoice = null): void
     {
-        if ($invoice === null) {
+        if (! $invoice instanceof Invoice) {
             // Creating new invoice
             $this->issueDate = now()->toDateString();
             $this->dueDate = now()->addDays(30)->toDateString();
@@ -53,9 +62,7 @@ final class InvoiceForm extends Component
             // Editing existing invoice
             $this->authorize('update', $invoice);
 
-            if ($invoice->status->value !== 'draft') {
-                abort(403, 'Only draft invoices can be edited.');
-            }
+            abort_if($invoice->status->value !== 'draft', 403, 'Only draft invoices can be edited.');
 
             $this->invoiceId = $invoice->id;
             $this->clientId = (string) $invoice->client_id;
@@ -64,17 +71,14 @@ final class InvoiceForm extends Component
             $this->notes = $invoice->notes;
             $this->currency = $invoice->currency->value;
 
-            // Load line items and convert from cents to dollars for display
-            $this->lineItems = $invoice->lineItems->map(function ($item) {
-                return [
-                    'description' => $item->description,
-                    'quantity' => (string) $item->quantity,
-                    'unit_price' => (string) ($item->unit_price / 100),
-                    'tax_rate_id' => (string) ($item->tax_rate_id ?? ''),
-                    'line_total' => $item->line_total,
-                    'tax_amount' => $item->tax_amount,
-                ];
-            })->toArray();
+            $this->lineItems = $invoice->lineItems->map(fn (InvoiceLineItem $item): array => [
+                'description' => $item->description,
+                'quantity' => (string) $item->quantity,
+                'unit_price' => (string) ($item->unit_price / 100),
+                'tax_rate_id' => (string) ($item->tax_rate_id ?? ''),
+                'line_total' => $item->line_total,
+                'tax_amount' => $item->tax_amount,
+            ])->toArray();
 
             $this->calculateTotals();
         }
@@ -82,7 +86,7 @@ final class InvoiceForm extends Component
 
     public function addLineItem(): void
     {
-        $defaultTaxRate = TaxRate::where('is_default', true)->first();
+        $defaultTaxRate = TaxRate::query()->where('is_default', true)->first();
 
         $this->lineItems[] = [
             'description' => '',
@@ -141,7 +145,7 @@ final class InvoiceForm extends Component
         // Look up tax rate and calculate tax amount
         $taxAmount = 0;
         if (! empty($item['tax_rate_id'])) {
-            $taxRate = TaxRate::find($item['tax_rate_id']);
+            $taxRate = TaxRate::query()->find($item['tax_rate_id']);
             if ($taxRate !== null) {
                 $taxAmount = (int) round($lineTotal * ($taxRate->percentage / 100));
             }
@@ -154,8 +158,8 @@ final class InvoiceForm extends Component
 
     public function calculateTotals(): void
     {
-        $this->subtotal = (int) array_sum(array_column($this->lineItems, 'line_total'));
-        $this->taxTotal = (int) array_sum(array_column($this->lineItems, 'tax_amount'));
+        $this->subtotal = array_sum(array_column($this->lineItems, 'line_total'));
+        $this->taxTotal = array_sum(array_column($this->lineItems, 'tax_amount'));
         $this->grandTotal = $this->subtotal + $this->taxTotal;
     }
 
@@ -173,12 +177,12 @@ final class InvoiceForm extends Component
             'lineItems.*.tax_rate_id' => 'nullable|exists:tax_rates,id',
         ]);
 
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             if ($this->invoiceId === null) {
                 // Create new invoice
-                $invoiceNumber = (new GenerateInvoiceNumber())->execute();
+                $invoiceNumber = new GenerateInvoiceNumber()->execute();
 
-                $invoice = Invoice::create([
+                $invoice = Invoice::query()->create([
                     'client_id' => $this->clientId,
                     'created_by' => auth()->id(),
                     'invoice_number' => $invoiceNumber,
@@ -195,7 +199,7 @@ final class InvoiceForm extends Component
                 $this->invoiceId = $invoice->id;
             } else {
                 // Update existing invoice
-                $invoice = Invoice::findOrFail($this->invoiceId);
+                $invoice = Invoice::query()->findOrFail($this->invoiceId);
                 $invoice->lineItems()->delete();
                 $invoice->update([
                     'issue_date' => $this->issueDate,
@@ -211,7 +215,7 @@ final class InvoiceForm extends Component
             foreach ($this->lineItems as $item) {
                 $unitPriceCents = (int) round((float) ($item['unit_price']) * 100);
 
-                Invoice::findOrFail($this->invoiceId)->lineItems()->create([
+                Invoice::query()->findOrFail($this->invoiceId)->lineItems()->create([
                     'description' => $item['description'],
                     'quantity' => $item['quantity'],
                     'unit_price' => $unitPriceCents,
@@ -225,16 +229,16 @@ final class InvoiceForm extends Component
         $message = $this->invoiceId ? 'Invoice updated successfully.' : 'Invoice created successfully.';
         $this->dispatch('flash', type: 'success', message: $message);
 
-        redirect()->route('invoices.show', $this->invoiceId);
+        to_route('invoices.show', $this->invoiceId);
     }
 
     /**
      * TODO: Return all clients for dropdown.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<Client>
+     * @return EloquentCollection<Client>
      */
     #[Computed]
-    public function clients(): Collection
+    public function clients(): EloquentCollection
     {
         return Client::all();
     }
@@ -242,12 +246,12 @@ final class InvoiceForm extends Component
     /**
      * TODO: Return all active tax rates for dropdowns.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<TaxRate>
+     * @return EloquentCollection<TaxRate>
      */
     #[Computed]
-    public function taxRates(): Collection
+    public function taxRates(): EloquentCollection
     {
-        return TaxRate::where('is_active', true)->get();
+        return TaxRate::query()->where('is_active', true)->get();
     }
 
     public function getCurrencySymbolProperty(): string
@@ -260,7 +264,7 @@ final class InvoiceForm extends Component
         };
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.invoices.invoice-form');
     }

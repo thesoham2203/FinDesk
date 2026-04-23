@@ -64,7 +64,7 @@ final class ExpenseCategoryForm extends Component
      */
     public function mount(?ExpenseCategory $category = null): void
     {
-        if ($category) {
+        if ($category instanceof ExpenseCategory) {
             $this->categoryId = $category->id;
             $this->name = $category->name;
             $this->description = $category->description;
@@ -83,31 +83,16 @@ final class ExpenseCategoryForm extends Component
         ];
     }
 
-    /**
-     * Save category (create or update).
-     *
-     * TODO: Implement save logic:
-     *       1. $this->validate() to check all properties
-     *       2. Convert maxAmount from dollars to cents:
-     *          $maxAmountCents = $this->maxAmount ? (int)(floatval($this->maxAmount) * 100) : null
-     *       3. If $this->categoryId is set (editing):
-     *          * $category = ExpenseCategory::findOrFail($this->categoryId)
-     *          * $category->update([...data...])
-     *       4. Otherwise (creating):
-     *          * ExpenseCategory::create([...data...])
-     *       5. session()->flash('success', 'Category saved')
-     *       6. $this->redirect(route('admin.categories.index'), navigate: true)
-     */
     public function save(): void
     {
         // TODO: Implement
 
         $this->validate();
 
-        $maxAmountCents = $this->maxAmount ? (int) ((float) ($this->maxAmount) * 100) : null;
+        $maxAmountCents = $this->maxAmount !== '' && $this->maxAmount !== '0' ? (int) ((float) ($this->maxAmount) * 100) : null;
 
         if ($this->categoryId) {
-            $category = ExpenseCategory::findOrFail($this->categoryId);
+            $category = ExpenseCategory::query()->findOrFail($this->categoryId);
             $category->update([
                 'name' => $this->name,
                 'description' => $this->description,
@@ -115,7 +100,7 @@ final class ExpenseCategoryForm extends Component
                 'requires_receipt' => $this->requiresReceipt,
             ]);
         } else {
-            ExpenseCategory::create([
+            ExpenseCategory::query()->create([
                 'name' => $this->name,
                 'description' => $this->description,
                 'max_amount' => $maxAmountCents,

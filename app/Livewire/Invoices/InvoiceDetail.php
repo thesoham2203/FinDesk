@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-
 namespace App\Livewire\Invoices;
 
+use App\Enums\InvoiceStatus;
+use App\Models\Activity;
 use App\Models\Invoice;
+use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -43,7 +45,7 @@ final class InvoiceDetail extends Component
     {
         $this->authorize('update', $this->invoice);
 
-        $this->invoice->transitionTo(\App\Enums\InvoiceStatus::Sent);
+        $this->invoice->transitionTo(InvoiceStatus::Sent);
 
         $this->dispatch('flash', type: 'success', message: 'Invoice sent successfully.');
         $this->invoice = $this->invoice->fresh(['client', 'creator', 'lineItems', 'payments', 'activities']);
@@ -65,10 +67,10 @@ final class InvoiceDetail extends Component
             'cancelReason' => 'required|string|min:10|max:500',
         ]);
 
-        $this->invoice->transitionTo(\App\Enums\InvoiceStatus::Cancelled);
+        $this->invoice->transitionTo(InvoiceStatus::Cancelled);
 
         // Log the cancellation reason in activity
-        \App\Models\Activity::create([
+        Activity::query()->create([
             'user_id' => auth()->id(),
             'subject_type' => Invoice::class,
             'subject_id' => $this->invoice->id,
@@ -81,7 +83,7 @@ final class InvoiceDetail extends Component
         $this->invoice = $this->invoice->fresh(['client', 'creator', 'lineItems', 'payments', 'activities']);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.invoices.invoice-detail');
     }

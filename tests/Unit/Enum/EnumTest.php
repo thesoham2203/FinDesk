@@ -48,10 +48,8 @@ test('UserRole color returns a valid color string', function (): void {
 // EXPENSE STATUS ENUM
 // ============================================================================
 
-test('ExpenseStatus has exactly 5 statuses', function (): void {
-    // WHY: The HLD defines exactly 5 states:
-    // Draft, Submitted, Approved, Rejected, Reimbursed
-    expect(ExpenseStatus::cases())->toHaveCount(5);
+test('ExpenseStatus has exactly 6 statuses', function (): void {
+    expect(ExpenseStatus::cases())->toHaveCount(6);
 });
 
 test('ExpenseStatus has all required cases', function (): void {
@@ -65,7 +63,8 @@ test('ExpenseStatus label returns human-readable text', function (): void {
         ->and(ExpenseStatus::Submitted->label())->toBe('Submitted')
         ->and(ExpenseStatus::Approved->label())->toBe('Approved')
         ->and(ExpenseStatus::Rejected->label())->toBe('Rejected')
-        ->and(ExpenseStatus::Reimbursed->label())->toBe('Reimbursed');
+        ->and(ExpenseStatus::Reimbursed->label())->toBe('Reimbursed')
+        ->and(ExpenseStatus::PartiallyPaid->label())->toBe('Partially Paid');
 });
 
 test('ExpenseStatus color returns a valid color string', function (): void {
@@ -73,7 +72,8 @@ test('ExpenseStatus color returns a valid color string', function (): void {
         ->and(ExpenseStatus::Submitted->color())->toBe('yellow')
         ->and(ExpenseStatus::Approved->color())->toBe('green')
         ->and(ExpenseStatus::Rejected->color())->toBe('red')
-        ->and(ExpenseStatus::Reimbursed->color())->toBe('blue');
+        ->and(ExpenseStatus::Reimbursed->color())->toBe('blue')
+        ->and(ExpenseStatus::PartiallyPaid->color())->toBe('orange');
 });
 
 // ============================================================================

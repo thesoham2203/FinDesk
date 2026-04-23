@@ -85,10 +85,10 @@ it('throws exception if expense is not draft', function (): void {
 
     $submitAction = resolve(SubmitExpense::class);
 
-    expect(function () use ($submitAction, $expense) {
+    expect(function () use ($submitAction, $expense): void {
         $submitAction->execute($expense);
     })->toThrow(InvalidArgumentException::class)
-        ->and(function () use ($submitAction, $expense) {
+        ->and(function () use ($submitAction, $expense): void {
             $submitAction->execute($expense);
         })->toThrow(InvalidArgumentException::class, 'Only draft expenses can be submitted.');
 });
@@ -98,7 +98,7 @@ it('throws exception for approved expense', function (): void {
 
     $submitAction = resolve(SubmitExpense::class);
 
-    expect(function () use ($submitAction, $expense) {
+    expect(function () use ($submitAction, $expense): void {
         $submitAction->execute($expense);
     })->toThrow(InvalidArgumentException::class);
 });
@@ -108,7 +108,7 @@ it('throws exception for rejected expense', function (): void {
 
     $submitAction = resolve(SubmitExpense::class);
 
-    expect(function () use ($submitAction, $expense) {
+    expect(function () use ($submitAction, $expense): void {
         $submitAction->execute($expense);
     })->toThrow(InvalidArgumentException::class);
 });
@@ -118,7 +118,7 @@ it('throws exception for reimbursed expense', function (): void {
 
     $submitAction = resolve(SubmitExpense::class);
 
-    expect(function () use ($submitAction, $expense) {
+    expect(function () use ($submitAction, $expense): void {
         $submitAction->execute($expense);
     })->toThrow(InvalidArgumentException::class);
 });

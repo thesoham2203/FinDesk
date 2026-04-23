@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -47,7 +46,7 @@ final class TaxRate extends Model
      * @return Builder<TaxRate>
      */
     #[Scope(visible: false)]
-    private function active(Builder $query): Builder
+    protected function active(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
@@ -57,7 +56,7 @@ final class TaxRate extends Model
      * @return Builder<TaxRate>
      */
     #[Scope(visible: false)]
-    private function default(Builder $query): Builder
+    protected function default(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }

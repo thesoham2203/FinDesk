@@ -43,7 +43,7 @@ it('converts dollars to cents when saving', function (): void {
         ->set('requiresReceipt', false)
         ->call('save');
 
-    $category = ExpenseCategory::where('name', 'Meals')->first();
+    $category = ExpenseCategory::query()->where('name', 'Meals')->first();
     expect($category->max_amount)->toBe(10050);
 });
 
@@ -111,7 +111,7 @@ it('allows null max amount', function (): void {
         ->set('requiresReceipt', false)
         ->call('save');
 
-    $category = ExpenseCategory::where('name', 'No Limit')->first();
+    $category = ExpenseCategory::query()->where('name', 'No Limit')->first();
     expect($category->max_amount)->toBeNull();
 });
 

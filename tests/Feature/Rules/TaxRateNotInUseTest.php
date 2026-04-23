@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\InvoiceLineItem;
 use App\Models\TaxRate;
 use App\Rules\TaxRateNotInUse;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -15,7 +16,7 @@ describe('TaxRateNotInUse Rule', function (): void {
         $rule = new TaxRateNotInUse();
 
         $failed = false;
-        $rule->validate('tax_rate_id', $taxRate->id, function () use (&$failed) {
+        $rule->validate('tax_rate_id', $taxRate->id, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -29,7 +30,7 @@ describe('TaxRateNotInUse Rule', function (): void {
         $rule = new TaxRateNotInUse();
         $failed = false;
 
-        $rule->validate('tax_rate_id', $taxRate->id, function () use (&$failed) {
+        $rule->validate('tax_rate_id', $taxRate->id, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -40,7 +41,7 @@ describe('TaxRateNotInUse Rule', function (): void {
         $rule = new TaxRateNotInUse();
         $failed = false;
 
-        $rule->validate('tax_rate_id', 99999, function () use (&$failed) {
+        $rule->validate('tax_rate_id', 99999, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -50,6 +51,6 @@ describe('TaxRateNotInUse Rule', function (): void {
     it('implements validation rule interface', function (): void {
         $rule = new TaxRateNotInUse();
 
-        expect($rule)->toBeInstanceOf(Illuminate\Contracts\Validation\ValidationRule::class);
+        expect($rule)->toBeInstanceOf(ValidationRule::class);
     });
 });

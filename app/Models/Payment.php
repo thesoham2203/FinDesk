@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Models;
 
 use App\Enums\PaymentMethod;
@@ -44,7 +43,7 @@ final class Payment extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    private function formattedAmount(): Attribute
+    protected function formattedAmount(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹'.number_format($this->amount / 100, 2),

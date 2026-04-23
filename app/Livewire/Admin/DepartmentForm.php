@@ -46,7 +46,7 @@ final class DepartmentForm extends Component
     {
         $this->authorize('create', Department::class);
 
-        if ($department) {
+        if ($department instanceof Department) {
             $this->departmentId = $department->id;
             $this->name = $department->name;
             $this->description = $department->description;
@@ -67,7 +67,7 @@ final class DepartmentForm extends Component
         $budgetCents = (int) ((float) ($validated['monthlyBudget']) * 100);
 
         if ($this->departmentId) {
-            $department = Department::findOrFail($this->departmentId);
+            $department = Department::query()->findOrFail($this->departmentId);
             $department->update([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
@@ -75,7 +75,7 @@ final class DepartmentForm extends Component
             ]);
             session()->flash('success', 'Department updated successfully');
         } else {
-            Department::create([
+            Department::query()->create([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'monthly_budget' => $budgetCents,

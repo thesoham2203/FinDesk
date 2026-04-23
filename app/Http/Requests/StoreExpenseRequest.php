@@ -54,12 +54,12 @@ final class StoreExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:2000',
-            'amount' => 'required|integer|min:1',
-            'category_id' => 'required|exists:expense_categories,id',
-            'currency' => 'required|string|in:USD,EUR,GBP,INR',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'amount' => ['required', 'integer', 'min:1'],
+            'category_id' => ['required', 'exists:expense_categories,id'],
+            'currency' => ['required', 'string', 'in:USD,EUR,GBP,INR'],
+            'receipt' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ];
     }
 
@@ -100,11 +100,12 @@ final class StoreExpenseRequest extends FormRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function (Validator $validator) {
-            $category = ExpenseCategory::find($this->category_id);
+        $validator->after(function (Validator $validator): void {
+            $category = ExpenseCategory::query()->find($this->category_id);
             if ($category->max_amount && $this->amount > $category->max_amount) {
                 $validator->errors()->add('amount', 'Exceeds category maximum...');
             }
+
             if ($category->requires_receipt && ! $this->hasFile('receipt')) {
                 $validator->errors()->add('receipt', 'Receipt is required...');
             }

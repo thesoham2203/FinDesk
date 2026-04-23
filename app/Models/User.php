@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Models;
 
 use App\Enums\UserRole;
@@ -123,7 +122,7 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @return Builder<User>
      */
     #[Scope(visible: false)]
-    private function byRole(Builder $query, UserRole $role): Builder
+    protected function byRole(Builder $query, UserRole $role): Builder
     {
         return $query->where('role', $role);
     }
@@ -135,7 +134,7 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @return Builder<User>
      */
     #[Scope(visible: false)]
-    private function inDepartment(Builder $query, int $departmentId): Builder
+    protected function inDepartment(Builder $query, int $departmentId): Builder
     {
         return $query->where('department_id', $departmentId);
     }

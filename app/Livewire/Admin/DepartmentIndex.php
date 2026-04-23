@@ -39,9 +39,9 @@ final class DepartmentIndex extends Component
     {
         $query = Department::query()->withCount('users')->orderBy('name', 'asc');
 
-        if ($this->search) {
-            $query->where('name', 'like', "%{$this->search}%")
-                ->orWhere('description', 'like', "%{$this->search}%");
+        if ($this->search !== '' && $this->search !== '0') {
+            $query->where('name', 'like', sprintf('%%%s%%', $this->search))
+                ->orWhere('description', 'like', sprintf('%%%s%%', $this->search));
         }
 
         return $query->paginate(15);
@@ -49,11 +49,11 @@ final class DepartmentIndex extends Component
 
     public function delete(int $id): void
     {
-        $department = Department::findOrFail($id);
+        $department = Department::query()->findOrFail($id);
         $this->authorize('delete', $department);
 
         if ($department->users()->count() > 0) {
-            session()->flash('error', "Cannot delete department with {$department->users()->count()} users. Please reassign users first.");
+            session()->flash('error', sprintf('Cannot delete department with %s users. Please reassign users first.', $department->users()->count()));
         } else {
             $department->delete();
             session()->flash('success', 'Department deleted successfully');

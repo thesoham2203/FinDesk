@@ -62,7 +62,7 @@ it('cannot transition from invalid state', function (): void {
 
     $approveAction = resolve(ApproveExpense::class);
 
-    expect(function () use ($approveAction, $expense, $approver) {
+    expect(function () use ($approveAction, $expense, $approver): void {
         $approveAction->execute($expense, $approver);
     })->toThrow(Exception::class);
 });

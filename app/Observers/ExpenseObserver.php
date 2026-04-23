@@ -64,12 +64,12 @@ final class ExpenseObserver
 {
     public function created(Expense $expense): void
     {
-        Activity::create([
+        Activity::query()->create([
             'user_id' => $expense->user_id,
             'subject_type' => Expense::class,
             'subject_id' => $expense->id,
 
-            'description' => "Employee {$expense->user->name} created expense: {$expense->title}",
+            'description' => sprintf('Employee %s created expense: %s', $expense->user->name, $expense->title),
             'properties' => ['amount' => $expense->amount, 'currency' => $expense->currency?->value],
         ]);
     }
@@ -80,10 +80,10 @@ final class ExpenseObserver
             if ($expense->status === ExpenseStatus::Submitted) {
                 Event::dispatch(new ExpenseSubmitted($expense));
             } elseif ($expense->status === ExpenseStatus::Approved) {
-                $approver = User::find($expense->reviewed_by) ?: Auth::user();
+                $approver = User::query()->find($expense->reviewed_by) ?: Auth::user();
                 Event::dispatch(new ExpenseApproved($expense, $approver));
             } elseif ($expense->status === ExpenseStatus::Rejected) {
-                $rejector = User::find($expense->reviewed_by) ?: Auth::user();
+                $rejector = User::query()->find($expense->reviewed_by) ?: Auth::user();
                 Event::dispatch(new ExpenseRejected($expense, $rejector, $expense->rejection_reason ?? 'No reason provided'));
             } elseif ($expense->status === ExpenseStatus::Reimbursed) {
                 Event::dispatch(new ExpenseReimbursed($expense, Auth::user()));

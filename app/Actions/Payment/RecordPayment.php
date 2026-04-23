@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-
 namespace App\Actions\Payment;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use InvalidArgumentException;
@@ -22,10 +22,10 @@ final class RecordPayment
     {
         // Check if invoice status allows payments
         $payableStatuses = [
-            \App\Enums\InvoiceStatus::Sent,
-            \App\Enums\InvoiceStatus::Viewed,
-            \App\Enums\InvoiceStatus::PartiallyPaid,
-            \App\Enums\InvoiceStatus::Overdue,
+            InvoiceStatus::Sent,
+            InvoiceStatus::Viewed,
+            InvoiceStatus::PartiallyPaid,
+            InvoiceStatus::Overdue,
         ];
 
         if (! in_array($invoice->status, $payableStatuses, true)) {
@@ -54,7 +54,7 @@ final class RecordPayment
         }
 
         // Create the payment record
-        $payment = Payment::create([
+        $payment = Payment::query()->create([
             'invoice_id' => $invoice->id,
             'amount' => $data['amount'],
             'payment_date' => $data['payment_date'],

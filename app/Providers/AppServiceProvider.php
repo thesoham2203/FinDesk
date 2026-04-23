@@ -37,16 +37,16 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register Authorization Gates
-        Gate::define('access-admin', fn (User $user) => $user->role === 'admin');
-        Gate::define('manage-users', fn (User $user) => $user->role === 'admin');
-        Gate::define('manage-departments', fn (User $user) => $user->role === 'admin');
-        Gate::define('manage-categories', fn (User $user) => $user->role === 'admin');
-        Gate::define('manage-tax-rates', fn (User $user) => $user->role === 'admin');
-        Gate::define('approve-expenses', fn (User $user) => $user->role === 'manager');
-        Gate::define('manage-invoices', fn (User $user) => in_array($user->role, ['admin', 'manager', 'accountant'], true));
-        Gate::define('record-payments', fn (User $user) => in_array($user->role, ['admin', 'accountant'], true));
-        Gate::define('view-reports', fn (User $user) => in_array($user->role, ['admin', 'manager'], true));
-        Gate::define('create-expenses', fn (User $user) => in_array($user->role, ['employee'], true));
+        Gate::define('access-admin', fn (User $user): bool => $user->role === 'admin');
+        Gate::define('manage-users', fn (User $user): bool => $user->role === 'admin');
+        Gate::define('manage-departments', fn (User $user): bool => $user->role === 'admin');
+        Gate::define('manage-categories', fn (User $user): bool => $user->role === 'admin');
+        Gate::define('manage-tax-rates', fn (User $user): bool => $user->role === 'admin');
+        Gate::define('approve-expenses', fn (User $user): bool => $user->role === 'manager');
+        Gate::define('manage-invoices', fn (User $user): bool => in_array($user->role, ['admin', 'manager', 'accountant'], true));
+        Gate::define('record-payments', fn (User $user): bool => in_array($user->role, ['admin', 'accountant'], true));
+        Gate::define('view-reports', fn (User $user): bool => in_array($user->role, ['admin', 'manager'], true));
+        Gate::define('create-expenses', fn (User $user): bool => $user->role === 'employee');
 
         // Register Event-Listener Mappings
         Event::listen(ExpenseSubmitted::class, LogExpenseActivity::class);
@@ -57,12 +57,12 @@ final class AppServiceProvider extends ServiceProvider
         Event::listen(ExpenseApproved::class, NotifyExpenseReviewed::class);
         Event::listen(ExpenseRejected::class, NotifyExpenseReviewed::class);
 
-        // Register Event-Listener Mappings 
+        // Register Event-Listener Mappings
         Event::listen(PaymentRecorded::class, LogPaymentActivity::class);
         Event::listen(PaymentRecorded::class, NotifyPaymentReceived::class);
         Event::listen(InvoiceOverdue::class, LogExpenseActivity::class);
 
-        // Register Model Observers 
+        // Register Model Observers
         Expense::observe(ExpenseObserver::class);
         Payment::observe(PaymentObserver::class);
     }

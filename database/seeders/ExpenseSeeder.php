@@ -36,7 +36,7 @@ final class ExpenseSeeder extends Seeder
         $categories = ExpenseCategory::all();
         $employeeUsers = User::query()->where('role', UserRole::Employee)->get();
         $managerUsers = User::query()->where('role', UserRole::Manager)->get();
-        $accountantUsers = User::query()->where('role', UserRole::Accountant)->get();
+        User::query()->where('role', UserRole::Accountant)->get();
 
         // Seed categories first if they don't exist
         if ($categories->isEmpty()) {
@@ -55,7 +55,7 @@ final class ExpenseSeeder extends Seeder
             Expense::factory()
                 ->count(2)
                 ->for($user)
-                ->state(fn () => ['department_id' => $user->department_id])
+                ->state(fn (): array => ['department_id' => $user->department_id])
                 ->create(['status' => ExpenseStatus::Draft]);
         }
 
@@ -65,13 +65,13 @@ final class ExpenseSeeder extends Seeder
             ->count(2)
             ->submitted()
             ->for($employeeUsers->first())
-            ->state(fn () => ['department_id' => $employeeUsers->first()->department_id])
+            ->state(fn (): array => ['department_id' => $employeeUsers->first()->department_id])
             ->create();
 
         Expense::factory()
             ->approved()
             ->for($employeeUsers->first())
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'department_id' => $employeeUsers->first()->department_id,
                 'reviewed_by' => $managerUsers->first()->id,
             ])
@@ -82,7 +82,7 @@ final class ExpenseSeeder extends Seeder
         Expense::factory()
             ->rejected()
             ->for($employeeUsers->skip(1)->first() ?? $employeeUsers->first())
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'department_id' => ($employeeUsers->skip(1)->first() ?? $employeeUsers->first())->department_id,
                 'reviewed_by' => $managerUsers->first()->id,
                 'rejection_reason' => 'Missing receipt documentation. Please attach and resubmit.',
@@ -94,7 +94,7 @@ final class ExpenseSeeder extends Seeder
         Expense::factory()
             ->reimbursed()
             ->for($employeeUsers->first())
-            ->state(fn () => [
+            ->state(fn (): array => [
                 'department_id' => $employeeUsers->first()->department_id,
                 'reviewed_by' => $managerUsers->first()->id,
             ])

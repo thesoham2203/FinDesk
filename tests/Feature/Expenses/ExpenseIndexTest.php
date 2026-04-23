@@ -11,7 +11,7 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-it('displays paginated list of user expenses', function () {
+it('displays paginated list of user expenses', function (): void {
     $user = User::factory()->create();
     $expenses = Expense::factory(5)->create(['user_id' => $user->id]);
 
@@ -23,7 +23,7 @@ it('displays paginated list of user expenses', function () {
     }
 });
 
-it('filters expenses by search term', function () {
+it('filters expenses by search term', function (): void {
     $user = User::factory()->create();
     $searchExpense = Expense::factory()->create(['user_id' => $user->id, 'title' => 'Unique Flight']);
     Expense::factory(3)->create(['user_id' => $user->id]);
@@ -34,7 +34,7 @@ it('filters expenses by search term', function () {
         ->assertSeeText('Unique Flight');
 });
 
-it('filters expenses by status', function () {
+it('filters expenses by status', function (): void {
     $user = User::factory()->create();
     $draftExpense = Expense::factory()->create([
         'user_id' => $user->id,
@@ -50,7 +50,7 @@ it('filters expenses by status', function () {
         ->assertDontSeeText($submittedExpense->title);
 });
 
-it('filters expenses by category', function () {
+it('filters expenses by category', function (): void {
     $user = User::factory()->create();
     $cat1 = ExpenseCategory::factory()->create();
     $cat2 = ExpenseCategory::factory()->create();
@@ -65,7 +65,7 @@ it('filters expenses by category', function () {
         ->assertDontSeeText('Cat2 Expense');
 });
 
-it('filters expenses by date range', function () {
+it('filters expenses by date range', function (): void {
     $user = User::factory()->create();
     $oldExpense = Expense::factory()->create([
         'user_id' => $user->id,
@@ -86,7 +86,7 @@ it('filters expenses by date range', function () {
         ->assertDontSeeText('Old Expense');
 });
 
-it('filters expenses by amount range', function () {
+it('filters expenses by amount range', function (): void {
     $user = User::factory()->create();
     Expense::factory()->create(['user_id' => $user->id, 'amount' => 5000, 'title' => 'Small Expense']);
     Expense::factory()->create(['user_id' => $user->id, 'amount' => 15000, 'title' => 'Large Expense']);
@@ -99,7 +99,7 @@ it('filters expenses by amount range', function () {
         ->assertDontSeeText('Small Expense');
 });
 
-it('clears all filters', function () {
+it('clears all filters', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -115,7 +115,7 @@ it('clears all filters', function () {
         ->assertSet('amountMin', '');
 });
 
-it('resets pagination when search changes', function () {
+it('resets pagination when search changes', function (): void {
     $user = User::factory()->create();
     Expense::factory(50)->create(['user_id' => $user->id, 'title' => 'Test Expense']);
 

@@ -62,10 +62,10 @@ it('throws exception if expense is not draft', function (): void {
 
     $updateAction = resolve(UpdateExpense::class);
 
-    expect(function () use ($updateAction, $expense, $data) {
+    expect(function () use ($updateAction, $expense, $data): void {
         $updateAction->execute($expense, $data);
     })->toThrow(InvalidArgumentException::class)
-        ->and(function () use ($updateAction, $expense, $data) {
+        ->and(function () use ($updateAction, $expense, $data): void {
             $updateAction->execute($expense, $data);
         })->toThrow(InvalidArgumentException::class, 'Only draft expenses can be updated.');
 });
@@ -184,7 +184,7 @@ it('cannot update approved expense', function (): void {
 
     $updateAction = resolve(UpdateExpense::class);
 
-    expect(function () use ($updateAction, $expense, $data) {
+    expect(function () use ($updateAction, $expense, $data): void {
         $updateAction->execute($expense, $data);
     })->toThrow(InvalidArgumentException::class);
 });
@@ -195,7 +195,7 @@ it('cannot update rejected expense', function (): void {
 
     $updateAction = resolve(UpdateExpense::class);
 
-    expect(function () use ($updateAction, $expense, $data) {
+    expect(function () use ($updateAction, $expense, $data): void {
         $updateAction->execute($expense, $data);
     })->toThrow(InvalidArgumentException::class);
 });
@@ -206,7 +206,7 @@ it('cannot update reimbursed expense', function (): void {
 
     $updateAction = resolve(UpdateExpense::class);
 
-    expect(function () use ($updateAction, $expense, $data) {
+    expect(function () use ($updateAction, $expense, $data): void {
         $updateAction->execute($expense, $data);
     })->toThrow(InvalidArgumentException::class);
 });

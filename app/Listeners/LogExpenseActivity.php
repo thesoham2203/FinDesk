@@ -29,27 +29,27 @@ final class LogExpenseActivity
         if ($event instanceof ExpenseSubmitted) {
             $action = 'submitted';
             $user = $expense->user;
-            $description = "Employee {$user->name} submitted expense: {$expense->title} ({$expense->formattedAmount})";
+            $description = sprintf('Employee %s submitted expense: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
         } elseif ($event instanceof ExpenseApproved) {
             $action = 'approved';
             $user = $event->approver;
-            $description = "Manager {$user->name} approved expense: {$expense->title} ({$expense->formattedAmount})";
+            $description = sprintf('Manager %s approved expense: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
         } elseif ($event instanceof ExpenseRejected) {
             $action = 'rejected';
             $user = $event->rejector;
-            $description = "Manager {$user->name} rejected expense: {$expense->title} ({$expense->formattedAmount}), Reason: {$event->reason}";
+            $description = sprintf('Manager %s rejected expense: %s (%s), Reason: %s', $user->name, $expense->title, $expense->formattedAmount, $event->reason);
             $properties['rejection_reason'] = $event->reason;
         } elseif ($event instanceof ExpenseReimbursed) {
             $action = 'reimbursed';
             $user = $event->processor;
-            $description = "Accountant {$user->name} marked expense as reimbursed: {$expense->title} ({$expense->formattedAmount})";
+            $description = sprintf('Accountant %s marked expense as reimbursed: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
         }
 
-        if (! $action || ! $user) {
+        if (! $user) {
             return;
         }
 
-        Activity::create([
+        Activity::query()->create([
             'user_id' => $user->id,
             'subject_type' => Expense::class,
             'subject_id' => $expense->id,

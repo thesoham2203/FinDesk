@@ -9,6 +9,7 @@ use App\Actions\Expense\ReimburseExpense;
 use App\Actions\Expense\RejectExpense;
 use App\Actions\Expense\SubmitExpense;
 use App\Enums\ExpenseStatus;
+use App\Models\Activity;
 use App\Models\Attachment;
 use App\Models\Expense;
 use App\Rules\ExpenseWithinBudget;
@@ -54,9 +55,7 @@ final class ExpenseDetail extends Component
     {
         $this->authorize('update', $this->expense);
 
-        if ($this->expense->status !== ExpenseStatus::Draft) {
-            throw new InvalidArgumentException('Only draft expenses can be submitted.');
-        }
+        throw_if($this->expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be submitted.');
 
         // Check budget constraint
         $budgetExceeded = false;
@@ -71,7 +70,7 @@ final class ExpenseDetail extends Component
             return;
         }
 
-        app(SubmitExpense::class)->execute($this->expense);
+        resolve(SubmitExpense::class)->execute($this->expense);
         session()->flash('success', 'Expense submitted successfully.');
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
 
@@ -81,9 +80,7 @@ final class ExpenseDetail extends Component
     {
         Gate::authorize('delete', $this->expense);
 
-        if ($this->expense->status !== ExpenseStatus::Draft) {
-            throw new InvalidArgumentException('Only draft expenses can be deleted.');
-        }
+        throw_if($this->expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be deleted.');
 
         $this->expense->delete();
 
@@ -93,7 +90,7 @@ final class ExpenseDetail extends Component
     public function approve(): void
     {
         $this->authorize('approve', $this->expense);
-        $this->expense = app(ApproveExpense::class)->execute($this->expense, Auth::user());
+        $this->expense = resolve(ApproveExpense::class)->execute($this->expense, Auth::user());
         session()->flash('success', 'Expense approved successfully.');
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
     }
@@ -112,7 +109,7 @@ final class ExpenseDetail extends Component
             ['rejectionReason.required' => 'Please provide a valid reason'],
             ['rejectionReason.min' => 'Minimum 10 characters please']
         );
-        $this->expense = app(RejectExpense::class)->execute(
+        $this->expense = resolve(RejectExpense::class)->execute(
             $this->expense,
             Auth::user(),
             $this->rejectionReason
@@ -135,7 +132,7 @@ final class ExpenseDetail extends Component
             return;
         }
 
-        $this->expense = app(ReimburseExpense::class)->execute($this->expense, Auth::user());
+        $this->expense = resolve(ReimburseExpense::class)->execute($this->expense);
 
         session()->flash('success', 'Expense marked as reimbursed.');
         $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
@@ -159,7 +156,7 @@ final class ExpenseDetail extends Component
         $this->authorize('partiallyPaid', $this->expense);
 
         $this->validate([
-            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:'.($this->expense->amount / 100),
+            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:' . ($this->expense->amount / 100),
         ], [
             'partialReimbursementAmount.max' => 'Reimbursement amount cannot exceed the expense amount.',
         ]);
@@ -178,13 +175,14 @@ final class ExpenseDetail extends Component
 
         // Transition to PartiallyPaid status
         $this->expense->transitionTo(ExpenseStatus::PartiallyPaid);
+        $this->expense->save();
 
         // Log the activity
-        \App\Models\Activity::create([
+        Activity::query()->create([
             'user_id' => auth()->id(),
             'subject_type' => Expense::class,
             'subject_id' => $this->expense->id,
-            'description' => 'Partial reimbursement recorded: '.number_format($amountInPaise / 100, 2),
+            'description' => 'Partial reimbursement recorded: ' . number_format($amountInPaise / 100, 2),
         ]);
 
         // Reset form and close modal

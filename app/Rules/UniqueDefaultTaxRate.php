@@ -32,7 +32,7 @@ use App\Models\TaxRate;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-final class UniqueDefaultTaxRate implements ValidationRule
+final readonly class UniqueDefaultTaxRate implements ValidationRule
 {
     /**
      * Create a new rule instance.
@@ -40,7 +40,7 @@ final class UniqueDefaultTaxRate implements ValidationRule
      * @param  int|null  $excludeId  The tax rate ID to exclude when checking (for updates)
      */
     public function __construct(
-        private readonly ?int $excludeId = null,
+        private ?int $excludeId = null,
     ) {}
 
     /**
@@ -66,7 +66,7 @@ final class UniqueDefaultTaxRate implements ValidationRule
             return;
         }
 
-        $query = TaxRate::where('is_default', true);
+        $query = TaxRate::query()->where('is_default', true);
         if ($this->excludeId !== null) {
             $query->where('id', '!=', $this->excludeId);
         }

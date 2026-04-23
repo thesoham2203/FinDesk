@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\ExpenseStatus;
+use App\Enums\UserRole;
 use App\Livewire\Expenses\ExpenseDetail;
 use App\Models\Department;
 use App\Models\Expense;
@@ -14,7 +15,7 @@ uses(RefreshDatabase::class);
 
 it('renders the expense detail component', function (): void {
     $expense = Expense::factory()->create();
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -23,7 +24,7 @@ it('renders the expense detail component', function (): void {
 
 it('mounts with expense data', function (): void {
     $expense = Expense::factory()->create();
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -32,7 +33,7 @@ it('mounts with expense data', function (): void {
 
 it('eager loads relationships on mount', function (): void {
     $expense = Expense::factory()->create();
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -53,7 +54,7 @@ it('authorizes user can view expense', function (): void {
 
 it('submits a draft expense', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -65,7 +66,7 @@ it('submits a draft expense', function (): void {
 
 it('flashes success message when submitting', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -78,7 +79,7 @@ it('flashes success message when submitting', function (): void {
 
 it('prevents submitting non-draft expense', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -88,7 +89,7 @@ it('prevents submitting non-draft expense', function (): void {
 
 it('deletes a draft expense', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -99,7 +100,7 @@ it('deletes a draft expense', function (): void {
 
 it('prevents deleting submitted expense', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -110,7 +111,7 @@ it('prevents deleting submitted expense', function (): void {
 
 it('prevents deleting approved expense', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -137,7 +138,7 @@ it('checks budget constraint on submit', function (): void {
 
 it('shows rejection reason field', function (): void {
     $expense = Expense::factory()->create();
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -146,7 +147,7 @@ it('shows rejection reason field', function (): void {
 
 it('toggles reject modal', function (): void {
     $expense = Expense::factory()->create();
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -155,7 +156,7 @@ it('toggles reject modal', function (): void {
 
 it('initializes with correct data', function (): void {
     $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
-    $user = User::where('id', $expense->user_id)->first();
+    $user = User::query()->where('id', $expense->user_id)->first();
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
@@ -177,23 +178,27 @@ it('prevents unauthorized deletion', function (): void {
 
 it('marks approved expense as partially paid', function (): void {
     $department = Department::factory()->create();
-    $admin = User::factory()->create(['role' => App\Enums\UserRole::Admin, 'department_id' => $department->id]);
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'status' => ExpenseStatus::Approved,
         'department_id' => $department->id,
+        'amount' => 10000,
     ]);
 
     $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
 
-    $component->call('markPartiallyPaid');
+    $component->set('partialReimbursementAmount', '50.00');
+    $component->call('recordPartialReimbursement');
 
     $expense->refresh();
-    expect($expense->status)->toBe(ExpenseStatus::PartiallyPaid);
+    expect($expense->status)->toBe(ExpenseStatus::PartiallyPaid)
+        ->and($expense->reimbursed_amount)->toBe(5000)
+        ->and($expense->due_amount)->toBe(5000);
 });
 
 it('marks partially paid expense as reimbursed', function (): void {
     $department = Department::factory()->create();
-    $admin = User::factory()->create(['role' => App\Enums\UserRole::Admin, 'department_id' => $department->id]);
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'status' => ExpenseStatus::PartiallyPaid,
         'department_id' => $department->id,
@@ -209,7 +214,7 @@ it('marks partially paid expense as reimbursed', function (): void {
 
 it('prevents non-admin from marking as partially paid', function (): void {
     $department = Department::factory()->create();
-    $employee = User::factory()->create(['role' => App\Enums\UserRole::Employee, 'department_id' => $department->id]);
+    $employee = User::factory()->create(['role' => UserRole::Employee, 'department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'status' => ExpenseStatus::Approved,
         'user_id' => $employee->id,
@@ -218,12 +223,12 @@ it('prevents non-admin from marking as partially paid', function (): void {
 
     $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
 
-    $component->assertForbidden();
+    $component->call('recordPartialReimbursement')->assertForbidden();
 });
 
 it('prevents non-admin from reimbursing partially paid expense', function (): void {
     $department = Department::factory()->create();
-    $employee = User::factory()->create(['role' => App\Enums\UserRole::Employee, 'department_id' => $department->id]);
+    $employee = User::factory()->create(['role' => UserRole::Employee, 'department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'status' => ExpenseStatus::PartiallyPaid,
         'user_id' => $employee->id,
@@ -232,5 +237,5 @@ it('prevents non-admin from reimbursing partially paid expense', function (): vo
 
     $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
 
-    $component->assertForbidden();
+    $component->call('reimburse')->assertForbidden();
 });

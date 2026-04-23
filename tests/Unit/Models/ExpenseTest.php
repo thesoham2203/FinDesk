@@ -239,14 +239,15 @@ test('submitted expense can transition to approved or rejected', function (): vo
         ->and($allowed)->toContain(ExpenseStatus::Approved, ExpenseStatus::Rejected);
 });
 
-test('approved expense can only transition to reimbursed', function (): void {
+test('approved expense can transition to reimbursed or partially paid', function (): void {
     // WHY: Once approved, the only next step is reimbursement.
     // It cannot go back to Draft or Submitted.
 
     $allowed = ExpenseStatus::Approved->allowedTransitions();
 
-    expect($allowed)->toHaveCount(1)
-        ->and($allowed)->toContain(ExpenseStatus::Reimbursed);
+    expect($allowed)->toHaveCount(2)
+        ->and($allowed)->toContain(ExpenseStatus::Reimbursed)
+        ->and($allowed)->toContain(ExpenseStatus::PartiallyPaid);
 });
 
 test('rejected expense can only transition back to draft', function (): void {

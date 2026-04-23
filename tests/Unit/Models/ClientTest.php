@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Client;
 use App\Models\Invoice;
+use Illuminate\Support\Sleep;
 
 test('client can be created with factory', function (): void {
     $client = Client::factory()->create();
@@ -47,7 +48,7 @@ test('client has required attributes', function (): void {
 test('client has many invoices', function (): void {
     $client = Client::factory()->create();
     $invoice1 = Invoice::factory()->create(['client_id' => $client->id]);
-    sleep(1); // Avoid invoice_number collision
+    Sleep::sleep(1); // Avoid invoice_number collision
     $invoice2 = Invoice::factory()->create(['client_id' => $client->id]);
 
     $clientInvoices = $client->invoices;
@@ -61,9 +62,9 @@ test('client invoices relationship returns only client invoices', function (): v
     $client2 = Client::factory()->create();
 
     $invoice1 = Invoice::factory()->create(['client_id' => $client1->id]);
-    sleep(1); // Avoid invoice_number collision
+    Sleep::sleep(1); // Avoid invoice_number collision
     $invoice2 = Invoice::factory()->create(['client_id' => $client1->id]);
-    sleep(1);
+    Sleep::sleep(1);
     $invoice3 = Invoice::factory()->create(['client_id' => $client2->id]);
 
     expect($client1->invoices)->toHaveCount(2)
@@ -72,7 +73,7 @@ test('client invoices relationship returns only client invoices', function (): v
 });
 
 test('client fillable fields are correct', function (): void {
-    $fillable = (new Client())->getFillable();
+    $fillable = new Client()->getFillable();
 
     expect($fillable)->toContain(
         'name',
@@ -114,17 +115,17 @@ test('client can be deleted', function (): void {
 
     $client->delete();
 
-    expect(Client::find($id))->toBeNull();
+    expect(Client::query()->find($id))->toBeNull();
 });
 
 test('client eager load invoices', function (): void {
     $client = Client::factory()->create();
     // Create invoices with staggered times to avoid invoice_number collision
-    sleep(1);
+    Sleep::sleep(1);
     Invoice::factory()->create(['client_id' => $client->id]);
-    sleep(1);
+    Sleep::sleep(1);
     Invoice::factory()->create(['client_id' => $client->id]);
-    sleep(1);
+    Sleep::sleep(1);
     Invoice::factory()->create(['client_id' => $client->id]);
 
     $clients = Client::with('invoices')->where('id', $client->id)->get();

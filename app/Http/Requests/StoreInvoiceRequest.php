@@ -54,17 +54,17 @@ final class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required|exists:clients,id',
-            'issue_date' => 'required|date',
-            'due_date' => 'required|date|after_or_equal:issue_date',
-            'notes' => 'nullable|string|max:2000',
-            'currency' => 'required|string|in:USD,EUR,GBP,INR',
+            'client_id' => ['required', 'exists:clients,id'],
+            'issue_date' => ['required', 'date'],
+            'due_date' => ['required', 'date', 'after_or_equal:issue_date'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+            'currency' => ['required', 'string', 'in:USD,EUR,GBP,INR'],
 
-            'line_items' => 'required|array|min:1',
-            'line_items.*.description' => 'required|string|max:255',
-            'line_items.*.quantity' => 'required|numeric|min:0.01',
-            'line_items.*.unit_price' => 'required|integer|min:1',
-            'line_items.*.tax_rate_id' => 'nullable|exists:tax_rates,id',
+            'line_items' => ['required', 'array', 'min:1'],
+            'line_items.*.description' => ['required', 'string', 'max:255'],
+            'line_items.*.quantity' => ['required', 'numeric', 'min:0.01'],
+            'line_items.*.unit_price' => ['required', 'integer', 'min:1'],
+            'line_items.*.tax_rate_id' => ['nullable', 'exists:tax_rates,id'],
         ];
     }
 
@@ -115,11 +115,11 @@ final class StoreInvoiceRequest extends FormRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function (Validator $validator) {
+        $validator->after(function (Validator $validator): void {
             $lineItems = $this->input('line_items', []);
             $hasValidLineItem = false;
 
-            foreach ($lineItems as $index => $item) {
+            foreach ($lineItems as $item) {
                 $quantity = $item['quantity'] ?? 0;
                 $unitPrice = $item['unit_price'] ?? 0;
 

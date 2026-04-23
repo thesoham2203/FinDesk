@@ -39,11 +39,11 @@ final class TaxRateNotInUse implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $taxRate = TaxRate::withCount('lineItems')->find($value);
+        $taxRate = TaxRate::query()->withCount('lineItems')->find($value);
         if (! $taxRate) {
             $fail('Tax rate not found.');
         } elseif ($taxRate->line_items_count > 0) {
-            $fail("This tax rate cannot be deleted because it is used on {$taxRate->line_items_count} invoice line items.");
+            $fail(sprintf('This tax rate cannot be deleted because it is used on %s invoice line items.', $taxRate->line_items_count));
         }
     }
 }

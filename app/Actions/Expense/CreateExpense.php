@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Actions\Expense;
 
 use App\Enums\ExpenseStatus;
@@ -27,7 +26,7 @@ final class CreateExpense
         // 2. Map validated data into the expense fields
         // 3. If a receipt exists, store it and assign receipt_path
         // 4. Save the expense and return it
-        $expense = Expense::create([
+        $expense = Expense::query()->create([
             'title' => $data['title'],
             'user_id' => $user->id,
             'department_id' => $user->department_id,
@@ -38,7 +37,7 @@ final class CreateExpense
             'category_id' => (int) $data['category_id'],
             'date' => $data['date'],
         ]);
-        if ($receipt !== null) {
+        if ($receipt instanceof UploadedFile) {
             // Capture metadata BEFORE storing the file
             $originalName = $receipt->getClientOriginalName();
             $mimeType = $receipt->getMimeType();
@@ -47,7 +46,7 @@ final class CreateExpense
             // Store the file
             $path = $receipt->store('expenses');
 
-            Attachment::create([
+            Attachment::query()->create([
                 'attachable_type' => Expense::class,
                 'attachable_id' => $expense->id,
                 'user_id' => $user->id,

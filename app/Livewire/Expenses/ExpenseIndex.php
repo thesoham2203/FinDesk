@@ -85,29 +85,14 @@ final class ExpenseIndex extends Component
     {
         return Expense::query()
             ->with(['category', 'user', 'department'])
-            ->when($this->search !== '', function (mixed $query): mixed {
-                return $query->where('title', 'like', '%'.$this->search.'%')
-                    ->orWhere('description', 'like', '%'.$this->search.'%');
-            })
-            ->when($this->statusFilter !== '', function (mixed $query): mixed {
-                return $query->where('status', $this->statusFilter);
-            })
-            ->when($this->categoryFilter !== '', function (mixed $query): mixed {
-                return $query->where('category_id', $this->categoryFilter);
-            })
-            ->when($this->dateFrom !== '', function (mixed $query): mixed {
-                return $query->where('date', '>=', $this->dateFrom);
-            })
-            ->when($this->dateTo !== '', function (mixed $query): mixed {
-                return $query->where('date', '<=', $this->dateTo);
-            })
-            ->when($this->amountMin !== '', function (mixed $query): mixed {
-                return $query->where('amount', '>=', (int) ($this->amountMin * 100));
-            })
-            ->when($this->amountMax !== '', function (mixed $query): mixed {
-                return $query->where('amount', '<=', (int) ($this->amountMax * 100));
-            })
-            ->orderByDesc('created_at')
+            ->when($this->search !== '', fn (mixed $query): mixed => $query->where('title', 'like', '%'.$this->search.'%')
+                ->orWhere('description', 'like', '%'.$this->search.'%'))
+            ->when($this->statusFilter !== '', fn (mixed $query): mixed => $query->where('status', $this->statusFilter))
+            ->when($this->categoryFilter !== '', fn (mixed $query): mixed => $query->where('category_id', $this->categoryFilter))
+            ->when($this->dateFrom !== '', fn (mixed $query): mixed => $query->where('date', '>=', $this->dateFrom))
+            ->when($this->dateTo !== '', fn (mixed $query): mixed => $query->where('date', '<=', $this->dateTo))
+            ->when($this->amountMin !== '', fn (mixed $query): mixed => $query->where('amount', '>=', (int) ($this->amountMin * 100)))
+            ->when($this->amountMax !== '', fn (mixed $query): mixed => $query->where('amount', '<=', (int) ($this->amountMax * 100)))->latest()
             ->paginate(10);
     }
 

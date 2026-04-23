@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Expense;
 use App\Models\User;
 use App\Notifications\ExpenseRejectedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 describe('ExpenseRejectedNotification', function (): void {
     it('returns database channel', function (): void {
@@ -68,6 +69,6 @@ describe('ExpenseRejectedNotification', function (): void {
 
         $notification = new ExpenseRejectedNotification($expense, $rejector, 'Test reason');
 
-        expect($notification instanceof Illuminate\Contracts\Queue\ShouldQueue)->toBeTrue();
+        expect($notification instanceof ShouldQueue)->toBeTrue();
     });
 });

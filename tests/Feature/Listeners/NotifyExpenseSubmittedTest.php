@@ -6,6 +6,7 @@ use App\Events\ExpenseSubmitted;
 use App\Listeners\NotifyExpenseSubmitted;
 use App\Models\Expense;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -37,6 +38,6 @@ describe('NotifyExpenseSubmitted Listener', function (): void {
     it('listener implements should queue interface', function (): void {
         $listener = new NotifyExpenseSubmitted();
 
-        expect($listener)->toBeInstanceOf(Illuminate\Contracts\Queue\ShouldQueue::class);
+        expect($listener)->toBeInstanceOf(ShouldQueue::class);
     });
 });

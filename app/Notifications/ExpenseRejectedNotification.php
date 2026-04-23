@@ -38,7 +38,7 @@ final class ExpenseRejectedNotification extends Notification implements ShouldQu
     {
         return [
             'title' => 'Expense Rejected',
-            'message' => "Your expense \"{$this->expense->title}\" for {$this->expense->formattedAmount} was rejected by {$this->rejector->name}. Reason: {$this->reason}",
+            'message' => sprintf('Your expense "%s" for %s was rejected by %s. Reason: %s', $this->expense->title, $this->expense->formattedAmount, $this->rejector->name, $this->reason),
             'expense_id' => $this->expense->id,
             'action_url' => route('expenses.show', $this->expense),
             'rejector_name' => $this->rejector->name,

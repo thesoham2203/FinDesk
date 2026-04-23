@@ -71,10 +71,10 @@ final class PendingApprovals extends Component
     #[Computed]
     public function pendingExpenses(): LengthAwarePaginator
     {
-        return Expense::where('status', ExpenseStatus::Submitted)
+        return Expense::query()->where('status', ExpenseStatus::Submitted)
             ->where('department_id', Auth::user()->department_id)
             ->with(['user', 'category'])
-            ->orderBy('submitted_at', 'asc')
+            ->oldest('submitted_at')
             ->paginate(10);
     }
 
@@ -84,7 +84,7 @@ final class PendingApprovals extends Component
     #[Computed]
     public function pendingCount(): int
     {
-        return Expense::where('status', ExpenseStatus::Submitted)
+        return Expense::query()->where('status', ExpenseStatus::Submitted)
             ->where('department_id', Auth::user()->department_id)
             ->count();
     }
@@ -94,9 +94,9 @@ final class PendingApprovals extends Component
      */
     public function approve(int $expenseId): void
     {
-        $expense = Expense::findOrFail($expenseId);
+        $expense = Expense::query()->findOrFail($expenseId);
         $this->authorize('approve', $expense);
-        app(ApproveExpense::class)->execute($expense, Auth::user());
+        resolve(ApproveExpense::class)->execute($expense, Auth::user());
         session()->flash('success', 'Expense approved successfully.');
         $this->resetPage();
     }

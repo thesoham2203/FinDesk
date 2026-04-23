@@ -53,7 +53,7 @@ final class CheckOverdueInvoices extends Command
      */
     public function handle(): int
     {
-        $today = now()->startOfDay();
+        $today = today();
         $count = 0;
 
         // Query for invoices that are past due and still in payable states
@@ -74,16 +74,16 @@ final class CheckOverdueInvoices extends Command
             $invoice->save();
 
             // Dispatch event to trigger notifications
-            InvoiceOverdue::dispatch($invoice);
+            event(new InvoiceOverdue($invoice));
 
-            $this->info("Marked invoice {$invoice->invoice_number} as overdue");
+            $this->info(sprintf('Marked invoice %s as overdue', $invoice->invoice_number));
             $count++;
         }
 
         // Notify all accountants and admins
         $this->notifyAccountingTeam($overdue);
 
-        $this->info("Processed {$count} overdue invoices");
+        $this->info(sprintf('Processed %d overdue invoices', $count));
 
         return self::SUCCESS;
     }
@@ -112,6 +112,6 @@ final class CheckOverdueInvoices extends Command
             }
         }
 
-        $this->info("Notifications sent to {$accountingTeam->count()} team members");
+        $this->info(sprintf('Notifications sent to %d team members', $accountingTeam->count()));
     }
 }

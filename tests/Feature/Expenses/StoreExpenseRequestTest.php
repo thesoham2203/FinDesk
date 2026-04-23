@@ -7,6 +7,8 @@ use App\Models\ExpenseCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 uses(RefreshDatabase::class);
 
@@ -24,8 +26,8 @@ function validateExpenseRequest(array $data, ?User $user = null): array|true
         $validated = $request->validate($request->rules());
 
         return true;
-    } catch (Illuminate\Validation\ValidationException $e) {
-        return $e->errors();
+    } catch (ValidationException $validationException) {
+        return $validationException->errors();
     }
 }
 
@@ -41,9 +43,7 @@ describe('StoreExpenseRequest - Authorization', function (): void {
 
 describe('StoreExpenseRequest - Basic Validation', function (): void {
     beforeEach(function (): void {
-        Gate::define('create-expenses', function () {
-            return true;
-        });
+        Gate::define('create-expenses', fn (): true => true);
     });
 
     it('validates required fields', function (): void {
@@ -121,9 +121,7 @@ describe('StoreExpenseRequest - Basic Validation', function (): void {
 
 describe('StoreExpenseRequest - File Validation', function (): void {
     beforeEach(function (): void {
-        Gate::define('create-expenses', function () {
-            return true;
-        });
+        Gate::define('create-expenses', fn (): true => true);
     });
 
     it('validates receipt is nullable file', function (): void {
@@ -160,9 +158,7 @@ describe('StoreExpenseRequest - File Validation', function (): void {
 describe('StoreExpenseRequest - Custom Validation', function (): void {
     beforeEach(function (): void {
         // Ensure clean state between tests
-        Gate::define('create-expenses', function () {
-            return true;
-        });
+        Gate::define('create-expenses', fn (): true => true);
     });
 
     it('rejects expense exceeding category max_amount', function (): void {
@@ -178,7 +174,7 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
             'currency' => 'INR',
         ]);
 
-        $validator = Illuminate\Support\Facades\Validator::make(
+        $validator = Validator::make(
             $request->all(),
             $request->rules()
         );
@@ -202,7 +198,7 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
             'currency' => 'INR',
         ]);
 
-        $validator = Illuminate\Support\Facades\Validator::make(
+        $validator = Validator::make(
             $request->all(),
             $request->rules()
         );
@@ -225,7 +221,7 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
             'currency' => 'INR',
         ]);
 
-        $validator = Illuminate\Support\Facades\Validator::make(
+        $validator = Validator::make(
             $request->all(),
             $request->rules()
         );
@@ -248,7 +244,7 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
             'currency' => 'INR',
         ]);
 
-        $validator = Illuminate\Support\Facades\Validator::make(
+        $validator = Validator::make(
             $request->all(),
             $request->rules()
         );
@@ -262,9 +258,7 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
 
 describe('StoreExpenseRequest - Error Messages', function (): void {
     beforeEach(function (): void {
-        Gate::define('create-expenses', function () {
-            return true;
-        });
+        Gate::define('create-expenses', fn (): true => true);
     });
 
     it('returns custom message for required title', function (): void {

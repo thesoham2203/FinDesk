@@ -41,9 +41,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Validate;
+
 final class ExpenseCategoryIndex extends Component
 {
     use WithPagination;
@@ -56,9 +57,9 @@ final class ExpenseCategoryIndex extends Component
     {
         $query = ExpenseCategory::query()->withCount('expenses')->orderBy('name', 'asc');
 
-        if ($this->search) {
-            $query->where('name', 'like', "%{$this->search}%")
-                ->orWhere('description', 'like', "%{$this->search}%");
+        if ($this->search !== '' && $this->search !== '0') {
+            $query->where('name', 'like', sprintf('%%%s%%', $this->search))
+                ->orWhere('description', 'like', sprintf('%%%s%%', $this->search));
         }
 
         return $query->paginate(15);
@@ -67,10 +68,10 @@ final class ExpenseCategoryIndex extends Component
     #[Validate]
     public function delete(int $id): void
     {
-        $category = ExpenseCategory::findOrFail($id);
+        $category = ExpenseCategory::query()->findOrFail($id);
 
         if ($category->expenses()->count() > 0) {
-            session()->flash('error', "Cannot delete category with {$category->expenses()->count()} expenses");
+            session()->flash('error', sprintf('Cannot delete category with %s expenses', $category->expenses()->count()));
         } else {
             $category->delete();
             session()->flash('success', 'Category deleted');

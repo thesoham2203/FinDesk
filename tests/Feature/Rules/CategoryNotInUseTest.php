@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Rules\CategoryNotInUse;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -15,7 +16,7 @@ describe('CategoryNotInUse Rule', function (): void {
         $rule = new CategoryNotInUse();
 
         $failed = false;
-        $rule->validate('category_id', $category->id, function () use (&$failed) {
+        $rule->validate('category_id', $category->id, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -29,7 +30,7 @@ describe('CategoryNotInUse Rule', function (): void {
         $rule = new CategoryNotInUse();
         $failed = false;
 
-        $rule->validate('category_id', $category->id, function () use (&$failed) {
+        $rule->validate('category_id', $category->id, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -40,7 +41,7 @@ describe('CategoryNotInUse Rule', function (): void {
         $rule = new CategoryNotInUse();
         $failed = false;
 
-        $rule->validate('category_id', 99999, function () use (&$failed) {
+        $rule->validate('category_id', 99999, function () use (&$failed): void {
             $failed = true;
         });
 
@@ -50,6 +51,6 @@ describe('CategoryNotInUse Rule', function (): void {
     it('implements validation rule interface', function (): void {
         $rule = new CategoryNotInUse();
 
-        expect($rule)->toBeInstanceOf(Illuminate\Contracts\Validation\ValidationRule::class);
+        expect($rule)->toBeInstanceOf(ValidationRule::class);
     });
 });

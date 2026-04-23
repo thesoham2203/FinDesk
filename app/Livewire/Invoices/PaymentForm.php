@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Livewire\Invoices;
 
 use App\Actions\Payment\RecordPayment;
@@ -65,12 +64,12 @@ final class PaymentForm extends Component
         // Convert amount from dollars to cents
         $amountInCents = (int) round((float) $validated['amount'] * 100);
 
-        $invoice = Invoice::findOrFail($this->invoiceId);
+        $invoice = Invoice::query()->findOrFail($this->invoiceId);
         $this->authorize('recordPayment', $invoice);
 
         try {
             // Record the payment (Observer fires PaymentRecorded event)
-            (new RecordPayment())->execute($invoice, [
+            new RecordPayment()->execute($invoice, [
                 'amount' => $amountInCents,
                 'payment_date' => $validated['paymentDate'],
                 'payment_method' => $validated['paymentMethod'],
@@ -87,8 +86,8 @@ final class PaymentForm extends Component
             $this->refreshBalances();
 
             $this->dispatch('flash', type: 'success', message: 'Payment recorded successfully.');
-        } catch (InvalidArgumentException $e) {
-            $this->dispatch('flash', type: 'error', message: $e->getMessage());
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            $this->dispatch('flash', type: 'error', message: $invalidArgumentException->getMessage());
         }
     }
 
@@ -113,7 +112,7 @@ final class PaymentForm extends Component
      */
     private function refreshBalances(): void
     {
-        $invoice = Invoice::findOrFail($this->invoiceId);
+        $invoice = Invoice::query()->findOrFail($this->invoiceId);
         $this->invoiceTotal = $invoice->total;
         $this->totalPaid = $invoice->payments()->sum('amount');
         $this->remaining = $this->invoiceTotal - $this->totalPaid;

@@ -40,11 +40,11 @@ final class CategoryNotInUse implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $category = ExpenseCategory::withCount('expenses')->find($value);
+        $category = ExpenseCategory::query()->withCount('expenses')->find($value);
         if (! $category) {
             $fail('Category not found.');
         } elseif ($category->expenses_count > 0) {
-            $fail("This category cannot be deleted because it has {$category->expenses_count} expenses.");
+            $fail(sprintf('This category cannot be deleted because it has %s expenses.', $category->expenses_count));
         }
     }
 }

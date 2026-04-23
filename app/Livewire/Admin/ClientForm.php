@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\Client;
+use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -53,7 +54,7 @@ final class ClientForm extends Component
      */
     public function mount(?Client $client = null): void
     {
-        if ($client !== null) {
+        if ($client instanceof Client) {
             $this->clientId = $client->id;
             $this->name = $client->name;
             $this->email = $client->email;
@@ -83,7 +84,7 @@ final class ClientForm extends Component
 
         if ($this->clientId !== null) {
             // Update existing
-            Client::findOrFail($this->clientId)->update([
+            Client::query()->findOrFail($this->clientId)->update([
                 'name' => $this->name,
                 'email' => $this->email,
                 'phone' => $this->phone,
@@ -94,7 +95,7 @@ final class ClientForm extends Component
             $this->dispatch('flash', type: 'success', message: 'Client updated successfully.');
         } else {
             // Create new
-            Client::create([
+            Client::query()->create([
                 'name' => $this->name,
                 'email' => $this->email,
                 'phone' => $this->phone,
@@ -105,10 +106,10 @@ final class ClientForm extends Component
             $this->dispatch('flash', type: 'success', message: 'Client created successfully.');
         }
 
-        redirect()->route('admin.clients.index');
+        to_route('admin.clients.index');
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin.client-form');
     }

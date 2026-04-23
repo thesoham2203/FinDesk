@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-
 namespace App\Listeners;
 
 use App\Events\PaymentRecorded;
 use App\Models\Activity;
+use App\Models\Invoice;
 
 final class LogPaymentActivity
 {
@@ -15,9 +15,9 @@ final class LogPaymentActivity
      */
     public function handle(PaymentRecorded $event): void
     {
-        Activity::create([
+        Activity::query()->create([
             'user_id' => auth()->id(),
-            'subject_type' => \App\Models\Invoice::class,
+            'subject_type' => Invoice::class,
             'subject_id' => $event->invoice->id,
             'description' => sprintf(
                 'Payment of ₹%s recorded via %s',

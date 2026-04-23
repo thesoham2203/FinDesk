@@ -31,12 +31,12 @@ declare(strict_types=1);
 
 namespace App\Rules;
 
+use App\Models\Department;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Support\Facades\DB;
 
-final class ExpenseWithinBudget implements ValidationRule
+final readonly class ExpenseWithinBudget implements ValidationRule
 {
     /**
      * Create a new rule instance.
@@ -45,8 +45,8 @@ final class ExpenseWithinBudget implements ValidationRule
      * @param  int  $amount  The expense amount in cents
      */
     public function __construct(
-        private readonly int $departmentId,
-        private readonly int $amount,
+        private int $departmentId,
+        private int $amount,
     ) {}
 
     /**
@@ -59,7 +59,7 @@ final class ExpenseWithinBudget implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // Get department and its budget
-        $department = \App\Models\Department::find($this->departmentId);
+        $department = Department::query()->find($this->departmentId);
         if (! $department) {
             $fail('Department not found.');
 
@@ -75,7 +75,7 @@ final class ExpenseWithinBudget implements ValidationRule
             ->whereIn('status', ['approved', 'submitted'])
             ->sum('amount');
 
-        $currentTotal = $currentTotal ?? 0;
+        $currentTotal ??= 0;
 
         if ($currentTotal + $this->amount > $department->monthly_budget) {
             $fail("This expense would cause the department's monthly total to exceed the budget.");

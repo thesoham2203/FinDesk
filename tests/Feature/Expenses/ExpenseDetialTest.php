@@ -12,7 +12,7 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-it('displays expense details for authorized user', function () {
+it('displays expense details for authorized user', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->create(['user_id' => $user->id]);
 
@@ -21,7 +21,7 @@ it('displays expense details for authorized user', function () {
         ->assertSet('expenseId', $expense->id);
 });
 
-it('prevents unauthorized employee from viewing other expense', function () {
+it('prevents unauthorized employee from viewing other expense', function (): void {
     $expenseOwner = User::factory()->create(['role' => UserRole::Employee]);
     $otherEmployee = User::factory()->create(['role' => UserRole::Employee]);
     $expense = Expense::factory()->create(['user_id' => $expenseOwner->id]);
@@ -32,7 +32,7 @@ it('prevents unauthorized employee from viewing other expense', function () {
         ->assertForbidden();
 });
 
-it('allows manager from same department to view expense', function () {
+it('allows manager from same department to view expense', function (): void {
     $department = Department::factory()->create();
     $employee = User::factory()->create([
         'role' => UserRole::Employee,
@@ -49,7 +49,7 @@ it('allows manager from same department to view expense', function () {
         ->assertSet('expenseId', $expense->id);
 });
 
-it('allows admin to view any expense', function () {
+it('allows admin to view any expense', function (): void {
     $employee = User::factory()->create(['role' => UserRole::Employee]);
     $admin = User::factory()->create(['role' => UserRole::Admin]);
     $expense = Expense::factory()->create(['user_id' => $employee->id]);
@@ -59,7 +59,7 @@ it('allows admin to view any expense', function () {
         ->assertSet('expenseId', $expense->id);
 });
 
-it('loads related data with expense', function () {
+it('loads related data with expense', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->create(['user_id' => $user->id]);
 
@@ -68,7 +68,7 @@ it('loads related data with expense', function () {
         ->assertViewHas('expense');
 });
 
-it('submits draft expense', function () {
+it('submits draft expense', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->create(['user_id' => $user->id, 'status' => ExpenseStatus::Draft]);
 
@@ -79,7 +79,7 @@ it('submits draft expense', function () {
     expect($expense->fresh())->status->toBe(ExpenseStatus::Submitted);
 });
 
-it('prevents submitting non-draft expense', function () {
+it('prevents submitting non-draft expense', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->submitted()->create(['user_id' => $user->id]);
 

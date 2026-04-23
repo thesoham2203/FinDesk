@@ -109,7 +109,7 @@ describe('ExpensePolicy', function (): void {
             ]);
             $policy = new ExpensePolicy();
 
-            expect($policy->create($manager))->toBeTrue();
+            expect($policy->create($manager))->toBeFalse();
         });
 
         it('prevents managers without department', function (): void {

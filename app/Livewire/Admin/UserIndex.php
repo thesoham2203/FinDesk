@@ -46,12 +46,12 @@ final class UserIndex extends Component
             ->with('department', 'manager')
             ->orderBy('name', 'asc');
 
-        if ($this->search) {
-            $query->where('name', 'like', "%{$this->search}%")
-                ->orWhere('email', 'like', "%{$this->search}%");
+        if ($this->search !== '' && $this->search !== '0') {
+            $query->where('name', 'like', sprintf('%%%s%%', $this->search))
+                ->orWhere('email', 'like', sprintf('%%%s%%', $this->search));
         }
 
-        if ($this->roleFilter) {
+        if ($this->roleFilter !== '' && $this->roleFilter !== '0') {
             $query->where('role', $this->roleFilter);
         }
 
@@ -60,11 +60,11 @@ final class UserIndex extends Component
 
     public function delete(string $id): void
     {
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $this->authorize('delete', $user);
 
         // Prevent deleting the last admin user
-        if ($user->role === UserRole::Admin && User::where('role', UserRole::Admin->value)->count() <= 1) {
+        if ($user->role === UserRole::Admin && User::query()->where('role', UserRole::Admin->value)->count() <= 1) {
             session()->flash('error', 'Cannot delete the last admin user');
 
             return;
@@ -81,7 +81,7 @@ final class UserIndex extends Component
     public function getRoleFiltersProperty(): Collection
     {
         return collect(UserRole::cases())
-            ->mapWithKeys(fn (UserRole $role) => [$role->value => $role->label()]);
+            ->mapWithKeys(fn (UserRole $role): array => [$role->value => $role->label()]);
     }
 
     public function render(): View

@@ -88,7 +88,7 @@ it('has correct attachment properties after creation', function (): void {
         receipt: $file,
     );
 
-    $attachment = Attachment::where('attachable_id', $expense->id)->first();
+    $attachment = Attachment::query()->where('attachable_id', $expense->id)->first();
 
     expect($attachment)->not->toBeNull();
     expect($attachment->original_name)->toBe('document.docx');
@@ -156,7 +156,6 @@ it('does not create attachment when expense is created without receipt', functio
             'category_id' => $this->category->id,
             'date' => now()->toDateString(),
         ],
-        receipt: null,
     );
 
     expect($expense->attachments()->count())->toBe(0);

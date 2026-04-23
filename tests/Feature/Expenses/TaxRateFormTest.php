@@ -43,7 +43,7 @@ it('allows decimal percentages', function (): void {
         ->set('isActive', true)
         ->call('save');
 
-    $taxRate = TaxRate::where('name', 'VAT 18.5%')->first();
+    $taxRate = TaxRate::query()->where('name', 'VAT 18.5%')->first();
     expect($taxRate->percentage)->toBe(18.5);
 });
 
@@ -151,7 +151,7 @@ it('allows zero percentage', function (): void {
         ->set('isActive', true)
         ->call('save');
 
-    $taxRate = TaxRate::where('name', 'Zero Rate')->first();
+    $taxRate = TaxRate::query()->where('name', 'Zero Rate')->first();
     expect($taxRate->percentage)->toBe(0.0);
 });
 
@@ -187,6 +187,6 @@ it('allows non-default tax rates', function (): void {
         ->set('isDefault', false)
         ->call('save');
 
-    $taxRate = TaxRate::where('name', 'Non-default')->first();
+    $taxRate = TaxRate::query()->where('name', 'Non-default')->first();
     expect($taxRate->is_default)->toBeFalse();
 });

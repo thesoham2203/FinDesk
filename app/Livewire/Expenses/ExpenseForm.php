@@ -55,11 +55,9 @@ final class ExpenseForm extends Component
 
     public function mount(?Expense $expense = null): void
     {
-        if ($expense !== null && $expense->status !== ExpenseStatus::Draft) {
-            throw new InvalidArgumentException('Only draft expenses can be edited.');
-        }
+        throw_if($expense instanceof Expense && $expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be edited.');
 
-        if ($expense !== null) {
+        if ($expense instanceof Expense) {
             $this->expenseId = $expense->id;
             $this->title = $expense->title;
             $this->description = $expense->description ?? '';
@@ -85,14 +83,16 @@ final class ExpenseForm extends Component
             'date' => $this->date,
         ];
         if ($this->expenseId === null) {
-            $expense = app(CreateExpense::class)->execute(Auth::user(), $data, $this->receipt);
+            $expense = resolve(CreateExpense::class)->execute(Auth::user(), $data, $this->receipt);
         } else {
             $expense = Expense::query()->findOrFail($this->expenseId);
-            $expense = app(UpdateExpense::class)->execute($expense, $data, $this->receipt);
+            $expense = resolve(UpdateExpense::class)->execute($expense, $data, $this->receipt);
         }
+
         if ($andSubmit) {
-            app(SubmitExpense::class)->execute($expense);
+            resolve(SubmitExpense::class)->execute($expense);
         }
+
         session()->flash('success', 'Expense saved successfully.');
         $this->redirectRoute('expenses.show', $expense);
     }

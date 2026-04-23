@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Livewire\Notifications;
 
 use illuminate\View\View;

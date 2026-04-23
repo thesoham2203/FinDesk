@@ -47,7 +47,7 @@ final class OrganizationSettingsForm extends Component
     {
         $this->authorize('update', Organization::class);
 
-        $org = Organization::first();
+        $org = Organization::query()->first();
         if ($org) {
             $this->name = $org->name;
             $this->address = $org->address;
@@ -72,7 +72,7 @@ final class OrganizationSettingsForm extends Component
             $logoPath = $this->logo->store('org-logos', 'public');
         }
 
-        $org = Organization::first();
+        $org = Organization::query()->first();
         if (! $org) {
             $org = new Organization();
         }
@@ -97,7 +97,7 @@ final class OrganizationSettingsForm extends Component
     public function getCurrenciesProperty(): Collection
     {
         return collect(Currency::cases())
-            ->mapWithKeys(fn (Currency $currency) => [$currency->value => $currency->label()]);
+            ->mapWithKeys(fn (Currency $currency): array => [$currency->value => $currency->label()]);
     }
 
     /**

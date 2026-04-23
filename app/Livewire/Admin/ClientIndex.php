@@ -24,6 +24,7 @@ namespace App\Livewire\Admin;
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder as Bob;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -46,8 +47,8 @@ final class ClientIndex extends Component
     public function clients(): LengthAwarePaginator
     {
         return Client::query()
-            ->when($this->search, fn (Bob $query) => $query->where('name', 'like', "%{$this->search}%")
-                ->orWhere('email', 'like', "%{$this->search}%")
+            ->when($this->search, fn (Bob $query) => $query->where('name', 'like', sprintf('%%%s%%', $this->search))
+                ->orWhere('email', 'like', sprintf('%%%s%%', $this->search))
             )
             ->withCount('invoices')
             ->paginate(15);
@@ -55,7 +56,7 @@ final class ClientIndex extends Component
 
     public function delete(int $id): void
     {
-        $client = Client::findOrFail($id);
+        $client = Client::query()->findOrFail($id);
 
         if ($client->invoices()->exists()) {
             $this->dispatch('flash', type: 'error', message: 'Cannot delete client with existing invoices.');
@@ -67,7 +68,7 @@ final class ClientIndex extends Component
         $this->dispatch('flash', type: 'success', message: 'Client deleted successfully.');
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin.client-index');
     }

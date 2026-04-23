@@ -9,6 +9,7 @@ use App\Models\Expense;
 use App\Models\User;
 use App\Notifications\ExpenseApprovedNotification;
 use App\Notifications\ExpenseRejectedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 
 describe('NotifyExpenseReviewed Listener', function (): void {
@@ -64,10 +65,8 @@ describe('NotifyExpenseReviewed Listener', function (): void {
         Notification::assertSentTo(
             [$employee],
             ExpenseApprovedNotification::class,
-            function (ExpenseApprovedNotification $notification) use ($expense, $approver) {
-                return $notification->expense->id === $expense->id &&
-                    $notification->approver->id === $approver->id;
-            }
+            fn (ExpenseApprovedNotification $notification): bool => $notification->expense->id === $expense->id &&
+                $notification->approver->id === $approver->id
         );
     });
 
@@ -87,17 +86,15 @@ describe('NotifyExpenseReviewed Listener', function (): void {
         Notification::assertSentTo(
             [$employee],
             ExpenseRejectedNotification::class,
-            function (ExpenseRejectedNotification $notification) use ($expense, $rejector, $reason) {
-                return $notification->expense->id === $expense->id &&
-                    $notification->rejector->id === $rejector->id &&
-                    $notification->reason === $reason;
-            }
+            fn (ExpenseRejectedNotification $notification): bool => $notification->expense->id === $expense->id &&
+                $notification->rejector->id === $rejector->id &&
+                $notification->reason === $reason
         );
     });
 
     it('implements ShouldQueue interface', function (): void {
         $listener = new NotifyExpenseReviewed();
 
-        expect($listener instanceof Illuminate\Contracts\Queue\ShouldQueue)->toBeTrue();
+        expect($listener instanceof ShouldQueue)->toBeTrue();
     });
 });

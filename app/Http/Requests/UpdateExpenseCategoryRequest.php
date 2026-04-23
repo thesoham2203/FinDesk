@@ -54,9 +54,9 @@ final class UpdateExpenseCategoryRequest extends FormRequest
                 'max:255',
                 Rule::unique('expense_categories')->ignore($this->route('expense_category')),
             ],
-            'description' => 'nullable|string|max:1000',
-            'max_amount' => 'nullable|integer|min:1',
-            'requires_receipt' => 'required|boolean',
+            'description' => ['nullable', 'string', 'max:1000'],
+            'max_amount' => ['nullable', 'integer', 'min:1'],
+            'requires_receipt' => ['required', 'boolean'],
         ];
     }
 

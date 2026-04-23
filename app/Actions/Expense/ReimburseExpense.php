@@ -6,7 +6,6 @@ namespace App\Actions\Expense;
 
 use App\Enums\ExpenseStatus;
 use App\Models\Expense;
-use App\Models\User;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
 
 final class ReimburseExpense
@@ -16,7 +15,7 @@ final class ReimburseExpense
      *
      * @throws InvalidArgumentException if transition is invalid
      */
-    public function execute(Expense $expense, User $processor): Expense
+    public function execute(Expense $expense): Expense
     {
         $expense->transitionTo(ExpenseStatus::Reimbursed);
         $expense->save();

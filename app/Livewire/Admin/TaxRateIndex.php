@@ -55,7 +55,7 @@ final class TaxRateIndex extends Component
 
     public function toggleActive(int $id): void
     {
-        $taxRate = TaxRate::findOrFail($id);
+        $taxRate = TaxRate::query()->findOrFail($id);
         $taxRate->is_active = ! $taxRate->is_active;
         $taxRate->save();
 
@@ -68,10 +68,10 @@ final class TaxRateIndex extends Component
 
     public function delete(int $id): void
     {
-        $taxRate = TaxRate::findOrFail($id);
+        $taxRate = TaxRate::query()->findOrFail($id);
 
         if ($taxRate->lineItems()->count() > 0) {
-            session()->flash('error', "Cannot delete: used on {$taxRate->lineItems()->count()} invoices");
+            session()->flash('error', sprintf('Cannot delete: used on %s invoices', $taxRate->lineItems()->count()));
         } else {
             $taxRate->delete();
             session()->flash('success', 'Tax rate deleted');

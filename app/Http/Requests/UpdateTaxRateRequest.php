@@ -41,10 +41,10 @@ final class UpdateTaxRateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'percentage' => 'required|numeric|min:0|max:100',
-            'is_default' => 'required|boolean',
-            'is_active' => 'required|boolean',
+            'name' => ['required', 'string', 'max:255'],
+            'percentage' => ['required', 'numeric', 'min:0', 'max:100'],
+            'is_default' => ['required', 'boolean'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 

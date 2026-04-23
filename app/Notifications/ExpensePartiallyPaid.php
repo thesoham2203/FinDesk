@@ -37,7 +37,7 @@ final class ExpensePartiallyPaid extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Expense Partially Paid',
-            'message' => "Your expense \"{$this->expense->title}\" for {$this->expense->formattedAmount} was Partially paid by {$this->approver->name}",
+            'message' => sprintf('Your expense "%s" for %s was Partially paid by %s', $this->expense->title, $this->expense->formattedAmount, $this->approver->name),
             'expense_id' => $this->expense->id,
             'action_url' => route('expenses.show', $this->expense),
             'approver_name' => $this->approver->name,

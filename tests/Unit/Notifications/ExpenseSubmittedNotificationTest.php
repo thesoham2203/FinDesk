@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Expense;
 use App\Models\User;
 use App\Notifications\ExpenseSubmittedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 describe('ExpenseSubmittedNotification', function (): void {
     it('returns database channel', function (): void {
@@ -53,6 +54,7 @@ describe('ExpenseSubmittedNotification', function (): void {
     it('includes submitted date when available', function (): void {
         $expense = Expense::factory()->create();
         $expense->update(['submitted_at' => now()]);
+
         $notifiable = User::factory()->create();
 
         $notification = new ExpenseSubmittedNotification($expense);
@@ -66,6 +68,6 @@ describe('ExpenseSubmittedNotification', function (): void {
 
         $notification = new ExpenseSubmittedNotification($expense);
 
-        expect($notification instanceof Illuminate\Contracts\Queue\ShouldQueue)->toBeTrue();
+        expect($notification instanceof ShouldQueue)->toBeTrue();
     });
 });

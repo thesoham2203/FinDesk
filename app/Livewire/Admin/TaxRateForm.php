@@ -61,7 +61,7 @@ final class TaxRateForm extends Component
     public function mount(?TaxRate $taxRate = null): void
     {
         // TODO: Implement
-        if ($taxRate) {
+        if ($taxRate instanceof TaxRate) {
             $this->taxRateId = $taxRate->id;
             $this->name = $taxRate->name;
             $this->percentage = (string) $taxRate->percentage;
@@ -72,15 +72,14 @@ final class TaxRateForm extends Component
 
     public function save(): void
     {
-        // TODO: Implement
         $this->validate();
 
         if ($this->isDefault) {
-            TaxRate::where('is_default', true)->update(['is_default' => false]);
+            TaxRate::query()->where('is_default', true)->update(['is_default' => false]);
         }
 
         if ($this->taxRateId) {
-            $taxRate = TaxRate::findOrFail($this->taxRateId);
+            $taxRate = TaxRate::query()->findOrFail($this->taxRateId);
             $taxRate->update([
                 'name' => $this->name,
                 'percentage' => $this->percentage,
@@ -88,7 +87,7 @@ final class TaxRateForm extends Component
                 'is_active' => $this->isActive,
             ]);
         } else {
-            TaxRate::create([
+            TaxRate::query()->create([
                 'name' => $this->name,
                 'percentage' => $this->percentage,
                 'is_default' => $this->isDefault,

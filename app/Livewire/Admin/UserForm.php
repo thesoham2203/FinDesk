@@ -44,7 +44,7 @@ final class UserForm extends Component
     {
         $this->authorize('create', User::class);
 
-        if ($user) {
+        if ($user instanceof User) {
             $this->userId = $user->id;
             $this->name = $user->name;
             $this->email = $user->email;
@@ -86,11 +86,11 @@ final class UserForm extends Component
         }
 
         if ($this->userId) {
-            $user = User::findOrFail($this->userId);
+            $user = User::query()->findOrFail($this->userId);
             $user->update($data);
             session()->flash('success', 'User updated successfully');
         } else {
-            User::create($data);
+            User::query()->create($data);
             session()->flash('success', 'User created successfully');
         }
 
@@ -138,7 +138,7 @@ final class UserForm extends Component
         return view('livewire.admin.user-form', [
             'departments' => $this->departments,
             'managers' => $this->managers,
-            'roles' => collect(UserRole::cases())->mapWithKeys(fn (UserRole $role) => [$role->value => $role->label()]),
+            'roles' => collect(UserRole::cases())->mapWithKeys(fn (UserRole $role): array => [$role->value => $role->label()]),
         ]);
     }
 }

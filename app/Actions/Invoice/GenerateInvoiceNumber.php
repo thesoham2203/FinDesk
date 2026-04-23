@@ -32,7 +32,7 @@ final class GenerateInvoiceNumber
     {
         $year = now()->year;
 
-        $invoiceNumber = DB::transaction(function () use ($year): string {
+        return DB::transaction(function () use ($year): string {
             // Lock the last invoice of the current year for exclusive access
             $lastInvoice = Invoice::query()
                 ->whereYear('created_at', $year)
@@ -46,7 +46,7 @@ final class GenerateInvoiceNumber
                 $nextNumber = 1;
             } else {
                 // Extract sequence number from existing invoice_number (e.g., '0042' from 'INV-2026-0042')
-                $parts = explode('-', $lastInvoice->invoice_number);
+                $parts = explode('-', (string) $lastInvoice->invoice_number);
                 $currentSequence = (int) $parts[2] ?? 0;
                 $nextNumber = $currentSequence + 1;
             }
@@ -54,7 +54,5 @@ final class GenerateInvoiceNumber
             // Format as INV-YYYY-NNNN (zero-padded to 4 digits)
             return sprintf('INV-%d-%04d', $year, $nextNumber);
         });
-
-        return $invoiceNumber;
     }
 }

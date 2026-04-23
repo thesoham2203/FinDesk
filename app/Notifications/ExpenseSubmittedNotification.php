@@ -33,7 +33,7 @@ final class ExpenseSubmittedNotification extends Notification implements ShouldQ
     {
         return [
             'title' => 'New Expense Submitted',
-            'message' => "{$this->expense->user->name} submitted \"{$this->expense->title}\" for {$this->expense->formattedAmount}",
+            'message' => sprintf('%s submitted "%s" for %s', $this->expense->user->name, $this->expense->title, $this->expense->formattedAmount),
             'expense_id' => $this->expense->id,
             'action_url' => route('expenses.show', $this->expense),
             'submitted_at' => $this->expense->submitted_at?->toDateTimeString(),

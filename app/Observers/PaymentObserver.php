@@ -28,10 +28,11 @@ final class PaymentObserver
         } elseif ($invoice->due_date < now() && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::Overdue);
         }
+
         $invoice->save();
 
         // Dispatch event for listeners to react (notifications, activity logging)
-        PaymentRecorded::dispatch($payment, $invoice);
+        event(new PaymentRecorded($payment, $invoice));
     }
 
     /**
@@ -52,6 +53,7 @@ final class PaymentObserver
         } elseif ($invoice->due_date < now() && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::Overdue);
         }
+
         $invoice->save();
     }
 }

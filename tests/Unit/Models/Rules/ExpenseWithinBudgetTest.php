@@ -7,19 +7,19 @@ use App\Models\Expense;
 use App\Rules\ExpenseWithinBudget;
 
 // write tests for ExpenseWithinBudget rule
-test('department with no expenses passes validation', function () {
+test('department with no expenses passes validation', function (): void {
     $department = Department::factory()->create(['monthly_budget' => 100000]); // 1000.00
     $rule = new ExpenseWithinBudget(departmentId: $department->id, amount: 50000); // 500.00
 
     $fails = [];
-    $rule->validate('amount', 50000, function ($message) use (&$fails) {
+    $rule->validate('amount', 50000, function ($message) use (&$fails): void {
         $fails[] = $message;
     });
 
     expect($fails)->toBeEmpty();
 });
 
-test('expense exceeding budget fails validation', function () {
+test('expense exceeding budget fails validation', function (): void {
     $department = Department::factory()->create(['monthly_budget' => 100000]); // 1000.00
     Expense::factory()->create([
         'department_id' => $department->id,
@@ -31,7 +31,7 @@ test('expense exceeding budget fails validation', function () {
     $rule = new ExpenseWithinBudget(departmentId: $department->id, amount: 50000); // 500.00 more
 
     $fails = [];
-    $rule->validate('amount', 50000, function ($message) use (&$fails) {
+    $rule->validate('amount', 50000, function ($message) use (&$fails): void {
         $fails[] = $message;
     });
 
@@ -39,7 +39,7 @@ test('expense exceeding budget fails validation', function () {
     expect($fails[0])->toContain('exceed');
 });
 
-test('expense within budget passes validation', function () {
+test('expense within budget passes validation', function (): void {
     $department = Department::factory()->create(['monthly_budget' => 100000]); // 1000.00
     Expense::factory()->create([
         'department_id' => $department->id,
@@ -51,7 +51,7 @@ test('expense within budget passes validation', function () {
     $rule = new ExpenseWithinBudget(departmentId: $department->id, amount: 40000); // 400.00 more = 700.00 total
 
     $fails = [];
-    $rule->validate('amount', 40000, function ($message) use (&$fails) {
+    $rule->validate('amount', 40000, function ($message) use (&$fails): void {
         $fails[] = $message;
     });
 

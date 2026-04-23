@@ -6,8 +6,10 @@ namespace App\Livewire\Invoices;
 
 use App\Models\Client;
 use App\Models\Invoice;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -43,17 +45,19 @@ final class InvoiceIndex extends Component
      * }>
      *
      * @return Paginator<Invoice>
+     * @return LengthAwarePaginator<Invoice>
      */
     #[Computed]
     public function invoices(): LengthAwarePaginator
     {
-        $query = Invoice::with(['client', 'creator'])
-            ->when($this->search, fn ($q) => $q->where('invoice_number', 'like', "%{$this->search}%"))
-            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
-            ->when($this->clientFilter, fn ($q) => $q->where('client_id', $this->clientFilter))
-            ->when($this->dateFrom, fn ($q) => $q->whereDate('issue_date', '>=', $this->dateFrom))
-            ->when($this->dateTo, fn ($q) => $q->whereDate('issue_date', '<=', $this->dateTo))
-            ->orderByDesc('created_at');
+        $query = Invoice::query()
+            ->with(['client', 'creator'])
+            ->when($this->search !== '', fn (Builder $query): Builder => $query->where('invoice_number', 'like', sprintf('%%%s%%', $this->search)))
+            ->when($this->statusFilter !== '', fn (Builder $query): Builder => $query->where('status', $this->statusFilter))
+            ->when($this->clientFilter !== '', fn (Builder $query): Builder => $query->where('client_id', $this->clientFilter))
+            ->when($this->dateFrom !== '', fn (Builder $query): Builder => $query->whereDate('issue_date', '>=', $this->dateFrom))
+            ->when($this->dateTo !== '', fn (Builder $query): Builder => $query->whereDate('issue_date', '<=', $this->dateTo))
+            ->latest();
 
         return $query->paginate(15);
     }
@@ -61,15 +65,15 @@ final class InvoiceIndex extends Component
     /**
      * TODO: Return all clients for filter dropdown.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<Client>
+     * @return EloquentCollection<Client>
      */
     #[Computed]
-    public function clients()
+    public function clients(): EloquentCollection
     {
         return Client::all();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.invoices.invoice-index');
     }

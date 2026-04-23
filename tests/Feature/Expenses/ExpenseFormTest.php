@@ -7,11 +7,12 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\View\ViewException;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-it('displays empty form for creating new expense', function () {
+it('displays empty form for creating new expense', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -21,7 +22,7 @@ it('displays empty form for creating new expense', function () {
         ->assertSeeText('Category');
 });
 
-it('validates required fields on save', function () {
+it('validates required fields on save', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -33,7 +34,7 @@ it('validates required fields on save', function () {
         ->assertHasErrors(['title', 'amount', 'categoryId']);
 });
 
-it('validates amount must be greater than 0', function () {
+it('validates amount must be greater than 0', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)
@@ -45,7 +46,7 @@ it('validates amount must be greater than 0', function () {
         ->assertHasErrors('amount');
 });
 
-it('creates new expense successfully', function () {
+it('creates new expense successfully', function (): void {
     $user = User::factory()->create();
     $category = ExpenseCategory::factory()->create(['requires_receipt' => false]);
 
@@ -59,13 +60,13 @@ it('creates new expense successfully', function () {
         ->set('date', now()->format('Y-m-d'))
         ->call('save');
 
-    expect(Expense::where('title', 'Flight Ticket')->first())
+    expect(Expense::query()->where('title', 'Flight Ticket')->first())
         ->not->toBeNull()
         ->amount->toBe(500000) // 5000 * 100 = 500000 paise
         ->status->toBe(ExpenseStatus::Draft);
 });
 
-it('loads existing draft expense for editing', function () {
+it('loads existing draft expense for editing', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->create([
         'user_id' => $user->id,
@@ -79,16 +80,16 @@ it('loads existing draft expense for editing', function () {
         ->assertSet('amount', '1000');
 });
 
-it('prevents editing of non-draft expenses', function () {
+it('prevents editing of non-draft expenses', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->submitted()->create(['user_id' => $user->id]);
 
     expect(fn () => Livewire::actingAs($user)
         ->test('expenses.expense-form', ['expense' => $expense])
-    )->toThrow(Illuminate\View\ViewException::class); // Livewire wraps InvalidArgumentException
+    )->toThrow(ViewException::class); // Livewire wraps InvalidArgumentException
 });
 
-it('updates existing expense successfully', function () {
+it('updates existing expense successfully', function (): void {
     $user = User::factory()->create();
     $category = ExpenseCategory::factory()->create();
     $expense = Expense::factory()->create(['user_id' => $user->id]);
@@ -106,7 +107,7 @@ it('updates existing expense successfully', function () {
         ->amount->toBe(200000);
 });
 
-it('submits expense when saving with andSubmit flag', function () {
+it('submits expense when saving with andSubmit flag', function (): void {
     $user = User::factory()->create();
     $category = ExpenseCategory::factory()->create();
 
@@ -119,11 +120,11 @@ it('submits expense when saving with andSubmit flag', function () {
         ->set('date', now()->format('Y-m-d'))
         ->call('save', true);
 
-    expect(Expense::where('title', 'Urgent Expense')->first())
+    expect(Expense::query()->where('title', 'Urgent Expense')->first())
         ->status->toBe(ExpenseStatus::Submitted);
 });
 
-it('updates category requirements when category is set', function () {
+it('updates category requirements when category is set', function (): void {
     $user = User::factory()->create();
     $categoryWithReceipt = ExpenseCategory::factory()->create(['requires_receipt' => true]);
     $categoryNoReceipt = ExpenseCategory::factory()->create(['requires_receipt' => false]);

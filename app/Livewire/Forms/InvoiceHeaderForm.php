@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-
 namespace App\Livewire\Forms;
 
+use App\Models\Invoice;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -29,7 +29,7 @@ final class InvoiceHeaderForm extends Form
      * TODO: Optional method to populate form from existing invoice.
      * Useful for edit mode — set all properties from Invoice model.
      */
-    public function setFromInvoice(\App\Models\Invoice $invoice): void
+    public function setFromInvoice(Invoice $invoice): void
     {
         $this->clientId = (string) $invoice->client_id;
         $this->issueDate = $invoice->issue_date->toDateString();

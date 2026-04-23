@@ -104,27 +104,6 @@ final class Expense extends Model
         return $this->morphMany(Activity::class, 'subject');
     }
 
-    public function formattedAmount(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->amount / 100, 2),
-        );
-    }
-
-    public function formattedReimbursedAmount(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->reimbursed_amount / 100, 2),
-        );
-    }
-
-    public function formattedDueAmount(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->due_amount / 100, 2),
-        );
-    }
-
     /**
      * Transition the expense to a new status, validating via the state machine.
      *
@@ -134,7 +113,7 @@ final class Expense extends Model
     {
         $allowedTransitions = $this->status->allowedTransitions();
 
-        if (! in_array($newStatus, $allowedTransitions, true)) {
+        if (!in_array($newStatus, $allowedTransitions, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot transition from %s to %s',
                 $this->status->label(),
@@ -145,11 +124,32 @@ final class Expense extends Model
         $this->status = $newStatus;
     }
 
+    public function formattedAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->amount / 100, 2),
+        );
+    }
+
+    protected function formattedReimbursedAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->reimbursed_amount / 100, 2),
+        );
+    }
+
+    protected function formattedDueAmount(): Attribute
+    {
+        return Attribute::make(
+            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->due_amount / 100, 2),
+        );
+    }
+
     /**
      * @param  Builder<Expense>  $query
      * @return Builder<Expense>
      */
-    public function scopeForDepartment(Builder $query, int $departmentId): Builder
+    protected function scopeForDepartment(Builder $query, int $departmentId): Builder
     {
         return $query->where('department_id', $departmentId);
     }
@@ -158,7 +158,7 @@ final class Expense extends Model
      * @param  Builder<Expense>  $query
      * @return Builder<Expense>
      */
-    public function scopeWithStatus(Builder $query, ExpenseStatus $status): Builder
+    protected function scopeWithStatus(Builder $query, ExpenseStatus $status): Builder
     {
         return $query->where('status', $status);
     }
@@ -167,7 +167,7 @@ final class Expense extends Model
      * @param  Builder<Expense>  $query
      * @return Builder<Expense>
      */
-    public function scopeSubmittedInMonth(Builder $query, int $year, int $month): Builder
+    protected function scopeSubmittedInMonth(Builder $query, int $year, int $month): Builder
     {
         return $query->whereYear('submitted_at', $year)
             ->whereMonth('submitted_at', $month);
@@ -177,7 +177,7 @@ final class Expense extends Model
      * @param  Builder<Expense>  $query
      * @return Builder<Expense>
      */
-    public function scopePending(Builder $query): Builder
+    protected function scopePending(Builder $query): Builder
     {
         return $query->where('status', ExpenseStatus::Submitted);
     }

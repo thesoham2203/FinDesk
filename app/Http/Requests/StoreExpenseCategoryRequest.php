@@ -47,10 +47,10 @@ final class StoreExpenseCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:expense_categories',
-            'description' => 'nullable|string|max:1000',
-            'max_amount' => 'nullable|integer|min:1',
-            'requires_receipt' => 'required|boolean',
+            'name' => ['required', 'string', 'max:255', 'unique:expense_categories'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'max_amount' => ['nullable', 'integer', 'min:1'],
+            'requires_receipt' => ['required', 'boolean'],
         ];
     }
 

@@ -17,11 +17,7 @@ final class ExpensePolicy
     public function viewAny(User $user): bool
     {
         // TODO: All authenticated roles can view expense lists (but queries should scope differently)
-        if ($user) {
-            return true;
-        }
-
-        return false;
+        return (bool) $user;
     }
 
     /**
@@ -32,14 +28,12 @@ final class ExpensePolicy
         if ($user->role->value === UserRole::Employee->value && $expense->user_id === $user->id) {
             return true;
         }
+
         if ($user->role->value === UserRole::Manager->value && $expense->department_id === $user->department_id) {
             return true;
         }
-        if ($user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value) {
-            return true;
-        }
 
-        return false;
+        return $user->role->value === UserRole::Admin->value || $user->role->value === UserRole::Accountant->value;
     }
 
     /**
@@ -47,13 +41,11 @@ final class ExpensePolicy
      */
     public function create(User $user): bool
     {
-        if ($user->role->value === UserRole::Employee->value) {
-            if ($user->department_id !== null) {
-                return true;
-            }
+        if ($user->role->value !== UserRole::Employee->value) {
+            return false;
         }
 
-        return false;
+        return $user->department_id !== null;
     }
 
     /**
@@ -61,12 +53,7 @@ final class ExpensePolicy
      */
     public function update(User $user, Expense $expense): bool
     {
-
-        if ($expense->user_id === $user->id && $expense->status === ExpenseStatus::Draft || $user->role->value === UserRole::Manager->value) {
-            return true;
-        }
-
-        return false;
+        return $expense->user_id === $user->id && $expense->status === ExpenseStatus::Draft || $user->role->value === UserRole::Manager->value;
     }
 
     /**
@@ -74,13 +61,11 @@ final class ExpensePolicy
      */
     public function delete(User $user, Expense $expense): bool
     {
-        if ($expense->user_id === $user->id) {
-            if ($expense->status === ExpenseStatus::Draft) {
-                return true;
-            }
+        if ($expense->user_id !== $user->id) {
+            return false;
         }
 
-        return false;
+        return $expense->status === ExpenseStatus::Draft;
     }
 
     public function approve(User $user, Expense $expense): bool
@@ -88,14 +73,12 @@ final class ExpensePolicy
         if ($user->role->value !== UserRole::Manager->value) {
             return false;
         }
+
         if ($expense->department_id !== $user->department_id) {
             return false;
         }
-        if ($expense->status !== ExpenseStatus::Submitted) {
-            return false;
-        }
 
-        return true;
+        return $expense->status === ExpenseStatus::Submitted;
     }
 
     /**
@@ -119,14 +102,12 @@ final class ExpensePolicy
         if ($user->role->value !== UserRole::Manager->value) {
             return false;
         }
+
         if ($expense->department_id !== $user->department_id) {
             return false;
         }
-        if ($expense->status !== ExpenseStatus::Submitted) {
-            return false;
-        }
 
-        return true;
+        return $expense->status === ExpenseStatus::Submitted;
     }
 
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Enums\UserRole;
-use App\Models\Organization;
 use App\Models\User;
 
 final class OrganizationPolicy

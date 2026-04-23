@@ -110,40 +110,6 @@ final class Invoice extends Model
         return $this->morphMany(Activity::class, 'subject');
     }
 
-    public function formattedSubtotal(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->subtotal / 100, 2),
-        );
-    }
-
-    public function formattedTaxTotal(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->tax_total / 100, 2),
-        );
-    }
-
-    public function formattedTotal(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): string => $this->currency->symbol().' '.number_format($this->total / 100, 2),
-        );
-    }
-
-    /**
-     * Amount still due (total - sum of payments).
-     * Computed value, not stored in database.
-     *
-     * @return Attribute<int, never>
-     */
-    public function amountDue(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): int => $this->total - $this->payments()->sum('amount'),
-        );
-    }
-
     /**
      * Transition the invoice to a new status, validating via the state machine.
      *
@@ -166,7 +132,7 @@ final class Invoice extends Model
 
         $this->update(['status' => $newStatus]);
 
-        Activity::create([
+        Activity::query()->create([
             'user_id' => auth()->id(),
             'subject_type' => self::class,
             'subject_id' => $this->id,
@@ -185,5 +151,39 @@ final class Invoice extends Model
             'tax_total' => $taxTotal,
             'total' => $total,
         ]);
+    }
+
+    protected function formattedSubtotal(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->subtotal / 100, 2),
+        );
+    }
+
+    protected function formattedTaxTotal(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->tax_total / 100, 2),
+        );
+    }
+
+    protected function formattedTotal(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->total / 100, 2),
+        );
+    }
+
+    /**
+     * Amount still due (total - sum of payments).
+     * Computed value, not stored in database.
+     *
+     * @return Attribute<int, never>
+     */
+    protected function amountDue(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): int => $this->total - $this->payments()->sum('amount'),
+        );
     }
 }

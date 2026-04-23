@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +54,7 @@ final class Department extends Model
     public function formattedBudget(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => '₹ '.number_format($this->monthly_budget / 100, 2),
+            get: fn(): string => '₹ ' . number_format($this->monthly_budget / 100, 2),
         );
     }
 
@@ -70,11 +69,12 @@ final class Department extends Model
     {
         // TODO: [Implement budget usage subquery]
 
-        $query->addSelect(['monthly_spent' => Expense::query()
-            ->whereBelongsTo($this)
-            ->whereYear('submitted_at', now()->year)
-            ->whereMonth('submitted_at', now()->month)
-            ->select(DB::raw('sum(amount)')),
+        $query->addSelect([
+            'monthly_spent' => Expense::query()
+                ->whereBelongsTo($this)
+                ->whereYear('submitted_at', now()->year)
+                ->whereMonth('submitted_at', now()->month)
+                ->select(DB::raw('sum(amount)')),
         ]);
 
         return $query;

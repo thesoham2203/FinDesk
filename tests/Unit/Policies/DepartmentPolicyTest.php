@@ -30,7 +30,7 @@ describe('DepartmentPolicy', function (): void {
             $department = Department::factory()->create();
             $policy = new DepartmentPolicy();
 
-            expect($policy->view($admin, $department))->toBeTrue();
+            expect($policy->view($admin))->toBeTrue();
         });
 
         it('prevents non-admin from viewing a specific department', function (): void {
@@ -38,7 +38,7 @@ describe('DepartmentPolicy', function (): void {
             $department = Department::factory()->create();
             $policy = new DepartmentPolicy();
 
-            expect($policy->view($employee, $department))->toBeFalse();
+            expect($policy->view($employee))->toBeFalse();
         });
     });
 
@@ -64,7 +64,7 @@ describe('DepartmentPolicy', function (): void {
             $department = Department::factory()->create();
             $policy = new DepartmentPolicy();
 
-            expect($policy->update($admin, $department))->toBeTrue();
+            expect($policy->update($admin))->toBeTrue();
         });
     });
 

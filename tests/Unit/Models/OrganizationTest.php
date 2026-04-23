@@ -103,7 +103,7 @@ test('organization::current uses cache key organization', function (): void {
 });
 
 test('organization fillable fields are correct', function (): void {
-    $fillable = (new Organization())->getFillable();
+    $fillable = new Organization()->getFillable();
 
     expect($fillable)->toContain(
         'name',

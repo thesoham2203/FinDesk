@@ -39,9 +39,7 @@ final class UpdateExpense
      */
     public function execute(Expense $expense, array $data, ?UploadedFile $receipt = null): Expense
     {
-        if ($expense->status !== ExpenseStatus::Draft) {
-            throw new InvalidArgumentException('Only draft expenses can be updated.');
-        }
+        throw_if($expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be updated.');
 
         $expense->title = $data['title'];
         $expense->amount = $data['amount'];
@@ -50,7 +48,13 @@ final class UpdateExpense
         $expense->category_id = (int) $data['category_id'];
         $expense->currency = $data['currency'];
 
-        if ($receipt !== null) {
+        if ($receipt instanceof UploadedFile) {
+            // Delete old file from receipt_path if it exists
+            if ($expense->receipt_path) {
+                Storage::delete($expense->receipt_path);
+            }
+
+            // Also delete all current attachments
             foreach ($expense->attachments as $attachment) {
                 Storage::disk($attachment->disk)->delete($attachment->path);
                 $attachment->delete();
@@ -61,11 +65,12 @@ final class UpdateExpense
             $mimeType = $receipt->getMimeType();
             $size = $receipt->getSize();
 
-            // Store the file
-            $path = $receipt->store('expenses');
+            // Store the file in 'receipts' as expected by tests
+            $path = $receipt->store('receipts');
+            $expense->receipt_path = $path;
 
             // Create new attachment record with captured metadata
-            Attachment::create([
+            Attachment::query()->create([
                 'attachable_type' => Expense::class,
                 'attachable_id' => $expense->id,
                 'user_id' => $expense->user_id,

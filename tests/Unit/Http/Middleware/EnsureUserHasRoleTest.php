@@ -5,8 +5,10 @@ declare(strict_types=1);
 use App\Enums\UserRole;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Models\User;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 describe('EnsureUserHasRole Middleware', function (): void {
     it('allows user with required role to pass through', function (): void {
@@ -16,7 +18,7 @@ describe('EnsureUserHasRole Middleware', function (): void {
         $request->setUserResolver(fn () => $user);
 
         $middleware = new EnsureUserHasRole();
-        $response = $middleware->handle($request, fn () => response('Success'), 'admin');
+        $response = $middleware->handle($request, fn (): ResponseFactory|Response => response('Success'), 'admin');
 
         expect($response)->toBeInstanceOf(Response::class);
         expect($response->getContent())->toBe('Success');
@@ -31,7 +33,7 @@ describe('EnsureUserHasRole Middleware', function (): void {
         $middleware = new EnsureUserHasRole();
         $response = $middleware->handle(
             $request,
-            fn () => response('Success'),
+            fn (): ResponseFactory|Response => response('Success'),
             'manager',
             'admin'
         );
@@ -48,27 +50,27 @@ describe('EnsureUserHasRole Middleware', function (): void {
         $middleware = new EnsureUserHasRole();
 
         expect(
-            fn () => $middleware->handle(
+            fn (): Response => $middleware->handle(
                 $request,
-                fn () => response('Success'),
+                fn (): ResponseFactory|Response => response('Success'),
                 'admin'
             )
-        )->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        )->toThrow(HttpException::class);
     });
 
     it('denies request with no authenticated user', function (): void {
         $request = Request::create('/', 'GET');
-        $request->setUserResolver(fn () => null);
+        $request->setUserResolver(fn (): null => null);
 
         $middleware = new EnsureUserHasRole();
 
         expect(
-            fn () => $middleware->handle(
+            fn (): Response => $middleware->handle(
                 $request,
-                fn () => response('Success'),
+                fn (): ResponseFactory|Response => response('Success'),
                 'admin'
             )
-        )->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        )->toThrow(HttpException::class);
     });
 
     it('denies accountant role from admin-only route', function (): void {
@@ -80,12 +82,12 @@ describe('EnsureUserHasRole Middleware', function (): void {
         $middleware = new EnsureUserHasRole();
 
         expect(
-            fn () => $middleware->handle(
+            fn (): Response => $middleware->handle(
                 $request,
-                fn () => response('Success'),
+                fn (): ResponseFactory|Response => response('Success'),
                 'admin'
             )
-        )->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        )->toThrow(HttpException::class);
     });
 
     it('is case sensitive for role matching', function (): void {
@@ -97,11 +99,11 @@ describe('EnsureUserHasRole Middleware', function (): void {
         $middleware = new EnsureUserHasRole();
 
         expect(
-            fn () => $middleware->handle(
+            fn (): Response => $middleware->handle(
                 $request,
-                fn () => response('Success'),
+                fn (): ResponseFactory|Response => response('Success'),
                 'ADMIN' // Wrong case
             )
-        )->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        )->toThrow(HttpException::class);
     });
 });

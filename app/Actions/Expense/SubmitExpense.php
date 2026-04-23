@@ -17,9 +17,8 @@ final class SubmitExpense
      */
     public function execute(Expense $expense): Expense
     {
-        if ($expense->status !== ExpenseStatus::Draft) {
-            throw new InvalidArgumentException('Only draft expenses can be submitted.');
-        }
+        throw_if($expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be submitted.');
+
         $expense->transitionTo(ExpenseStatus::Submitted);
         $expense->submitted_at = now();
         $expense->department_id = $expense->user->department_id;

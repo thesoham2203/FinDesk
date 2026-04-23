@@ -67,7 +67,7 @@ it('cannot transition from invalid state', function (): void {
 
     $rejectAction = resolve(RejectExpense::class);
 
-    expect(function () use ($rejectAction, $expense, $rejector) {
+    expect(function () use ($rejectAction, $expense, $rejector): void {
         $rejectAction->execute($expense, $rejector, 'Invalid');
     })->toThrow(Exception::class);
 });

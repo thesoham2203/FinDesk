@@ -110,7 +110,7 @@ test('multiple attachments can be created for same polymorphic model', function 
 });
 
 test('attachment fillable fields are correct', function (): void {
-    $fillable = (new Attachment())->getFillable();
+    $fillable = new Attachment()->getFillable();
 
     expect($fillable)->toContain(
         'attachable_type',

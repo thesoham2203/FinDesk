@@ -21,7 +21,7 @@ it('renders the pending approvals component', function (): void {
     $component->assertStatus(200);
 });
 
-it('displays pending expenses for manager\'s department', function (): void {
+it("displays pending expenses for manager's department", function (): void {
     $department = Department::factory()->create();
     $manager = User::factory()->create(['department_id' => $department->id]);
     $employee = User::factory()->create(['department_id' => $department->id]);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Expense;
 use App\Models\User;
 use App\Notifications\ExpenseApprovedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 describe('ExpenseApprovedNotification', function (): void {
     it('returns database channel', function (): void {
@@ -70,6 +71,6 @@ describe('ExpenseApprovedNotification', function (): void {
         $notification = new ExpenseApprovedNotification($expense, $approver);
 
         // Check that the notification implements ShouldQueue
-        expect($notification instanceof Illuminate\Contracts\Queue\ShouldQueue)->toBeTrue();
+        expect($notification instanceof ShouldQueue)->toBeTrue();
     });
 });
