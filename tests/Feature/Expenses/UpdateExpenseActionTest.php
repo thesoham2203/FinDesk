@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 use App\Actions\Expense\UpdateExpense;
 use App\Enums\ExpenseStatus;
+use App\Enums\UserRole;
+use App\Livewire\Expenses\ExpenseDetail;
+use App\Models\Attachment;
+use App\Models\Department;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -235,4 +241,81 @@ it('updates multiple fields in one call', function (): void {
     expect($updated->title)->toBe('New Title')
         ->and($updated->description)->toBe('New description')
         ->and($updated->amount)->toBe(10000);
+});
+
+it('prevents non-admin from marking as reimbursed', function (): void {
+    $department = Department::factory()->create();
+    $employee = User::factory()->create(['role' => UserRole::Employee, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::PartiallyPaid,
+        'user_id' => $employee->id,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('reimburse')->assertForbidden();
+});
+
+it('replaces receipt and creates attachment metadata', function (): void {
+    Storage::fake('local');
+
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+        'receipt_path' => 'receipts/old.pdf',
+    ]);
+
+    $existingAttachment = Attachment::factory()->create([
+        'attachable_type' => Expense::class,
+        'attachable_id' => $expense->id,
+        'user_id' => $expense->user_id,
+        'path' => 'receipts/old.pdf',
+        'disk' => 'local',
+    ]);
+
+    $category = ExpenseCategory::factory()->create();
+    $file = UploadedFile::fake()->create('new-receipt.pdf', 128, 'application/pdf');
+
+    $updated = resolve(UpdateExpense::class)->execute($expense, [
+        'title' => 'Updated',
+        'description' => 'desc',
+        'amount' => 5000,
+        'currency' => 'INR',
+        'category_id' => $category->id,
+        'date' => now()->format('Y-m-d'),
+    ], $file);
+
+    $this->assertDatabaseHas('attachments', [
+        'attachable_type' => Expense::class,
+        'attachable_id' => $updated->id,
+        'user_id' => $expense->user_id,
+        'original_name' => 'new-receipt.pdf',
+        'mime_type' => 'application/pdf',
+        'disk' => 'local',
+    ]);
+
+    $this->assertDatabaseMissing('attachments', [
+        'id' => $existingAttachment->id,
+    ]);
+
+    Storage::disk('local')->assertMissing('receipts/old.pdf');
+});
+it('reciept path is null when no receipt uploaded', function (): void {
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+        'receipt_path' => null,
+    ]);
+
+    $category = ExpenseCategory::factory()->create();
+
+    $updated = resolve(UpdateExpense::class)->execute($expense, [
+        'title' => 'Updated',
+        'description' => 'desc',
+        'amount' => 5000,
+        'currency' => 'INR',
+        'category_id' => $category->id,
+        'date' => now()->format('Y-m-d'),
+    ]);
+
+    expect($updated->receipt_path)->toBeNull();
 });

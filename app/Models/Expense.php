@@ -113,7 +113,7 @@ final class Expense extends Model
     {
         $allowedTransitions = $this->status->allowedTransitions();
 
-        if (!in_array($newStatus, $allowedTransitions, true)) {
+        if (! in_array($newStatus, $allowedTransitions, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot transition from %s to %s',
                 $this->status->label(),
@@ -124,24 +124,24 @@ final class Expense extends Model
         $this->status = $newStatus;
     }
 
-    public function formattedAmount(): Attribute
+    protected function formattedAmount(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->amount / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->amount / 100, 2),
         );
     }
 
     protected function formattedReimbursedAmount(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->reimbursed_amount / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->reimbursed_amount / 100, 2),
         );
     }
 
     protected function formattedDueAmount(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => $this->currency->symbol() . ' ' . number_format($this->due_amount / 100, 2),
+            get: fn (): string => $this->currency->symbol().' '.number_format($this->due_amount / 100, 2),
         );
     }
 

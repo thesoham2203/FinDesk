@@ -249,5 +249,97 @@ describe('ExpensePolicy', function (): void {
 
             expect($policy->approve($manager, $expense))->toBeFalse();
         });
+        it('allows admin to approve any submitted expense', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->approve($admin, $expense))->toBeFalse();
+        });
+        it('allows accountant to approve any submitted expense', function (): void {
+            $accountant = User::factory()->create(['role' => UserRole::Accountant]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->approve($accountant, $expense))->toBeFalse();
+        });
+    });
+    describe('reject', function (): void {
+        it('allows manager to reject submitted expense in their department', function (): void {
+            $department = Department::factory()->create();
+            $manager = User::factory()->create([
+                'role' => UserRole::Manager,
+                'department_id' => $department->id,
+            ]);
+            $expense = Expense::factory()->create([
+                'department_id' => $department->id,
+                'status' => ExpenseStatus::Submitted,
+            ]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->reject($manager, $expense))->toBeTrue();
+        });
+
+        it('prevents non-manager from rejecting', function (): void {
+            $employee = User::factory()->create(['role' => UserRole::Employee]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->reject($employee, $expense))->toBeFalse();
+        });
+
+        it('prevents manager from rejecting other department expense', function (): void {
+            $department1 = Department::factory()->create();
+            $department2 = Department::factory()->create();
+            $manager = User::factory()->create([
+                'role' => UserRole::Manager,
+                'department_id' => $department1->id,
+            ]);
+            $expense = Expense::factory()->create([
+                'department_id' => $department2->id,
+                'status' => ExpenseStatus::Submitted,
+            ]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->reject($manager, $expense))->toBeFalse();
+        });
+
+        it('prevents manager from rejecting non-submitted expense', function (): void {
+            $department = Department::factory()->create();
+            $manager = User::factory()->create([
+                'role' => UserRole::Manager,
+                'department_id' => $department->id,
+            ]);
+            $expense = Expense::factory()->create([
+                'department_id' => $department->id,
+                'status' => ExpenseStatus::Draft,
+            ]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->reject($manager, $expense))->toBeFalse();
+        });
+    });
+    describe('partiallyPaid', function (): void {
+        it('allows manager to partially approve submitted expense in their department', function (): void {
+            $department = Department::factory()->create();
+            $manager = User::factory()->create([
+                'role' => UserRole::Manager,
+                'department_id' => $department->id,
+            ]);
+            $expense = Expense::factory()->create([
+                'department_id' => $department->id,
+                'status' => ExpenseStatus::Submitted,
+            ]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->partiallyPaid($manager, $expense))->toBeFalse();
+        });
+        it('allows admin to partially approve any submitted expense', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->partiallyPaid($admin, $expense))->toBeFalse();
+        });
     });
 });

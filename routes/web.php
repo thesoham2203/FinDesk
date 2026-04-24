@@ -7,6 +7,7 @@ use App\Livewire\Admin\ClientForm;
 use App\Livewire\Admin\ClientIndex;
 use App\Livewire\Admin\ExpenseCategoryForm;
 use App\Livewire\Admin\ExpenseCategoryIndex;
+use App\Livewire\Admin\OrganizationSettingsForm;
 use App\Livewire\Admin\TaxRateForm;
 use App\Livewire\Admin\TaxRateIndex;
 use App\Livewire\Admin\UserForm;
@@ -126,6 +127,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('/users/{user}/edit', UserForm::class)
         ->name('users.edit');
+
+    // Organization Settings
+    Route::get('/organization', OrganizationSettingsForm::class)
+        ->name('organization.settings');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('attachments')->name('attachments.')->group(function (): void {

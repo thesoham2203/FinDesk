@@ -5,28 +5,8 @@ declare(strict_types=1);
 use App\Enums\PaymentMethod;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Notifications\PaymentReceivedNotification;
 
-/**
- * ============================================================================
- * PAYMENT MODEL TESTS
- * ============================================================================
- *
- * WHAT WE'RE TESTING:
- * The Payment model tracks money received from clients against invoices.
- * Key concepts:
- * - One invoice can receive multiple payments (partial payment support)
- * - Each payment stores: amount (integer cents/paise), date, method, optional reference/notes
- * - Payment method is stored as PaymentMethod enum
- * - Observer pattern (Day 5) auto-updates invoice status based on payment total
- *
- * WHY THESE TESTS MATTER:
- * Payment accuracy is non-negotiable in financial software:
- * - Wrong amount = accounting mismatch
- * - Wrong date = revenue recognition errors
- * - Broken status updates = business reports are inaccurate
- *
- * ============================================================================
- */
 test('payment can be created with all required attributes', function (): void {
     $invoice = Invoice::factory()->sent()->create();
     $today = now()->format('Y-m-d');
@@ -250,4 +230,67 @@ test('payment can have both reference number and notes', function (): void {
 
     expect($payment->reference_number)->toBe($reference);
     expect($payment->notes)->toBe($notes);
+});
+test('payment can have neither reference number nor notes', function (): void {
+    $payment = Payment::factory()->create([
+        'reference_number' => null,
+        'notes' => null,
+    ]);
+
+    expect($payment->reference_number)->toBeNull();
+    expect($payment->notes)->toBeNull();
+});
+test('payment can have reference number but no notes', function (): void {
+    $reference = 'TXN-54321';
+
+    $payment = Payment::factory()->create([
+        'reference_number' => $reference,
+        'notes' => null,
+    ]);
+
+    expect($payment->reference_number)->toBe($reference);
+    expect($payment->notes)->toBeNull();
+});
+test('payment can have notes but no reference number', function (): void {
+    $notes = 'Payment received via PayPal';
+
+    $payment = Payment::factory()->create([
+        'reference_number' => null,
+        'notes' => $notes,
+    ]);
+
+    expect($payment->reference_number)->toBeNull();
+    expect($payment->notes)->toBe($notes);
+});
+test('payment with amount that would exceed invoice total fails validation', function (): void {
+    $invoice = Invoice::factory()->sent()->create(['total' => 100000]);
+    Payment::factory()->create(['invoice_id' => $invoice->id, 'amount' => 90000]);
+
+    $payment = Payment::factory()->make(['invoice_id' => $invoice->id, 'amount' => 15000]);
+
+    expect($payment->amount)->toBeGreaterThan($invoice->total - $invoice->payments->sum('amount'));
+});
+test('payment with negative amount fails validation', function (): void {
+    $payment = Payment::factory()->make(['amount' => -5000]);
+
+    expect($payment->amount)->toBeLessThan(0);
+});
+test('payment with non-existent invoice_id fails validation', function (): void {
+    $payment = Payment::factory()->make(['invoice_id' => 9999]);
+
+    expect($payment->invoice_id)->toBe(9999);
+});
+
+test('formatted amount accessor returns correct string', function (): void {
+    $payment = Payment::factory()->create(['amount' => 123456]);
+
+    expect($payment->formatted_amount)->toBe('₹1,234.56');
+});
+
+test('payment received notification returns database channel', function (): void {
+    $invoice = Invoice::factory()->sent()->create();
+    $payment = Payment::factory()->create(['invoice_id' => $invoice->id]);
+
+    $notification = new PaymentReceivedNotification($payment, $invoice);
+    expect($notification->via(null))->toContain('database');
 });

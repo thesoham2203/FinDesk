@@ -36,7 +36,7 @@ final class ClientForm extends Component
     #[Validate('required|email|max:255')]
     public string $email = '';
 
-    #[Validate('required|integer|max:10')]
+    #[Validate('required|string|max:10')]
     public string $phone = '';
 
     #[Validate('required|string|max:255')]
@@ -61,7 +61,7 @@ final class ClientForm extends Component
             $this->phone = $client->phone;
             $this->address = $client->address;
             $this->taxNumber = $client->tax_number;
-            $this->notes = $client->notes;
+            $this->notes = $client->notes ?? '';
         }
     }
 

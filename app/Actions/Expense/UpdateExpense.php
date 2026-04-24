@@ -2,23 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * UpdateExpense Action
- *
- * WHAT: Updates an existing draft expense and optionally replaces its receipt upload.
- *
- * WHY: Only draft expenses are editable, and this rule belongs in a reusable business-action
- *      layer rather than being spread across components or requests.
- *
- * IMPLEMENT: Verify the expense is Draft, apply validated data, handle receipt replacement,
- *            save the expense, and return the refreshed model.
- *
- * KEY CONCEPTS:
- * - Draft-only edit rules
- * - UploadedFile replacement flow
- * - Storage cleanup before replacement
- */
-
 namespace App\Actions\Expense;
 
 use App\Enums\ExpenseStatus;

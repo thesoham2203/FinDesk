@@ -78,3 +78,21 @@ describe('DepartmentPolicy', function (): void {
     });
 
 });
+
+describe('DepartmentPolicy delete method', function (): void {
+    it('allows admin to delete department', function (): void {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $department = Department::factory()->create();
+        $policy = new DepartmentPolicy();
+
+        expect($policy->delete($admin))->toBeTrue();
+    });
+
+    it('prevents non-admin from deleting department', function (): void {
+        $employee = User::factory()->create(['role' => UserRole::Employee]);
+        $department = Department::factory()->create();
+        $policy = new DepartmentPolicy();
+
+        expect($policy->delete($employee))->toBeFalse();
+    });
+});

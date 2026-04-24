@@ -2,26 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * StoreExpenseCategoryRequest
- *
- * WHAT: Validates data when CREATING a new expense category.
- *
- * WHY: Form Requests centralize validation logic — instead of writing rules
- *      directly in Livewire components, we extract them here. This makes rules
- *      reusable, testable independently, and consistent across the application.
- *
- * IMPLEMENT: Add authorize() method body to check Gate::allows('manage-categories').
- *            Validation rules are complete for Day 3. Day 4+ may add conditional
- *            rules via withValidator() or after() hook if needed.
- *
- * KEY CONCEPTS:
- * - Form Request Validation: https://laravel.com/docs/13.x/validation#form-request-validation
- * - Authorization: https://laravel.com/docs/13.x/authorization#creating-policies
- * - Money Conversion: User inputs dollars (e.g., "500.00"), convert to cents (50000)
- *   before storing. This is consistent across all money fields in the app.
- */
-
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;

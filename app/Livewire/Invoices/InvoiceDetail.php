@@ -28,11 +28,6 @@ final class InvoiceDetail extends Component
 
     public bool $showPartialPaymentModal = false;
 
-    /**
-     * TODO: Mount the component and load invoice with all relationships.
-     * 1. Load invoice with: client, creator, lineItems, payments, activities
-     * 2. Authorize: $this->authorize('view', $invoice)
-     */
     public function mount(Invoice $invoice): void
     {
         $this->authorize('view', $invoice);

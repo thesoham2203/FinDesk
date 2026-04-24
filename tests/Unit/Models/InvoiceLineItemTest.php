@@ -14,7 +14,7 @@ use App\Models\TaxRate;
  * WHAT WE'RE TESTING:
  * InvoiceLineItem represents a single line on an invoice (a service or product).
  * Each line item tracks: description, quantity (can be fractional), unit_price,
- * line_total (quantity × unit_price), tax_amount, relationships to Invoice and TaxRate.
+ * line_total (quantity ï¿½ unit_price), tax_amount, relationships to Invoice and TaxRate.
  *
  * WHY THESE TESTS MATTER:
  * Line items are how actual charges appear on invoices. Errors cascade immediately:

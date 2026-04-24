@@ -156,7 +156,7 @@ final class ExpenseDetail extends Component
         $this->authorize('partiallyPaid', $this->expense);
 
         $this->validate([
-            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:' . ($this->expense->amount / 100),
+            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:'.($this->expense->amount / 100),
         ], [
             'partialReimbursementAmount.max' => 'Reimbursement amount cannot exceed the expense amount.',
         ]);
@@ -182,7 +182,7 @@ final class ExpenseDetail extends Component
             'user_id' => auth()->id(),
             'subject_type' => Expense::class,
             'subject_id' => $this->expense->id,
-            'description' => 'Partial reimbursement recorded: ' . number_format($amountInPaise / 100, 2),
+            'description' => 'Partial reimbursement recorded: '.number_format($amountInPaise / 100, 2),
         ]);
 
         // Reset form and close modal
