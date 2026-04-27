@@ -13,7 +13,8 @@ parameters:
         - public
         - routes
 
-
     level: max
 
     tmpDir: /tmp/phpstan
+
+    memoryLimit: 2G

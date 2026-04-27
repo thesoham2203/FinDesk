@@ -32,10 +32,7 @@ final class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        /** @var array<string, string> $credentials */
-        $credentials = $this->only(['email', 'password']);
-
-        if (! Auth::attempt($credentials, $this->remember)) {
+        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -51,7 +48,7 @@ final class LoginForm extends Form
      */
     private function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 4)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
