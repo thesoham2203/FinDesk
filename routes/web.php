@@ -137,5 +137,8 @@ Route::middleware(['auth', 'verified'])->prefix('attachments')->name('attachment
     Route::get('/{attachment}/download', [AttachmentController::class, 'download'])
         ->name('download');
 });
+Route::prefix('client')
+    ->name('client.')
+    ->group(__DIR__.'/client.php');
 
 require __DIR__.'/auth.php';

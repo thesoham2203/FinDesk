@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 final class InvoiceFactory extends Factory
 {
+    private static int $sequence = 0;
+
     /**
      * Define the model's default state.
      *
@@ -41,12 +43,13 @@ final class InvoiceFactory extends Factory
     public function definition(): array
     {
         $year = now()->year;
-        $count = Invoice::query()->whereYear('created_at', $year)->count() + 1;
+        $existingCount = Invoice::query()->whereYear('created_at', $year)->count();
+        $nextNumber = $existingCount + (++self::$sequence);
 
         return [
             'client_id' => Client::factory(),
             'created_by' => User::factory(),
-            'invoice_number' => sprintf('INV-%d-%04d', $year, $count),
+            'invoice_number' => sprintf('INV-%d-%04d', $year, $nextNumber),
             'status' => 'draft',
             'issue_date' => $this->faker->date(),
             'due_date' => $this->faker->dateTimeBetween('+1 days', '+30 days')->format('Y-m-d'),
@@ -64,7 +67,7 @@ final class InvoiceFactory extends Factory
     public function sent(): self
     {
         return $this->state(fn (array $attributes): array => [
-            'status' => 'sent',
+            'status' => 'approved',
         ]);
     }
 

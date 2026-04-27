@@ -57,7 +57,7 @@ enum ExpenseStatus: string
             self::Draft => [self::Submitted],
             self::Submitted => [self::Approved, self::Rejected],
             self::Approved => [self::Reimbursed, self::PartiallyPaid],
-            self::PartiallyPaid => [self::Reimbursed],
+            self::PartiallyPaid => [self::Reimbursed, self::PartiallyPaid],
             self::Reimbursed => [],
             self::Rejected => [self::Draft],
         };

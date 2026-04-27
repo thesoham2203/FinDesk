@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 
 final class Invoice extends Model
@@ -133,7 +134,7 @@ final class Invoice extends Model
         $this->update(['status' => $newStatus]);
 
         Activity::query()->create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'subject_type' => self::class,
             'subject_id' => $this->id,
             'description' => sprintf('Invoice status changed from %s to %s', $this->status->label(), $newStatus->label()),

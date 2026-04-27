@@ -142,8 +142,11 @@ final class ExpenseDetail extends Component
     {
         $this->authorize('partiallyPaid', $this->expense);
 
-        if ($this->expense->status !== ExpenseStatus::Approved) {
-            $this->addError('status', 'Only approved expenses can be marked as partially paid.');
+        if (
+            $this->expense->status !== ExpenseStatus::Approved
+            && $this->expense->status !== ExpenseStatus::PartiallyPaid
+        ) {
+            $this->addError('status', 'Only approved or partially paid expenses can be marked as partially paid.');
 
             return;
         }
@@ -155,25 +158,34 @@ final class ExpenseDetail extends Component
     {
         $this->authorize('partiallyPaid', $this->expense);
 
+        $remainingDueAmount = $this->expense->due_amount ?? max(0, $this->expense->amount - $this->expense->reimbursed_amount);
+
+        if ($remainingDueAmount <= 0) {
+            $this->addError('status', 'This expense has no remaining balance to reimburse.');
+
+            return;
+        }
+
         $this->validate([
-            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:'.($this->expense->amount / 100),
+            'partialReimbursementAmount' => 'required|numeric|min:0.01|max:'.($remainingDueAmount / 100),
         ], [
-            'partialReimbursementAmount.max' => 'Reimbursement amount cannot exceed the expense amount.',
+            'partialReimbursementAmount.max' => 'Reimbursement amount cannot exceed the remaining expense balance.',
         ]);
 
         // Convert from currency display (e.g., 100.50) to paise/cents (e.g., 10050)
         $amountInPaise = (int) round((float) ($this->partialReimbursementAmount) * 100);
 
-        // Calculate new amounts
-        $newDueAmount = $this->expense->amount - $amountInPaise;
+        $currentReimbursedAmount = $this->expense->reimbursed_amount ?? 0;
+        $newReimbursedAmount = $currentReimbursedAmount + $amountInPaise;
+        $newDueAmount = max(0, $remainingDueAmount - $amountInPaise);
 
-        // Update expense with reimbursed and due amounts
+        // Update expense with cumulative reimbursed and due amounts.
         $this->expense->update([
-            'reimbursed_amount' => $amountInPaise,
+            'reimbursed_amount' => $newReimbursedAmount,
             'due_amount' => $newDueAmount,
         ]);
 
-        // Transition to PartiallyPaid status
+        // Keep the ticket open in PartiallyPaid until an admin closes it manually.
         $this->expense->transitionTo(ExpenseStatus::PartiallyPaid);
         $this->expense->save();
 

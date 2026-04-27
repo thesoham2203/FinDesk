@@ -10,6 +10,7 @@ enum UserRole: string
     case Manager = 'manager';
     case Employee = 'employee';
     case Accountant = 'accountant';
+    case Client = 'client';
 
     public function label(): string
     {
@@ -18,6 +19,7 @@ enum UserRole: string
             self::Manager => 'Manager',
             self::Employee => 'Employee',
             self::Accountant => 'Accountant',
+            self::Client => 'Client',
         };
     }
 
@@ -28,6 +30,7 @@ enum UserRole: string
             self::Manager => 'blue',
             self::Employee => 'green',
             self::Accountant => 'purple',
+            self::Client => 'gray',
         };
     }
 }

@@ -36,7 +36,7 @@ final class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->randomElement(['engineering', 'sales', 'hr', 'marketing']),
             'description' => $this->faker->sentence(),
             'monthly_budget' => $this->faker->numberBetween(1000000, 10000000),
         ];

@@ -38,7 +38,7 @@ new class extends Component {
                         {{ __('Expenses') }}
                     </x-nav-link>
 
-                    @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Employee->value, \App\Enums\UserRole::Manager->value, \App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
+                    @if(in_array(auth()->user()->role->value, [\App\Enums\UserRole::Manager->value, \App\Enums\UserRole::Admin->value, \App\Enums\UserRole::Accountant->value]))
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')"
                             wire:navigate>
                             {{ __('Invoices') }}

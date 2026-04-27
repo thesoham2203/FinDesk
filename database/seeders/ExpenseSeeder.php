@@ -2,24 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * ExpenseSeeder
- *
- * WHAT: Seeds the database with sample expenses in various workflow states.
- *
- * WHY: Testing requires expenses across all states to verify filters, state transitions,
- *      and authorization rules. This seeder creates realistic scenarios.
- *
- * CREATES:
- * - Draft expenses (2 employees × 2 expenses = 4 total) — ready to test submission
- * - Submitted expenses (2) — waiting for manager review
- * - Approved expense (1) — example of completed approval flow
- * - Rejected expense (1) — with rejection reason for resubmission testing
- * - Reimbursed expense (1) — terminal state
- *
- * TOTAL: ~9 diverse expenses covering all workflow states
- */
-
 namespace Database\Seeders;
 
 use App\Enums\ExpenseStatus;

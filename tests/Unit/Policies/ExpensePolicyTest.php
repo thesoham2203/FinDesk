@@ -320,26 +320,20 @@ describe('ExpensePolicy', function (): void {
         });
     });
     describe('partiallyPaid', function (): void {
-        it('allows manager to partially approve submitted expense in their department', function (): void {
-            $department = Department::factory()->create();
-            $manager = User::factory()->create([
-                'role' => UserRole::Manager,
-                'department_id' => $department->id,
-            ]);
-            $expense = Expense::factory()->create([
-                'department_id' => $department->id,
-                'status' => ExpenseStatus::Submitted,
-            ]);
-            $policy = new ExpensePolicy();
-
-            expect($policy->partiallyPaid($manager, $expense))->toBeFalse();
-        });
-        it('allows admin to partially approve any submitted expense', function (): void {
+        it('allows admin to mark an approved expense as partially paid', function (): void {
             $admin = User::factory()->create(['role' => UserRole::Admin]);
-            $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::Approved]);
             $policy = new ExpensePolicy();
 
-            expect($policy->partiallyPaid($admin, $expense))->toBeFalse();
+            expect($policy->partiallyPaid($admin, $expense))->toBeTrue();
+        });
+
+        it('allows admin to keep a partially paid expense open for another partial reimbursement', function (): void {
+            $admin = User::factory()->create(['role' => UserRole::Admin]);
+            $expense = Expense::factory()->create(['status' => ExpenseStatus::PartiallyPaid]);
+            $policy = new ExpensePolicy();
+
+            expect($policy->partiallyPaid($admin, $expense))->toBeTrue();
         });
     });
 });

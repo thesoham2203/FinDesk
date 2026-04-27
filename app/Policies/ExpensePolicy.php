@@ -90,8 +90,8 @@ final class ExpensePolicy
             return false;
         }
 
-        // Can only mark as partially paid when status is Approved
-        return $expense->status === ExpenseStatus::Approved;
+        // Can mark as partially paid when the expense is still open.
+        return $expense->status === ExpenseStatus::Approved || $expense->status === ExpenseStatus::PartiallyPaid;
     }
 
     /**

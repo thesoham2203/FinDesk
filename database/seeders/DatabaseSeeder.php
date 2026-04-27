@@ -15,6 +15,9 @@ final class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             UserSeeder::class,
             ExpenseCategorySeeder::class,
+            TaxRateSeeder::class,
+            ClientSeeder::class,
+            InvoiceSeeder::class,
         ]);
     }
 }

@@ -196,6 +196,29 @@ it('marks approved expense as partially paid', function (): void {
         ->and($expense->due_amount)->toBe(5000);
 });
 
+it('keeps partially paid expense open for more reimbursements', function (): void {
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::PartiallyPaid,
+        'department_id' => $department->id,
+        'amount' => 10000,
+        'reimbursed_amount' => 5000,
+        'due_amount' => 5000,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('openPartialReimbursementModal');
+    $component->set('partialReimbursementAmount', '25.00');
+    $component->call('recordPartialReimbursement');
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::PartiallyPaid)
+        ->and($expense->reimbursed_amount)->toBe(7500)
+        ->and($expense->due_amount)->toBe(2500);
+});
+
 it('marks partially paid expense as reimbursed', function (): void {
     $department = Department::factory()->create();
     $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);

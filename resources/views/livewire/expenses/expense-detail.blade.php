@@ -68,16 +68,20 @@
                                         Reject
                                     </button>
                                 @endcan
-                            @elseif ($expense->status === \App\Enums\ExpenseStatus::Approved)
-                                    @can('reimburse', $expense)
-                                        <button type="button" wire:click="reimburse" wire:confirm="Mark this expense as reimbursed?"
-                                            class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
-                                            Mark as Reimbursed
-                                        </button>
-                                    @endcan
+                            @elseif (
+                                $expense->status === \App\Enums\ExpenseStatus::Approved
+                                || $expense->status === \App\Enums\ExpenseStatus::PartiallyPaid
+                            )
+                                @can('reimburse', $expense)
+                                    <button type="button" wire:click="reimburse" wire:confirm="Mark this expense as fully reimbursed?"
+                                        class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                                        Mark as Reimbursed
+                                    </button>
+                                @endcan
                                 @can('partiallyPaid', $expense)
-                                    <button type="button" wire:click="openPartialReimbursementModal"class="inline-flex items-center rounded-md bg-gray-500 hover:bg-gray-600 px-4 py-2 text-sm font-medium text-white transition">
-                                        Mark as Partially Paid
+                                    <button type="button" wire:click="openPartialReimbursementModal"
+                                        class="inline-flex items-center rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-600">
+                                        {{ $expense->status === \App\Enums\ExpenseStatus::PartiallyPaid ? 'Add Partial Reimbursement' : 'Mark as Partially Paid' }}
                                     </button>
                                 @endcan
                             @elseif ($expense->status === \App\Enums\ExpenseStatus::Reimbursed)
@@ -223,7 +227,7 @@
                             <div class="rounded-lg bg-white p-6 shadow-lg max-w-md w-full mx-4">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Record Partial Reimbursement</h3>
                                 <p class="text-gray-600 mb-4">
-                                    Expense Total: <span class="font-semibold">{{ $expense?->formatted_amount ?? '-' }}</span>
+                                    Remaining Balance: <span class="font-semibold">{{ $expense?->formatted_due_amount ?? $expense?->formatted_amount ?? '-' }}</span>
                                 </p>
 
                                 <div class="mb-4">

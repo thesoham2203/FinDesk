@@ -38,6 +38,7 @@ final class ClientFactory extends Factory
         return [
             'name' => $this->faker->company(),
             'email' => $this->faker->companyEmail(),
+            'password' => bcrypt('password'),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->address(),
             'tax_number' => $this->faker->bothify('###########'),
