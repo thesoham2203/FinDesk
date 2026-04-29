@@ -11,17 +11,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the expense category form component', function () {
+it('renders the expense category form component', function (): void {
     Livewire::test(ExpenseCategoryForm::class)
         ->assertStatus(200);
 });
 
-it('can create an expense category', function () {
+it('can create an expense category', function (): void {
     Livewire::test(ExpenseCategoryForm::class)
         ->set('name', 'Travel')
         ->set('description', 'Travel expenses')
@@ -38,7 +38,7 @@ it('can create an expense category', function () {
     ]);
 });
 
-it('can update an expense category', function () {
+it('can update an expense category', function (): void {
     $category = ExpenseCategory::factory()->create();
 
     Livewire::test(ExpenseCategoryForm::class, ['category' => $category])
@@ -51,7 +51,7 @@ it('can update an expense category', function () {
     expect($category->name)->toBe('Updated Category Name');
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     Livewire::test(ExpenseCategoryForm::class)
         ->set('name', '')
         ->call('save')

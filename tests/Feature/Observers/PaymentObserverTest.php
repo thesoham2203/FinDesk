@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Carbon\CarbonInterface;
+use App\Observers\PaymentObserver;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -10,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-final class FakePaymentObserverInvoiceStatus
+final readonly class FakePaymentObserverInvoiceStatus
 {
     public function __construct(private array $transitions) {}
 
@@ -20,11 +22,11 @@ final class FakePaymentObserverInvoiceStatus
     }
 }
 
-final class FakePaymentObserverPayments
+final readonly class FakePaymentObserverPayments
 {
     public function __construct(private int $sum) {}
 
-    public function sum(string $column): int
+    public function sum(): int
     {
         return $this->sum;
     }
@@ -37,8 +39,8 @@ final class FakePaymentObserverInvoice
     public function __construct(
         public object $status,
         public int $total,
-        public ?Carbon\CarbonInterface $due_date,
-        private int $paymentsSum,
+        public ?CarbonInterface $due_date,
+        private readonly int $paymentsSum,
     ) {}
 
     public function payments(): FakePaymentObserverPayments
@@ -50,8 +52,6 @@ final class FakePaymentObserverInvoice
     {
         $this->transitionedTo = $status;
     }
-
-    public function save(): void {}
 }
 
 function paymentObserverPaymentWithInvoice(FakePaymentObserverInvoice $invoice): Payment
@@ -480,7 +480,7 @@ describe('PaymentObserver', function (): void {
             paymentsSum: 0,
         );
 
-        (new App\Observers\PaymentObserver())->deleted(paymentObserverPaymentWithInvoice($invoice));
+        new PaymentObserver()->deleted(paymentObserverPaymentWithInvoice($invoice));
 
         expect($invoice->transitionedTo)->toBe(InvoiceStatus::Draft);
     });
@@ -493,7 +493,7 @@ describe('PaymentObserver', function (): void {
             paymentsSum: 500,
         );
 
-        (new App\Observers\PaymentObserver())->deleted(paymentObserverPaymentWithInvoice($invoice));
+        new PaymentObserver()->deleted(paymentObserverPaymentWithInvoice($invoice));
 
         expect($invoice->transitionedTo)->toBe(InvoiceStatus::Overdue);
     });

@@ -44,7 +44,7 @@ final class TaxRate extends Model
      * @param  Builder<TaxRate>  $query
      * @return Builder<TaxRate>
      */
-    public function scopeActive(Builder $query): Builder
+    protected function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
@@ -53,7 +53,7 @@ final class TaxRate extends Model
      * @param  Builder<TaxRate>  $query
      * @return Builder<TaxRate>
      */
-    public function scopeDefault(Builder $query): Builder
+    protected function scopeDefault(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }

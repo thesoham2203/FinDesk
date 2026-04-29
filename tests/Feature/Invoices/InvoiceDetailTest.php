@@ -12,12 +12,12 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the invoice detail component', function () {
+it('renders the invoice detail component', function (): void {
     $invoice = Invoice::factory()->create();
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
@@ -25,7 +25,7 @@ it('renders the invoice detail component', function () {
         ->assertSee($invoice->invoice_number);
 });
 
-it('can transition invoice to sent', function () {
+it('can transition invoice to sent', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Draft]);
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
@@ -36,7 +36,7 @@ it('can transition invoice to sent', function () {
     expect($invoice->status)->toBe(InvoiceStatus::Sent);
 });
 
-it('can cancel an invoice with a reason', function () {
+it('can cancel an invoice with a reason', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
@@ -53,7 +53,7 @@ it('can cancel an invoice with a reason', function () {
     ]);
 });
 
-it('validates cancel reason length', function () {
+it('validates cancel reason length', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
@@ -62,7 +62,7 @@ it('validates cancel reason length', function () {
         ->assertHasErrors(['cancelReason' => 'min']);
 });
 
-it('validates cancel reason is required', function () {
+it('validates cancel reason is required', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
@@ -71,7 +71,7 @@ it('validates cancel reason is required', function () {
         ->assertHasErrors(['cancelReason' => 'required']);
 });
 
-it('opens cancel modal when requested', function () {
+it('opens cancel modal when requested', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])

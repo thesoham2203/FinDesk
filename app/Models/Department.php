@@ -51,7 +51,7 @@ final class Department extends Model
         return $this->hasManyThrough(Expense::class, User::class);
     }
 
-    public function formattedBudget(): Attribute
+    protected function formattedBudget(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹ '.number_format($this->monthly_budget / 100, 2),
@@ -64,7 +64,7 @@ final class Department extends Model
      * @param  Builder<Department>  $query
      * @return Builder<Department>
      */
-    public function scopeWithBudgetUsage(Builder $query): Builder
+    protected function scopeWithBudgetUsage(Builder $query): Builder
     {
         return $query->addSelect([
             'monthly_spent' => Expense::query()

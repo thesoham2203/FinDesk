@@ -14,17 +14,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the organization settings form component', function () {
+it('renders the organization settings form component', function (): void {
     Livewire::test(OrganizationSettingsForm::class)
         ->assertStatus(200);
 });
 
-it('can update organization settings', function () {
+it('can update organization settings', function (): void {
     Livewire::test(OrganizationSettingsForm::class)
         ->set('name', 'FinDesk Org')
         ->set('address', '123 Tech Lane')
@@ -78,7 +78,7 @@ it('stores an uploaded logo when saving settings', function (): void {
     Storage::disk('public')->assertExists($organization->logo_path);
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     Livewire::test(OrganizationSettingsForm::class)
         ->set('name', '')
         ->call('save')

@@ -11,12 +11,12 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the department index component', function () {
+it('renders the department index component', function (): void {
     $department = Department::factory()->create(['name' => 'Engineering']);
 
     Livewire::test(DepartmentIndex::class)
@@ -24,7 +24,7 @@ it('renders the department index component', function () {
         ->assertSee('Engineering');
 });
 
-it('can search for departments', function () {
+it('can search for departments', function (): void {
     Department::factory()->create(['name' => 'Engineering']);
     Department::factory()->create(['name' => 'Marketing']);
 
@@ -34,7 +34,7 @@ it('can search for departments', function () {
         ->assertDontSee('Marketing');
 });
 
-it('can delete a department without users', function () {
+it('can delete a department without users', function (): void {
     $department = Department::factory()->create();
 
     Livewire::test(DepartmentIndex::class)
@@ -44,7 +44,7 @@ it('can delete a department without users', function () {
     $this->assertDatabaseMissing('departments', ['id' => $department->id]);
 });
 
-it('cannot delete a department with users', function () {
+it('cannot delete a department with users', function (): void {
     $department = Department::factory()->create();
     User::factory()->create(['department_id' => $department->id]);
 

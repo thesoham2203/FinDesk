@@ -34,7 +34,7 @@ describe('StoreInvoiceRequest', function (): void {
         expect($messages['client_id.required'])->toBe('Client is required.');
     });
 
-    it('validates line items correctly in withValidator', function () {
+    it('validates line items correctly in withValidator', function (): void {
         $request = new StoreInvoiceRequest();
 
         // Mocking input
@@ -51,7 +51,7 @@ describe('StoreInvoiceRequest', function (): void {
         expect($validator->errors()->first('line_items'))->toBe('At least one line item must have a quantity and unit price greater than zero.');
     });
 
-    it('passes validation when at least one line item is valid', function () {
+    it('passes validation when at least one line item is valid', function (): void {
         $request = new StoreInvoiceRequest();
 
         $request->merge([

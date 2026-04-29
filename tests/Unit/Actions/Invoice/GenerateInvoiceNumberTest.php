@@ -2,51 +2,51 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Date;
 use App\Actions\Invoice\GenerateInvoiceNumber;
 use App\Models\Invoice;
-use Illuminate\Support\Carbon;
 
-it('generates the first invoice number for the year', function () {
+it('generates the first invoice number for the year', function (): void {
     $year = now()->year;
     $action = new GenerateInvoiceNumber();
 
     $number = $action->execute();
 
-    expect($number)->toBe("INV-{$year}-0001");
+    expect($number)->toBe(sprintf('INV-%d-0001', $year));
 });
 
-it('generates sequential invoice numbers', function () {
+it('generates sequential invoice numbers', function (): void {
     $year = now()->year;
     Invoice::factory()->create([
-        'invoice_number' => "INV-{$year}-0001",
+        'invoice_number' => sprintf('INV-%d-0001', $year),
         'created_at' => now(),
     ]);
 
     $action = new GenerateInvoiceNumber();
     $number = $action->execute();
 
-    expect($number)->toBe("INV-{$year}-0002");
+    expect($number)->toBe(sprintf('INV-%d-0002', $year));
 });
 
-it('resets sequence for a new year', function () {
-    Carbon::setTestNow('2025-01-01');
+it('resets sequence for a new year', function (): void {
+    Date::setTestNow('2025-01-01');
     $lastYear = 2024;
     $currentYear = 2025;
 
     Invoice::factory()->create([
-        'invoice_number' => "INV-{$lastYear}-0005",
-        'created_at' => Carbon::parse('2024-12-31'),
+        'invoice_number' => sprintf('INV-%d-0005', $lastYear),
+        'created_at' => Date::parse('2024-12-31'),
     ]);
 
     $action = new GenerateInvoiceNumber();
     $number = $action->execute();
 
-    expect($number)->toBe("INV-{$currentYear}-0001");
+    expect($number)->toBe(sprintf('INV-%d-0001', $currentYear));
 
-    Carbon::setTestNow(); // Reset
+    Date::setTestNow(); // Reset
 });
 
-it('handles race conditions with pessimistic locking', function () {
+it('handles race conditions with pessimistic locking', function (): void {
     // This is hard to test in a simple unit test,
     // but we can at least verify it runs without errors in a transaction.
     $action = new GenerateInvoiceNumber();

@@ -10,17 +10,17 @@ use App\Models\Invoice;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the invoice index component', function () {
+it('renders the invoice index component', function (): void {
     Livewire::test(InvoiceIndex::class)
         ->assertStatus(200);
 });
 
-it('lists invoices', function () {
+it('lists invoices', function (): void {
     $client = Client::factory()->create();
     Invoice::factory()->create(['client_id' => $client->id, 'invoice_number' => 'INV-001']);
     Invoice::factory()->create(['client_id' => $client->id, 'invoice_number' => 'INV-002']);
@@ -30,7 +30,7 @@ it('lists invoices', function () {
         ->assertSee('INV-002');
 });
 
-it('filters invoices by search', function () {
+it('filters invoices by search', function (): void {
     Invoice::factory()->create(['invoice_number' => 'INV-ABC']);
     Invoice::factory()->create(['invoice_number' => 'INV-XYZ']);
 
@@ -40,7 +40,7 @@ it('filters invoices by search', function () {
         ->assertDontSee('INV-XYZ');
 });
 
-it('filters invoices by status', function () {
+it('filters invoices by status', function (): void {
     Invoice::factory()->create(['status' => InvoiceStatus::Draft, 'invoice_number' => 'INV-DRAFT']);
     Invoice::factory()->create(['status' => InvoiceStatus::Sent, 'invoice_number' => 'INV-SENT']);
 
@@ -50,7 +50,7 @@ it('filters invoices by status', function () {
         ->assertDontSee('INV-SENT');
 });
 
-it('filters invoices by client', function () {
+it('filters invoices by client', function (): void {
     $client1 = Client::factory()->create();
     $client2 = Client::factory()->create();
     Invoice::factory()->create(['client_id' => $client1->id, 'invoice_number' => 'INV-C1']);
@@ -62,7 +62,7 @@ it('filters invoices by client', function () {
         ->assertDontSee('INV-C2');
 });
 
-it('filters invoices by date range', function () {
+it('filters invoices by date range', function (): void {
     Invoice::factory()->create(['issue_date' => '2023-01-01', 'invoice_number' => 'INV-OLD']);
     Invoice::factory()->create(['issue_date' => '2023-06-01', 'invoice_number' => 'INV-MID']);
     Invoice::factory()->create(['issue_date' => '2023-12-01', 'invoice_number' => 'INV-NEW']);

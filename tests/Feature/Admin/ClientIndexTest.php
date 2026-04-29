@@ -12,12 +12,12 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the client index component', function () {
+it('renders the client index component', function (): void {
     $client = Client::factory()->create(['name' => 'Acme Corp']);
 
     Livewire::test(ClientIndex::class)
@@ -25,7 +25,7 @@ it('renders the client index component', function () {
         ->assertSee('Acme Corp');
 });
 
-it('can search for clients', function () {
+it('can search for clients', function (): void {
     Client::factory()->create(['name' => 'Apple Inc']);
     Client::factory()->create(['name' => 'Microsoft Corp']);
 
@@ -35,7 +35,7 @@ it('can search for clients', function () {
         ->assertDontSee('Microsoft Corp');
 });
 
-it('can delete a client without invoices', function () {
+it('can delete a client without invoices', function (): void {
     $client = Client::factory()->create();
 
     Livewire::test(ClientIndex::class)
@@ -45,7 +45,7 @@ it('can delete a client without invoices', function () {
     $this->assertDatabaseMissing('clients', ['id' => $client->id]);
 });
 
-it('cannot delete a client with existing invoices', function () {
+it('cannot delete a client with existing invoices', function (): void {
     $client = Client::factory()->create();
     Invoice::factory()->create(['client_id' => $client->id]);
 

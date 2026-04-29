@@ -14,17 +14,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the invoice form component', function () {
+it('renders the invoice form component', function (): void {
     Livewire::test(InvoiceForm::class)
         ->assertStatus(200);
 });
 
-it('creates a new invoice', function () {
+it('creates a new invoice', function (): void {
     $client = Client::factory()->create();
     $taxRate = TaxRate::factory()->create(['percentage' => 10, 'is_active' => true]);
 
@@ -45,7 +45,7 @@ it('creates a new invoice', function () {
     ]);
 });
 
-it('calculates totals correctly when adding line items', function () {
+it('calculates totals correctly when adding line items', function (): void {
     $component = Livewire::test(InvoiceForm::class);
 
     $component->set('lineItems.0.quantity', '1')
@@ -59,7 +59,7 @@ it('calculates totals correctly when adding line items', function () {
     expect($component->get('subtotal'))->toBe(20000); // 10000 + 10000
 });
 
-it('removes a line item', function () {
+it('removes a line item', function (): void {
     $component = Livewire::test(InvoiceForm::class);
     $component->call('addLineItem');
 
@@ -70,13 +70,13 @@ it('removes a line item', function () {
     expect($component->get('lineItems'))->toHaveCount(1);
 });
 
-it('cannot remove the last line item', function () {
+it('cannot remove the last line item', function (): void {
     Livewire::test(InvoiceForm::class)
         ->call('removeLineItem', 0)
         ->assertDispatched('flash', type: 'error');
 });
 
-it('updates an existing draft invoice', function () {
+it('updates an existing draft invoice', function (): void {
     $invoice = Invoice::factory()->hasLineItems(1)->create(['status' => InvoiceStatus::Draft]);
 
     Livewire::test(InvoiceForm::class, ['invoice' => $invoice])
@@ -89,14 +89,14 @@ it('updates an existing draft invoice', function () {
     expect($invoice->notes)->toBe('Updated Notes');
 });
 
-it('cannot update a non-draft invoice', function () {
+it('cannot update a non-draft invoice', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(InvoiceForm::class, ['invoice' => $invoice])
         ->assertStatus(403);
 });
 
-it('calculates line item tax when tax rate id is present', function () {
+it('calculates line item tax when tax rate id is present', function (): void {
     $taxRate = TaxRate::factory()->create(['percentage' => 18, 'is_active' => true]);
 
     $component = Livewire::test(InvoiceForm::class)
@@ -110,10 +110,11 @@ it('calculates line item tax when tax rate id is present', function () {
         ->and($component->get('lineItems.0.tax_amount'))->toBe(3600);
 });
 
-it('returns expected currency symbols including default fallback', function () {
+it('returns expected currency symbols including default fallback', function (): void {
     $component = Livewire::test(InvoiceForm::class);
 
     $component->set('currency', 'USD');
+
     expect($component->instance()->getCurrencySymbolProperty())->toBe('$');
 
     $component->set('currency', 'EUR');
@@ -123,14 +124,14 @@ it('returns expected currency symbols including default fallback', function () {
     expect($component->instance()->getCurrencySymbolProperty())->toBe('$');
 });
 
-it('returns default currency symbol on a plain invoice form instance', function () {
+it('returns default currency symbol on a plain invoice form instance', function (): void {
     $component = new InvoiceForm();
     $component->currency = 'AUD';
 
     expect($component->getCurrencySymbolProperty())->toBe('$');
 });
 
-it('skips line item calculation for an invalid index', function () {
+it('skips line item calculation for an invalid index', function (): void {
     $component = Livewire::test(InvoiceForm::class);
 
     $subtotal = $component->get('subtotal');

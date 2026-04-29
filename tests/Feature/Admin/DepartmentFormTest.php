@@ -11,17 +11,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the department form component', function () {
+it('renders the department form component', function (): void {
     Livewire::test(DepartmentForm::class)
         ->assertStatus(200);
 });
 
-it('can create a department', function () {
+it('can create a department', function (): void {
     Livewire::test(DepartmentForm::class)
         ->set('name', 'Engineering')
         ->set('description', 'Engineering Department')
@@ -36,7 +36,7 @@ it('can create a department', function () {
     ]);
 });
 
-it('can update a department', function () {
+it('can update a department', function (): void {
     $department = Department::factory()->create();
 
     Livewire::test(DepartmentForm::class, ['department' => $department])
@@ -49,7 +49,7 @@ it('can update a department', function () {
     expect($department->name)->toBe('Updated Department Name');
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     Livewire::test(DepartmentForm::class)
         ->set('name', '')
         ->call('save')

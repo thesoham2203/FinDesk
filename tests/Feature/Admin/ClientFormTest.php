@@ -11,17 +11,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the client form component', function () {
+it('renders the client form component', function (): void {
     Livewire::test(ClientForm::class)
         ->assertStatus(200);
 });
 
-it('can create a client', function () {
+it('can create a client', function (): void {
     Livewire::test(ClientForm::class)
         ->set('name', 'Acme Corp')
         ->set('email', 'contact@acme.com')
@@ -38,7 +38,7 @@ it('can create a client', function () {
     ]);
 });
 
-it('can update a client', function () {
+it('can update a client', function (): void {
     $client = Client::factory()->create();
 
     Livewire::test(ClientForm::class, ['client' => $client])
@@ -51,7 +51,7 @@ it('can update a client', function () {
     expect($client->name)->toBe('Updated Client Name');
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     Livewire::test(ClientForm::class)
         ->set('name', '')
         ->set('email', '')

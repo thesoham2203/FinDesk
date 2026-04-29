@@ -30,8 +30,8 @@ it('populates form fields when editing a client', function (): void {
 });
 
 it('creates a new client when clientId is null', function (): void {
-    Client::creating(function (Client $client) {
-        $client->password = $client->password ?? bcrypt('password');
+    Client::creating(function (Client $client): void {
+        $client->password ??= bcrypt('password');
     });
 
     $component = Livewire::test(ClientForm::class)

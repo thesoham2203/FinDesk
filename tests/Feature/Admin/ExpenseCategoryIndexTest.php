@@ -12,12 +12,12 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the expense category index component', function () {
+it('renders the expense category index component', function (): void {
     $category = ExpenseCategory::factory()->create(['name' => 'Travel']);
 
     Livewire::test(ExpenseCategoryIndex::class)
@@ -25,7 +25,7 @@ it('renders the expense category index component', function () {
         ->assertSee('Travel');
 });
 
-it('can search for expense categories', function () {
+it('can search for expense categories', function (): void {
     ExpenseCategory::factory()->create(['name' => 'Travel']);
     ExpenseCategory::factory()->create(['name' => 'Meals']);
 
@@ -35,7 +35,7 @@ it('can search for expense categories', function () {
         ->assertDontSee('Meals');
 });
 
-it('can delete an expense category without expenses', function () {
+it('can delete an expense category without expenses', function (): void {
     $category = ExpenseCategory::factory()->create();
 
     Livewire::test(ExpenseCategoryIndex::class)
@@ -45,7 +45,7 @@ it('can delete an expense category without expenses', function () {
     $this->assertDatabaseMissing('expense_categories', ['id' => $category->id]);
 });
 
-it('cannot delete an expense category with expenses', function () {
+it('cannot delete an expense category with expenses', function (): void {
     $category = ExpenseCategory::factory()->create();
     Expense::factory()->create(['category_id' => $category->id]);
 

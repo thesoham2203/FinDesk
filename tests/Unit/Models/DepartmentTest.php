@@ -142,7 +142,7 @@ test('department withBudgetUsage scope calculates monthly spent correctly', func
         'submitted_at' => now()->subMonth(),
     ]);
 
-    $result = Department::withBudgetUsage()->find($department->id);
+    $result = Department::query()->withBudgetUsage()->find($department->id);
 
     expect($result->monthly_spent)->toBe(150000);
 });

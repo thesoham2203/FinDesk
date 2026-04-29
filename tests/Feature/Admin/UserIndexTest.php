@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Gate;
 use App\Enums\UserRole;
 use App\Livewire\Admin\UserIndex;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the user index component', function () {
+it('renders the user index component', function (): void {
     Livewire::test(UserIndex::class)
         ->assertStatus(200);
 });
 
-it('lists users', function () {
+it('lists users', function (): void {
     User::factory()->create(['name' => 'User A']);
     User::factory()->create(['name' => 'User B']);
 
@@ -26,7 +27,7 @@ it('lists users', function () {
         ->assertSee('User B');
 });
 
-it('filters users by search', function () {
+it('filters users by search', function (): void {
     User::factory()->create(['name' => 'Apple']);
     User::factory()->create(['name' => 'Banana']);
 
@@ -36,7 +37,7 @@ it('filters users by search', function () {
         ->assertDontSee('Banana');
 });
 
-it('filters users by role', function () {
+it('filters users by role', function (): void {
     User::factory()->create(['role' => UserRole::Manager, 'name' => 'Manager User']);
     User::factory()->create(['role' => UserRole::Employee, 'name' => 'Employee User']);
 
@@ -46,7 +47,7 @@ it('filters users by role', function () {
         ->assertDontSee('Employee User');
 });
 
-it('deletes a user', function () {
+it('deletes a user', function (): void {
     $user = User::factory()->create(['role' => UserRole::Employee]);
 
     Livewire::test(UserIndex::class)
@@ -56,7 +57,7 @@ it('deletes a user', function () {
     expect(User::query()->find($user->id))->toBeNull();
 });
 
-it('cannot delete yourself', function () {
+it('cannot delete yourself', function (): void {
     Livewire::test(UserIndex::class)
         ->call('delete', $this->admin->id)
         ->assertStatus(403);
@@ -64,7 +65,7 @@ it('cannot delete yourself', function () {
     expect(User::query()->find($this->admin->id))->not->toBeNull();
 });
 
-it('cannot delete the last admin user', function () {
+it('cannot delete the last admin user', function (): void {
     $otherAdmin = User::factory()->create(['role' => UserRole::Admin]);
 
     // Now there are 2 admins. Delete one.

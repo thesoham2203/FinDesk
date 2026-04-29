@@ -63,14 +63,14 @@ final class InvoiceLineItem extends Model
         return $this->morphMany(Attachment::class, 'attachable');
     }
 
-    public function formattedLineTotal(): Attribute
+    protected function formattedLineTotal(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹ '.number_format($this->line_total / 100, 2),
         );
     }
 
-    public function formattedUnitPrice(): Attribute
+    protected function formattedUnitPrice(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹ '.number_format($this->unit_price / 100, 2),

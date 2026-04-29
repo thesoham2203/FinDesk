@@ -13,19 +13,19 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the payment form component', function () {
+it('renders the payment form component', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(PaymentForm::class, ['invoiceId' => $invoice->id])
         ->assertStatus(200);
 });
 
-it('can record a payment', function () {
+it('can record a payment', function (): void {
     $invoice = Invoice::factory()->create([
         'status' => InvoiceStatus::Sent,
         'total' => 10000, // $100.00
@@ -47,7 +47,7 @@ it('can record a payment', function () {
     ]);
 });
 
-it('can record full payment', function () {
+it('can record full payment', function (): void {
     $invoice = Invoice::factory()->create([
         'status' => InvoiceStatus::Sent,
         'total' => 10000,
@@ -64,7 +64,7 @@ it('can record full payment', function () {
     expect($invoice->status)->toBe(InvoiceStatus::Paid);
 });
 
-it('validates overpayment', function () {
+it('validates overpayment', function (): void {
     $invoice = Invoice::factory()->create([
         'status' => InvoiceStatus::Sent,
         'total' => 10000,
@@ -80,7 +80,7 @@ it('validates overpayment', function () {
     expect($invoice->status)->toBe(InvoiceStatus::Sent);
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
 
     Livewire::test(PaymentForm::class, ['invoiceId' => $invoice->id])

@@ -9,17 +9,17 @@ use App\Models\TaxRate;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the tax rate index component', function () {
+it('renders the tax rate index component', function (): void {
     Livewire::test(TaxRateIndex::class)
         ->assertStatus(200);
 });
 
-it('lists tax rates', function () {
+it('lists tax rates', function (): void {
     TaxRate::factory()->create(['name' => 'GST 18%']);
     TaxRate::factory()->create(['name' => 'VAT 20%']);
 
@@ -28,7 +28,7 @@ it('lists tax rates', function () {
         ->assertSee('VAT 20%');
 });
 
-it('toggles tax rate activity', function () {
+it('toggles tax rate activity', function (): void {
     $taxRate = TaxRate::factory()->create(['is_active' => true]);
 
     Livewire::test(TaxRateIndex::class)
@@ -39,7 +39,7 @@ it('toggles tax rate activity', function () {
     expect($taxRate->is_active)->toBeFalse();
 });
 
-it('deletes a tax rate not in use', function () {
+it('deletes a tax rate not in use', function (): void {
     $taxRate = TaxRate::factory()->create();
 
     Livewire::test(TaxRateIndex::class)
@@ -49,7 +49,7 @@ it('deletes a tax rate not in use', function () {
     expect(TaxRate::query()->find($taxRate->id))->toBeNull();
 });
 
-it('cannot delete tax rate in use', function () {
+it('cannot delete tax rate in use', function (): void {
     $taxRate = TaxRate::factory()->create();
     InvoiceLineItem::factory()->create(['tax_rate_id' => $taxRate->id]);
 

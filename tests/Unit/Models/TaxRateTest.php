@@ -57,7 +57,7 @@ describe('TaxRate Model', function (): void {
         $activeTaxRate = TaxRate::factory()->create(['is_active' => true]);
         $inactiveTaxRate = TaxRate::factory()->create(['is_active' => false]);
 
-        $activeTaxRates = TaxRate::active()->get();
+        $activeTaxRates = TaxRate::query()->active()->get();
 
         expect($activeTaxRates->pluck('id'))->toContain($activeTaxRate->id)
             ->and($activeTaxRates->pluck('id'))->not->toContain($inactiveTaxRate->id);
@@ -67,7 +67,7 @@ describe('TaxRate Model', function (): void {
         $defaultTaxRate = TaxRate::factory()->create(['is_default' => true]);
         $nonDefaultTaxRate = TaxRate::factory()->create(['is_default' => false]);
 
-        $defaultTaxRates = TaxRate::default()->get();
+        $defaultTaxRates = TaxRate::query()->default()->get();
 
         expect($defaultTaxRates->pluck('id'))->toContain($defaultTaxRate->id)
             ->and($defaultTaxRates->pluck('id'))->not->toContain($nonDefaultTaxRate->id);
@@ -78,7 +78,7 @@ describe('TaxRate Model', function (): void {
         $inactiveDefault = TaxRate::factory()->create(['is_active' => false, 'is_default' => true]);
         $activeNonDefault = TaxRate::factory()->create(['is_active' => true, 'is_default' => false]);
 
-        $result = TaxRate::active()->default()->get();
+        $result = TaxRate::query()->active()->default()->get();
 
         expect($result->pluck('id'))->toContain($activeDefault->id)
             ->and($result->pluck('id'))->not->toContain($inactiveDefault->id)

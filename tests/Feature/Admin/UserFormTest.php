@@ -8,12 +8,12 @@ use App\Models\Department;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('populates form fields when editing a user', function () {
+it('populates form fields when editing a user', function (): void {
     $user = User::factory()->create([
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -26,7 +26,7 @@ it('populates form fields when editing a user', function () {
         ->assertSet('role', 'employee');
 });
 
-it('creates a new user', function () {
+it('creates a new user', function (): void {
     $department = Department::factory()->create();
 
     Livewire::test(UserForm::class)
@@ -43,7 +43,7 @@ it('creates a new user', function () {
     expect(User::query()->where('email', 'new@example.com')->exists())->toBeTrue();
 });
 
-it('updates an existing user', function () {
+it('updates an existing user', function (): void {
     $user = User::factory()->create();
 
     Livewire::test(UserForm::class, ['user' => $user])
@@ -56,7 +56,7 @@ it('updates an existing user', function () {
     expect($user->name)->toBe('Updated Name');
 });
 
-it('requires a password when creating a new user', function () {
+it('requires a password when creating a new user', function (): void {
     Livewire::test(UserForm::class)
         ->set('name', 'New User')
         ->set('email', 'new-user@example.com')
@@ -67,7 +67,7 @@ it('requires a password when creating a new user', function () {
     expect(User::query()->where('email', 'new-user@example.com')->exists())->toBeFalse();
 });
 
-it('validates required fields on create', function () {
+it('validates required fields on create', function (): void {
     Livewire::test(UserForm::class)
         ->set('role', '')
         ->set('password', 'password123')
@@ -76,7 +76,7 @@ it('validates required fields on create', function () {
         ->assertHasErrors(['name', 'email', 'role']);
 });
 
-it('validates password matching', function () {
+it('validates password matching', function (): void {
     Livewire::test(UserForm::class)
         ->set('password', 'pass1')
         ->set('password_confirmation', 'pass2')

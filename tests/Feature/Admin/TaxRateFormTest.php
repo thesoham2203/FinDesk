@@ -11,17 +11,17 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = User::factory()->create(['role' => UserRole::Admin]);
     $this->actingAs($this->admin);
 });
 
-it('renders the tax rate form component', function () {
+it('renders the tax rate form component', function (): void {
     Livewire::test(TaxRateForm::class)
         ->assertStatus(200);
 });
 
-it('can create a tax rate', function () {
+it('can create a tax rate', function (): void {
     Livewire::test(TaxRateForm::class)
         ->set('name', 'GST 18%')
         ->set('percentage', '18')
@@ -37,7 +37,7 @@ it('can create a tax rate', function () {
     ]);
 });
 
-it('can update a tax rate', function () {
+it('can update a tax rate', function (): void {
     $taxRate = TaxRate::factory()->create();
 
     Livewire::test(TaxRateForm::class, ['taxRate' => $taxRate])
@@ -50,7 +50,7 @@ it('can update a tax rate', function () {
     expect($taxRate->name)->toBe('Updated Tax Rate');
 });
 
-it('ensures only one default tax rate exists', function () {
+it('ensures only one default tax rate exists', function (): void {
     $existingDefault = TaxRate::factory()->create(['is_default' => true]);
 
     Livewire::test(TaxRateForm::class)
@@ -62,11 +62,11 @@ it('ensures only one default tax rate exists', function () {
     $existingDefault->refresh();
     expect($existingDefault->is_default)->toBeFalse();
 
-    $newDefault = TaxRate::where('name', 'New Default')->first();
+    $newDefault = TaxRate::query()->where('name', 'New Default')->first();
     expect($newDefault->is_default)->toBeTrue();
 });
 
-it('validates required fields', function () {
+it('validates required fields', function (): void {
     Livewire::test(TaxRateForm::class)
         ->set('name', '')
         ->call('save')

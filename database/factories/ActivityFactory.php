@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Expense;
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Activity>
+ * @extends Factory<Activity>
  */
 final class ActivityFactory extends Factory
 {
@@ -21,7 +23,7 @@ final class ActivityFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'subject_type' => 'App\Models\Expense',
+            'subject_type' => Expense::class,
             'subject_id' => 1,
             'description' => $this->faker->sentence(),
             'properties' => [],

@@ -25,9 +25,7 @@ it('marks overdue invoices and notifies accounting team', function (): void {
     $invoice->refresh();
     expect($invoice->status->value)->toBe(InvoiceStatus::Overdue->value);
 
-    Event::assertDispatched(InvoiceOverdue::class, function ($e) use ($invoice) {
-        return $e->invoice->id === $invoice->id;
-    });
+    Event::assertDispatched(InvoiceOverdue::class, fn($e): bool => $e->invoice->id === $invoice->id);
 
     foreach ($admins->concat($accountants) as $user) {
         Notification::assertSentTo($user, InvoiceOverdueNotification::class);
