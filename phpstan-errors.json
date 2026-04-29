@@ -1,0 +1,2543 @@
+﻿{
+    "totals": {
+        "errors": 0,
+        "file_errors": 352
+    },
+    "files": {
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\ApproveExpense.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Property App\\Models\\Expense::$reviewed_by (int<0, max>|null) does not accept string.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Method App\\Actions\\Expense\\ApproveExpense::execute() should return App\\Models\\Expense but returns App\\Models\\Expense|null.",
+                    "line": 26,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\CreateExpense.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Cannot cast mixed to int.",
+                    "line": 37,
+                    "ignorable": true,
+                    "identifier": "cast.int"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\ReimburseExpense.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Method App\\Actions\\Expense\\ReimburseExpense::execute() should return App\\Models\\Expense but returns App\\Models\\Expense|null.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\RejectExpense.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Property App\\Models\\Expense::$reviewed_by (int<0, max>|null) does not accept string.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Method App\\Actions\\Expense\\RejectExpense::execute() should return App\\Models\\Expense but returns App\\Models\\Expense|null.",
+                    "line": 27,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\SubmitExpense.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Cannot access property $department_id on App\\Models\\User|null.",
+                    "line": 24,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$department_id (int<0, max>) does not accept int<0, max>|null.",
+                    "line": 24,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Expense\\UpdateExpense.php": {
+            "errors": 8,
+            "messages": [
+                {
+                    "message": "Property App\\Models\\Expense::$title (string) does not accept mixed.",
+                    "line": 27,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$amount (int) does not accept mixed.",
+                    "line": 28,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$description (string|null) does not accept mixed.",
+                    "line": 29,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$date (Carbon\\CarbonImmutable|null) does not accept mixed.",
+                    "line": 30,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Cannot cast mixed to int.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "cast.int"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$category_id (int<0, max>) does not accept int.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$currency (App\\Enums\\Currency) does not accept mixed.",
+                    "line": 32,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Models\\Expense::$receipt_path (string|null) does not accept string|false.",
+                    "line": 53,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Actions\\Invoice\\GenerateInvoiceNumber.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Expression on left side of ?? is not nullable.",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "nullCoalesce.expr"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Http\\Middleware\\EnsureUserHasRole.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "PHPDoc tag @param for parameter $roles with type list<string> is incompatible with native type string.",
+                    "line": 20,
+                    "ignorable": true,
+                    "identifier": "parameter.phpDocType"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Client|App\\Models\\User::$role.",
+                    "line": 24,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 24,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Method App\\Http\\Middleware\\EnsureUserHasRole::handle() should return Illuminate\\Http\\Response but returns mixed.",
+                    "line": 25,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Http\\Requests\\StoreExpenseRequest.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Cannot access property $max_amount on App\\Models\\ExpenseCategory|Illuminate\\Database\\Eloquent\\Collection<int, App\\Models\\ExpenseCategory>|null.",
+                    "line": 105,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $max_amount on App\\Models\\ExpenseCategory|Illuminate\\Database\\Eloquent\\Collection<int, App\\Models\\ExpenseCategory>|null.",
+                    "line": 105,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $requires_receipt on App\\Models\\ExpenseCategory|Illuminate\\Database\\Eloquent\\Collection<int, App\\Models\\ExpenseCategory>|null.",
+                    "line": 109,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Http\\Requests\\StoreInvoiceRequest.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Argument of an invalid type mixed supplied for foreach, only iterables are supported.",
+                    "line": 122,
+                    "ignorable": true,
+                    "identifier": "foreach.nonIterable"
+                },
+                {
+                    "message": "Cannot access offset 'quantity' on mixed.",
+                    "line": 123,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'unit_price' on mixed.",
+                    "line": 124,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Listeners\\LogExpenseActivity.php": {
+            "errors": 9,
+            "messages": [
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 32,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot access property $name on App\\Models\\User|null.",
+                    "line": 32,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Parameter #4 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 32,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 36,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #4 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 36,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 40,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #4 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 45,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #4 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 45,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Listeners\\NotifyExpenseReviewed.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Cannot call method notify() on App\\Models\\User|null.",
+                    "line": 24,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method notify() on App\\Models\\User|null.",
+                    "line": 26,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Listeners\\NotifyExpenseSubmitted.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Cannot access property $manager on App\\Models\\User|null.",
+                    "line": 18,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Listeners\\NotifyPaymentReceived.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Cannot call method notify() on App\\Models\\User|null.",
+                    "line": 19,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\ClientForm.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Admin\\ClientForm::$phone (string) does not accept string|null.",
+                    "line": 61,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Livewire\\Admin\\ClientForm::$address (string) does not accept string|null.",
+                    "line": 62,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Livewire\\Admin\\ClientForm::$taxNumber (string) does not accept string|null.",
+                    "line": 63,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\ClientIndex.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Generic type Illuminate\\Contracts\\Pagination\\LengthAwarePaginator<App\\Models\\Client> in PHPDoc tag @return does not specify all template types of interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator: TKey, TValue",
+                    "line": 46,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Type App\\Models\\Client in generic type Illuminate\\Contracts\\Pagination\\LengthAwarePaginator<App\\Models\\Client> in PHPDoc tag @return is not subtype of template type TKey of (int|string) of interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator.",
+                    "line": 46,
+                    "ignorable": true,
+                    "identifier": "generics.notSubtype"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\ClientIndex::clients() should return Illuminate\\Contracts\\Pagination\\LengthAwarePaginator<App\\Models\\Client> but returns Illuminate\\Pagination\\LengthAwarePaginator<int, App\\Models\\Client>.",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\DepartmentForm.php": {
+            "errors": 7,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Admin\\DepartmentForm::$description (string) does not accept string|null.",
+                    "line": 52,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Cannot access offset 'monthlyBudget' on mixed.",
+                    "line": 67,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot cast mixed to float.",
+                    "line": 67,
+                    "ignorable": true,
+                    "identifier": "cast.double"
+                },
+                {
+                    "message": "Cannot access offset 'name' on mixed.",
+                    "line": 72,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'description' on mixed.",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'name' on mixed.",
+                    "line": 79,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'description' on mixed.",
+                    "line": 80,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\DepartmentIndex.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Admin\\DepartmentIndex::departments() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 37,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\ExpenseCategoryForm.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Admin\\ExpenseCategoryForm::$description (string) does not accept string|null.",
+                    "line": 70,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\ExpenseCategoryForm::rules() return type has no value type specified in iterable type array.",
+                    "line": 76,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\ExpenseCategoryIndex.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Admin\\ExpenseCategoryIndex::categories() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 55,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\OrganizationSettingsForm.php": {
+            "errors": 10,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Admin\\OrganizationSettingsForm::$address (string) does not accept string|null.",
+                    "line": 53,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Cannot call method store() on mixed.",
+                    "line": 72,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access offset 'name' on mixed.",
+                    "line": 78,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'address' on mixed.",
+                    "line": 79,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'defaultCurrency' on mixed.",
+                    "line": 81,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'fiscalYearStart' on mixed.",
+                    "line": 82,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\OrganizationSettingsForm::getCurrenciesProperty() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 95,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\OrganizationSettingsForm::getMonthsProperty() return type has no value type specified in iterable type array.",
+                    "line": 104,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Admin\\OrganizationSettingsForm::$currencies.",
+                    "line": 125,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Admin\\OrganizationSettingsForm::$months.",
+                    "line": 126,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\TaxRateIndex.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Admin\\TaxRateIndex::taxRates() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\UserForm.php": {
+            "errors": 14,
+            "messages": [
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 51,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Property App\\Livewire\\Admin\\UserForm::$role (string) does not accept mixed.",
+                    "line": 51,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Property App\\Livewire\\Admin\\UserForm::$managerId (string|null) does not accept int<0, max>|null.",
+                    "line": 53,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Cannot access offset 'name' on mixed.",
+                    "line": 77,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'email' on mixed.",
+                    "line": 78,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'role' on mixed.",
+                    "line": 79,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'departmentId' on mixed.",
+                    "line": 80,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'managerId' on mixed.",
+                    "line": 81,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'password' on mixed.",
+                    "line": 84,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Parameter #1 $value of static method Illuminate\\Support\\Facades\\Hash::make() expects string, mixed given.",
+                    "line": 85,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\UserForm::getDepartmentsProperty() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 103,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\UserForm::getManagersProperty() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 112,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Admin\\UserForm::$departments.",
+                    "line": 139,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Admin\\UserForm::$managers.",
+                    "line": 140,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Admin\\UserIndex.php": {
+            "errors": 5,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Admin\\UserIndex::users() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 42,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Result of && is always false.",
+                    "line": 67,
+                    "ignorable": true,
+                    "tip": "ΓÇó Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.\nΓÇó If Illuminate\\Database\\Eloquent\\Builder<App\\Models\\User>::findOrFail() is impure, add @phpstan-impure PHPDoc tag above its declaration. Learn more: https://phpstan.org/blog/remembering-and-forgetting-returned-values",
+                    "identifier": "booleanAnd.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 67,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Livewire\\Admin\\UserIndex::getRoleFiltersProperty() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 81,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Admin\\UserIndex::$roleFilters.",
+                    "line": 90,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Client\\Invoices\\InvoiceDetail.php": {
+            "errors": 8,
+            "messages": [
+                {
+                    "message": "Cannot access property $client_id on App\\Models\\Invoice|null.",
+                    "line": 34,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Invoice|null.",
+                    "line": 37,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 43,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $id on App\\Models\\Invoice|null.",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method fresh() on App\\Models\\Invoice|null.",
+                    "line": 55,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $client_id on App\\Models\\Invoice|null.",
+                    "line": 60,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $invoice_number on App\\Models\\Invoice|null.",
+                    "line": 64,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Method App\\Livewire\\Client\\Invoices\\InvoiceDetail::render() should return Illuminate\\View\\View but returns mixed.",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Client\\Invoices\\InvoiceIndex.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Client\\Invoices\\InvoiceIndex::invoices() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 29,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Livewire\\Client\\Invoices\\InvoiceIndex::render() should return Illuminate\\Contracts\\View\\View but returns mixed.",
+                    "line": 44,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Expenses\\ExpenseDetail.php": {
+            "errors": 24,
+            "messages": [
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 58,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $amount on App\\Models\\Expense|null.",
+                    "line": 62,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $department_id on App\\Models\\Expense|null.",
+                    "line": 62,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $amount on App\\Models\\Expense|null.",
+                    "line": 63,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Parameter #1 $expense of method App\\Actions\\Expense\\SubmitExpense::execute() expects App\\Models\\Expense, App\\Models\\Expense|null given.",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Cannot call method fresh() on App\\Models\\Expense|null.",
+                    "line": 75,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 83,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method delete() on App\\Models\\Expense|null.",
+                    "line": 85,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Parameter #1 $expense of method App\\Actions\\Expense\\ApproveExpense::execute() expects App\\Models\\Expense, App\\Models\\Expense|null given.",
+                    "line": 93,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Parameter #2 $approver of method App\\Actions\\Expense\\ApproveExpense::execute() expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 93,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Parameter #1 $expense of method App\\Actions\\Expense\\RejectExpense::execute() expects App\\Models\\Expense, App\\Models\\Expense|null given.",
+                    "line": 113,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Parameter #2 $rejector of method App\\Actions\\Expense\\RejectExpense::execute() expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 114,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 129,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 129,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Parameter #1 $expense of method App\\Actions\\Expense\\ReimburseExpense::execute() expects App\\Models\\Expense, App\\Models\\Expense|null given.",
+                    "line": 135,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 146,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Expense|null.",
+                    "line": 147,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $amount on App\\Models\\Expense|null.",
+                    "line": 161,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $reimbursed_amount on App\\Models\\Expense|null.",
+                    "line": 161,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method update() on App\\Models\\Expense|null.",
+                    "line": 183,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Expense|null.",
+                    "line": 189,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method save() on App\\Models\\Expense|null.",
+                    "line": 190,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $id on App\\Models\\Expense|null.",
+                    "line": 196,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method fresh() on App\\Models\\Expense|null.",
+                    "line": 206,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Expenses\\ExpenseForm.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Binary operation \"*\" between string and 100 results in an error.",
+                    "line": 80,
+                    "ignorable": true,
+                    "identifier": "binaryOp.invalid"
+                },
+                {
+                    "message": "Cannot cast mixed to int.",
+                    "line": 80,
+                    "ignorable": true,
+                    "identifier": "cast.int"
+                },
+                {
+                    "message": "Parameter #1 $user of method App\\Actions\\Expense\\CreateExpense::execute() expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 86,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Method App\\Livewire\\Expenses\\ExpenseForm::categories() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 109,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Expenses\\ExpenseIndex.php": {
+            "errors": 7,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Expenses\\ExpenseIndex::expenses() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 83,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Binary operation \"*\" between string and 100 results in an error.",
+                    "line": 94,
+                    "ignorable": true,
+                    "identifier": "binaryOp.invalid"
+                },
+                {
+                    "message": "Cannot cast mixed to int.",
+                    "line": 94,
+                    "ignorable": true,
+                    "identifier": "cast.int"
+                },
+                {
+                    "message": "Binary operation \"*\" between string and 100 results in an error.",
+                    "line": 95,
+                    "ignorable": true,
+                    "identifier": "binaryOp.invalid"
+                },
+                {
+                    "message": "Cannot cast mixed to int.",
+                    "line": 95,
+                    "ignorable": true,
+                    "identifier": "cast.int"
+                },
+                {
+                    "message": "Method App\\Livewire\\Expenses\\ExpenseIndex::categories() return type with generic class Illuminate\\Support\\Collection does not specify its types: TKey, TValue",
+                    "line": 99,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Livewire\\Expenses\\ExpenseIndex::statuses() return type has no value type specified in iterable type array.",
+                    "line": 105,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Expenses\\PendingApprovals.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Expenses\\PendingApprovals::pendingExpenses() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 71,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Cannot access property $department_id on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 75,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $department_id on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 88,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Parameter #2 $approver of method App\\Actions\\Expense\\ApproveExpense::execute() expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 99,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Forms\\ClientLoginForm.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Parameter #1 $credentials of method Illuminate\\Contracts\\Auth\\StatefulGuard::attempt() expects array, mixed given.",
+                    "line": 35,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Forms\\InvoiceHeaderForm.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Forms\\InvoiceHeaderForm::$notes (string) does not accept string|null.",
+                    "line": 37,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Forms\\LoginForm.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Parameter #1 $credentials of static method Illuminate\\Support\\Facades\\Auth::attempt() expects array, mixed given.",
+                    "line": 35,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Invoices\\InvoiceDetail.php": {
+            "errors": 9,
+            "messages": [
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 48,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 50,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on mixed.",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 65,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 71,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on mixed.",
+                    "line": 71,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 77,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot access property $id on mixed.",
+                    "line": 77,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Access to an undefined property App\\Livewire\\Invoices\\InvoiceDetail::$invoice.",
+                    "line": 89,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Invoices\\InvoiceForm.php": {
+            "errors": 5,
+            "messages": [
+                {
+                    "message": "Property App\\Livewire\\Invoices\\InvoiceForm::$lineItems (array<int, array{description: string, quantity: string, unit_price: string, tax_rate_id: string, line_total: int, tax_amount: int}>) does not accept array<mixed>.",
+                    "line": 74,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                },
+                {
+                    "message": "Offset 'quantity' on array{description: string, quantity: string, unit_price: string, tax_rate_id: string, line_total: int, tax_amount: int} on left side of ?? always exists and is not nullable.",
+                    "line": 136,
+                    "ignorable": true,
+                    "identifier": "nullCoalesce.offset"
+                },
+                {
+                    "message": "Offset 'unit_price' on array{description: string, quantity: string, unit_price: string, tax_rate_id: string, line_total: int, tax_amount: int} on left side of ?? always exists and is not nullable.",
+                    "line": 137,
+                    "ignorable": true,
+                    "identifier": "nullCoalesce.offset"
+                },
+                {
+                    "message": "Method App\\Livewire\\Invoices\\InvoiceForm::clients() return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types: TKey, TModel",
+                    "line": 240,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Livewire\\Invoices\\InvoiceForm::taxRates() return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types: TKey, TModel",
+                    "line": 251,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Invoices\\InvoiceIndex.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Invoices\\InvoiceIndex::invoices() return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc tag @var above a method has no effect.",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "varTag.misplaced"
+                },
+                {
+                    "message": "Method App\\Livewire\\Invoices\\InvoiceIndex::clients() return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types: TKey, TModel",
+                    "line": 70,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Invoices\\PaymentForm.php": {
+            "errors": 8,
+            "messages": [
+                {
+                    "message": "Cannot access offset 'amount' on mixed.",
+                    "line": 65,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot cast mixed to float.",
+                    "line": 65,
+                    "ignorable": true,
+                    "identifier": "cast.double"
+                },
+                {
+                    "message": "Parameter #2 $data of method App\\Actions\\Payment\\RecordPayment::execute() expects array{amount: int, payment_date: string, payment_method: string, reference_number?: string, notes?: string}, array{amount: int, payment_date: mixed, payment_method: mixed, reference_number: mixed, notes: mixed} given.",
+                    "line": 72,
+                    "ignorable": true,
+                    "tip": "ΓÇó Offset 'payment_date' (string) does not accept type mixed.\nΓÇó Offset 'payment_method' (string) does not accept type mixed.\nΓÇó Offset 'reference_number' (string) does not accept type mixed.\nΓÇó Offset 'notes' (string) does not accept type mixed.",
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Cannot access offset 'paymentDate' on mixed.",
+                    "line": 74,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'paymentMethod' on mixed.",
+                    "line": 75,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'referenceNumber' on mixed.",
+                    "line": 76,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Cannot access offset 'notes' on mixed.",
+                    "line": 77,
+                    "ignorable": true,
+                    "identifier": "offsetAccess.nonOffsetAccessible"
+                },
+                {
+                    "message": "Property App\\Livewire\\Invoices\\PaymentForm::$totalPaid (int) does not accept float|int|string.",
+                    "line": 117,
+                    "ignorable": true,
+                    "identifier": "assign.propertyType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Notifications\\NotificationBell.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Class Illuminate\\View\\View referenced with incorrect case: illuminate\\View\\View.",
+                    "line": 7,
+                    "ignorable": true,
+                    "identifier": "class.nameCase"
+                },
+                {
+                    "message": "Cannot call method unreadNotifications() on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 19,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Class Illuminate\\View\\View referenced with incorrect case: illuminate\\View\\View.",
+                    "line": 22,
+                    "ignorable": true,
+                    "identifier": "class.nameCase"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Livewire\\Notifications\\NotificationIndex.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Method App\\Livewire\\Notifications\\NotificationIndex::notifications() return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types: TKey, TValue",
+                    "line": 20,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Cannot call method notifications() on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method notifications() on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method unreadNotifications() on App\\Models\\Client|App\\Models\\User|null.",
+                    "line": 47,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Activity.php": {
+            "errors": 5,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Activity uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 14,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Activity::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 30,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\Activity::user() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\Activity> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\Activity)>.",
+                    "line": 39,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphTo: TRelatedModel, TDeclaringModel",
+                    "line": 47,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Activity::subject() should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model, $this(App\\Models\\Activity)>.",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Attachment.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Attachment uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 14,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphTo: TRelatedModel, TDeclaringModel",
+                    "line": 33,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Attachment::attachable() should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo<Illuminate\\Database\\Eloquent\\Model, $this(App\\Models\\Attachment)>.",
+                    "line": 35,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Attachment::user() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\Attachment> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\Attachment)>.",
+                    "line": 43,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Client.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 56,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Client::invoices() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice, $this(App\\Models\\Client)>.",
+                    "line": 58,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Department.php": {
+            "errors": 7,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Department uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 17,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Department::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 31,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 38,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Department::users() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User, $this(App\\Models\\Department)>.",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough<App\\Models\\Expense> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough: TRelatedModel, TIntermediateModel, TDeclaringModel",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Department::expenses() should return Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough<App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough<App\\Models\\Expense, App\\Models\\User, $this(App\\Models\\Department)>.",
+                    "line": 51,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Department::formattedBudget() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 54,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Expense.php": {
+            "errors": 13,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Expense uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 19,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Expense::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 46,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::user() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\Expense)>.",
+                    "line": 62,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::category() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\ExpenseCategory, App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\ExpenseCategory, $this(App\\Models\\Expense)>.",
+                    "line": 70,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::department() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Department, App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Department, $this(App\\Models\\Expense)>.",
+                    "line": 78,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::reviewer() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\Expense)>.",
+                    "line": 86,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany: TRelatedModel, TDeclaringModel",
+                    "line": 92,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::attachments() should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment, $this(App\\Models\\Expense)>.",
+                    "line": 94,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany: TRelatedModel, TDeclaringModel",
+                    "line": 102,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::activities() should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity, $this(App\\Models\\Expense)>.",
+                    "line": 104,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::formattedAmount() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 127,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::formattedReimbursedAmount() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 134,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Models\\Expense::formattedDueAmount() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 141,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\ExpenseCategory.php": {
+            "errors": 5,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\ExpenseCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 14,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\ExpenseCategory::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 29,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 37,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\ExpenseCategory::expenses() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense, $this(App\\Models\\ExpenseCategory)>.",
+                    "line": 39,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\ExpenseCategory::formattedMaxAmount() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 42,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Invoice.php": {
+            "errors": 16,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Invoice uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 21,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Invoice::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 52,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::client() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Client, App\\Models\\Invoice> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Client, $this(App\\Models\\Invoice)>.",
+                    "line": 67,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::creator() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\Invoice> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\Invoice)>.",
+                    "line": 75,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 81,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::lineItems() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem, $this(App\\Models\\Invoice)>.",
+                    "line": 83,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Payment> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 89,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::payments() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Payment> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Payment, $this(App\\Models\\Invoice)>.",
+                    "line": 91,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasOne<App\\Models\\Payment> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasOne: TRelatedModel, TDeclaringModel",
+                    "line": 99,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::latestPayment() should return Illuminate\\Database\\Eloquent\\Relations\\HasOne<App\\Models\\Payment> but returns Illuminate\\Database\\Eloquent\\Relations\\HasOne<App\\Models\\Payment, $this(App\\Models\\Invoice)>.",
+                    "line": 101,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany: TRelatedModel, TDeclaringModel",
+                    "line": 109,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::activities() should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Activity, $this(App\\Models\\Invoice)>.",
+                    "line": 111,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::formattedSubtotal() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 157,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::formattedTaxTotal() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 164,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Models\\Invoice::formattedTotal() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 171,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Anonymous function should return int but returns float|int.",
+                    "line": 187,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\InvoiceLineItem.php": {
+            "errors": 8,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\InvoiceLineItem uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 15,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\InvoiceLineItem::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 33,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\InvoiceLineItem::invoice() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Invoice, App\\Models\\InvoiceLineItem> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Invoice, $this(App\\Models\\InvoiceLineItem)>.",
+                    "line": 45,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\InvoiceLineItem::taxRate() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\TaxRate, App\\Models\\InvoiceLineItem> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\TaxRate, $this(App\\Models\\InvoiceLineItem)>.",
+                    "line": 53,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany: TRelatedModel, TDeclaringModel",
+                    "line": 61,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\InvoiceLineItem::attachments() should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany<App\\Models\\Attachment, $this(App\\Models\\InvoiceLineItem)>.",
+                    "line": 63,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\InvoiceLineItem::formattedLineTotal() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 66,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "Method App\\Models\\InvoiceLineItem::formattedUnitPrice() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Organization.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Organization uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 13,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Organization::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 29,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\Organization::current() should return App\\Models\\Organization but returns App\\Models\\Organization|null.",
+                    "line": 41,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\Payment.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\Payment uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 15,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\Payment::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 32,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Method App\\Models\\Payment::invoice() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Invoice, App\\Models\\Payment> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Invoice, $this(App\\Models\\Payment)>.",
+                    "line": 43,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\Payment::formattedAmount() return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types: TGet, TSet",
+                    "line": 46,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\TaxRate.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Class App\\Models\\TaxRate uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory",
+                    "line": 14,
+                    "ignorable": true,
+                    "identifier": "missingType.generics"
+                },
+                {
+                    "message": "PHPDoc type array<string, mixed> of property App\\Models\\TaxRate::$casts is not covariant with PHPDoc type array<string, string> of overridden property Illuminate\\Database\\Eloquent\\Model::$casts.",
+                    "line": 29,
+                    "ignorable": true,
+                    "tip": "You can fix 3rd party PHPDoc types with stub files:\n   https://phpstan.org/user-guide/stub-files",
+                    "identifier": "property.phpDocType"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 38,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\TaxRate::lineItems() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\InvoiceLineItem, $this(App\\Models\\TaxRate)>.",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Models\\User.php": {
+            "errors": 10,
+            "messages": [
+                {
+                    "message": "Method App\\Models\\User::department() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Department, App\\Models\\User> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\Department, $this(App\\Models\\User)>.",
+                    "line": 81,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Method App\\Models\\User::manager() should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, App\\Models\\User> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo<App\\Models\\User, $this(App\\Models\\User)>.",
+                    "line": 89,
+                    "ignorable": true,
+                    "tip": "Template type TDeclaringModel on class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo is not covariant. Learn more: https://phpstan.org/blog/whats-up-with-template-covariant",
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 95,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\User::subordinates() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\User, $this(App\\Models\\User)>.",
+                    "line": 97,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 103,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\User::expenses() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Expense, $this(App\\Models\\User)>.",
+                    "line": 105,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany: TRelatedModel, TDeclaringModel",
+                    "line": 113,
+                    "ignorable": true,
+                    "identifier": "generics.lessTypes"
+                },
+                {
+                    "message": "Method App\\Models\\User::createdInvoices() should return Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Models\\Invoice, $this(App\\Models\\User)>.",
+                    "line": 115,
+                    "ignorable": true,
+                    "identifier": "return.type"
+                },
+                {
+                    "message": "Unknown parameter $visible in call to Illuminate\\Database\\Eloquent\\Attributes\\Scope constructor.",
+                    "line": 124,
+                    "ignorable": true,
+                    "identifier": "argument.unknown"
+                },
+                {
+                    "message": "Unknown parameter $visible in call to Illuminate\\Database\\Eloquent\\Attributes\\Scope constructor.",
+                    "line": 136,
+                    "ignorable": true,
+                    "identifier": "argument.unknown"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Notifications\\ExpenseApprovedNotification.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Method App\\Notifications\\ExpenseApprovedNotification::toDatabase() return type has no value type specified in iterable type array.",
+                    "line": 36,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 40,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #3 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Notifications\\ExpensePartiallyPaid.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Method App\\Notifications\\ExpensePartiallyPaid::toDatabase() return type has no value type specified in iterable type array.",
+                    "line": 36,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 40,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #3 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Notifications\\ExpenseRejectedNotification.php": {
+            "errors": 3,
+            "messages": [
+                {
+                    "message": "Method App\\Notifications\\ExpenseRejectedNotification::toDatabase() return type has no value type specified in iterable type array.",
+                    "line": 37,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 41,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Parameter #3 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 41,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Notifications\\ExpenseSubmittedNotification.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Method App\\Notifications\\ExpenseSubmittedNotification::toDatabase() return type has no value type specified in iterable type array.",
+                    "line": 32,
+                    "ignorable": true,
+                    "tip": "See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type",
+                    "identifier": "missingType.iterableValue"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\Expense::$formattedAmount.",
+                    "line": 36,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                },
+                {
+                    "message": "Cannot access property $name on App\\Models\\User|null.",
+                    "line": 36,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Parameter #4 ...$values of function sprintf expects bool|float|int|string|null, mixed given.",
+                    "line": 36,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Notifications\\InvoiceOverdueNotification.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Cannot access property $name on App\\Models\\Client|null.",
+                    "line": 43,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $name on App\\Models\\Client|null.",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Observers\\ExpenseObserver.php": {
+            "errors": 5,
+            "messages": [
+                {
+                    "message": "Cannot access property $name on App\\Models\\User|null.",
+                    "line": 72,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Using nullsafe property access on non-nullable type App\\Enums\\Currency. Use -> instead.",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "nullsafe.neverNull"
+                },
+                {
+                    "message": "Parameter #2 $approver of class App\\Events\\ExpenseApproved constructor expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 84,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Parameter #2 $rejector of class App\\Events\\ExpenseRejected constructor expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 87,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Parameter #2 $processor of class App\\Events\\ExpenseReimbursed constructor expects App\\Models\\User, App\\Models\\Client|App\\Models\\User|null given.",
+                    "line": 89,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Observers\\PaymentObserver.php": {
+            "errors": 18,
+            "messages": [
+                {
+                    "message": "Cannot call method payments() on App\\Models\\Invoice|null.",
+                    "line": 20,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Invoice|null.",
+                    "line": 21,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $total on App\\Models\\Invoice|null.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 24,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 26,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $due_date on App\\Models\\Invoice|null.",
+                    "line": 27,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Using nullsafe method call on non-nullable type Carbon\\CarbonImmutable. Use -> instead.",
+                    "line": 27,
+                    "ignorable": true,
+                    "identifier": "nullsafe.neverNull"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 28,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Parameter #2 $invoice of class App\\Events\\PaymentRecorded constructor expects App\\Models\\Invoice, App\\Models\\Invoice|null given.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "argument.type"
+                },
+                {
+                    "message": "Cannot call method payments() on App\\Models\\Invoice|null.",
+                    "line": 41,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $status on App\\Models\\Invoice|null.",
+                    "line": 42,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $total on App\\Models\\Invoice|null.",
+                    "line": 44,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 45,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 48,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot access property $due_date on App\\Models\\Invoice|null.",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Using nullsafe method call on non-nullable type Carbon\\CarbonImmutable. Use -> instead.",
+                    "line": 50,
+                    "ignorable": true,
+                    "identifier": "nullsafe.neverNull"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 51,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                },
+                {
+                    "message": "Cannot call method transitionTo() on App\\Models\\Invoice|null.",
+                    "line": 55,
+                    "ignorable": true,
+                    "identifier": "method.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Policies\\DepartmentPolicy.php": {
+            "errors": 10,
+            "messages": [
+                {
+                    "message": "Method App\\Policies\\DepartmentPolicy::viewAny() never returns true so the return type can be changed to false.",
+                    "line": 15,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 17,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\DepartmentPolicy::view() never returns true so the return type can be changed to false.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 25,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\DepartmentPolicy::create() never returns true so the return type can be changed to false.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 33,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\DepartmentPolicy::update() never returns true so the return type can be changed to false.",
+                    "line": 39,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 41,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\DepartmentPolicy::delete() never returns true so the return type can be changed to false.",
+                    "line": 47,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 49,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Policies\\ExpensePolicy.php": {
+            "errors": 17,
+            "messages": [
+                {
+                    "message": "Method App\\Policies\\ExpensePolicy::viewAny() never returns false so the return type can be changed to true.",
+                    "line": 17,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 28,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Result of && is always false.",
+                    "line": 28,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "booleanAnd.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 28,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 32,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 36,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 36,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 44,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 56,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Result of && is always false.",
+                    "line": 56,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "booleanAnd.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 56,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using !== between int<0, max> and string will always evaluate to true.",
+                    "line": 64,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "notIdentical.alwaysTrue"
+                },
+                {
+                    "message": "Unreachable statement - code above always terminates.",
+                    "line": 68,
+                    "ignorable": true,
+                    "identifier": "deadCode.unreachable"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 73,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 89,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 102,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 119,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Policies\\InvoicePolicy.php": {
+            "errors": 13,
+            "messages": [
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 20,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 29,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 34,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 43,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 57,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 58,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 72,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 73,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 87,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 88,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 102,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                },
+                {
+                    "message": "Strict comparison using === between int<0, max> and string will always evaluate to false.",
+                    "line": 103,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Cannot access property $value on string.",
+                    "line": 112,
+                    "ignorable": true,
+                    "identifier": "property.nonObject"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Policies\\OrganizationPolicy.php": {
+            "errors": 4,
+            "messages": [
+                {
+                    "message": "Method App\\Policies\\OrganizationPolicy::view() never returns true so the return type can be changed to false.",
+                    "line": 15,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 17,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\OrganizationPolicy::update() never returns true so the return type can be changed to false.",
+                    "line": 23,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 25,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Policies\\UserPolicy.php": {
+            "errors": 9,
+            "messages": [
+                {
+                    "message": "Method App\\Policies\\UserPolicy::viewAny() never returns true so the return type can be changed to false.",
+                    "line": 15,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 17,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 25,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\UserPolicy::create() never returns true so the return type can be changed to false.",
+                    "line": 31,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 33,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 41,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                },
+                {
+                    "message": "Method App\\Policies\\UserPolicy::delete() never returns true so the return type can be changed to false.",
+                    "line": 47,
+                    "ignorable": true,
+                    "identifier": "return.tooWideBool"
+                },
+                {
+                    "message": "Result of && is always false.",
+                    "line": 49,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "booleanAnd.alwaysFalse"
+                },
+                {
+                    "message": "Strict comparison using === between string and App\\Enums\\UserRole::Admin will always evaluate to false.",
+                    "line": 49,
+                    "ignorable": true,
+                    "tip": "Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your %configurationFile%.",
+                    "identifier": "identical.alwaysFalse"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Rules\\CategoryNotInUse.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Parameter #3 $fail (Closure(string): void) of method App\\Rules\\CategoryNotInUse::validate() should be compatible with parameter $fail (Closure(string, string|null=): Illuminate\\Translation\\PotentiallyTranslatedString) of method Illuminate\\Contracts\\Validation\\ValidationRule::validate()",
+                    "line": 41,
+                    "ignorable": true,
+                    "identifier": "method.childParameterType"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\ExpenseCategory|Illuminate\\Database\\Eloquent\\Collection<int, App\\Models\\ExpenseCategory>::$expenses_count.",
+                    "line": 46,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Rules\\ExpenseWithinBudget.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Parameter #3 $fail (Closure(string): void) of method App\\Rules\\ExpenseWithinBudget::validate() should be compatible with parameter $fail (Closure(string, string|null=): Illuminate\\Translation\\PotentiallyTranslatedString) of method Illuminate\\Contracts\\Validation\\ValidationRule::validate()",
+                    "line": 59,
+                    "ignorable": true,
+                    "identifier": "method.childParameterType"
+                },
+                {
+                    "message": "Variable $currentTotal on left side of ??= always exists and is not nullable.",
+                    "line": 78,
+                    "ignorable": true,
+                    "identifier": "nullCoalesce.variable"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Rules\\TaxRateNotInUse.php": {
+            "errors": 2,
+            "messages": [
+                {
+                    "message": "Parameter #3 $fail (Closure(string): void) of method App\\Rules\\TaxRateNotInUse::validate() should be compatible with parameter $fail (Closure(string, string|null=): Illuminate\\Translation\\PotentiallyTranslatedString) of method Illuminate\\Contracts\\Validation\\ValidationRule::validate()",
+                    "line": 40,
+                    "ignorable": true,
+                    "identifier": "method.childParameterType"
+                },
+                {
+                    "message": "Access to an undefined property App\\Models\\TaxRate|Illuminate\\Database\\Eloquent\\Collection<int, App\\Models\\TaxRate>::$line_items_count.",
+                    "line": 45,
+                    "ignorable": true,
+                    "tip": "Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property",
+                    "identifier": "property.notFound"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\app\\Rules\\UniqueDefaultTaxRate.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Parameter #3 $fail (Closure(string): void) of method App\\Rules\\UniqueDefaultTaxRate::validate() should be compatible with parameter $fail (Closure(string, string|null=): Illuminate\\Translation\\PotentiallyTranslatedString) of method Illuminate\\Contracts\\Validation\\ValidationRule::validate()",
+                    "line": 53,
+                    "ignorable": true,
+                    "identifier": "method.childParameterType"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\database\\factories\\AttachmentFactory.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Binary operation \".\" between array|string and '.pdf' results in an error.",
+                    "line": 49,
+                    "ignorable": true,
+                    "identifier": "binaryOp.invalid"
+                }
+            ]
+        },
+        "D:\\Insnapsys\\FinDesk\\database\\factories\\UserFactory.php": {
+            "errors": 1,
+            "messages": [
+                {
+                    "message": "Using nullsafe property access \"?->id\" on left side of ?? is unnecessary. Use -> instead.",
+                    "line": 80,
+                    "ignorable": true,
+                    "identifier": "nullsafe.neverNull"
+                }
+            ]
+        }
+    },
+    "errors": []
+}
