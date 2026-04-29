@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Date;
 use App\Actions\Invoice\GenerateInvoiceNumber;
 use App\Models\Invoice;
+use Illuminate\Support\Facades\Date;
 
 it('generates the first invoice number for the year', function (): void {
     $year = now()->year;

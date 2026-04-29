@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Carbon\CarbonInterface;
-use App\Observers\PaymentObserver;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\User;
+use App\Observers\PaymentObserver;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

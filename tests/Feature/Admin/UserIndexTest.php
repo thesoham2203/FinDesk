@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Gate;
 use App\Enums\UserRole;
 use App\Livewire\Admin\UserIndex;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 beforeEach(function (): void {

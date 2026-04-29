@@ -28,8 +28,6 @@ final class PaymentObserver
             $invoice->transitionTo(InvoiceStatus::Overdue);
         }
 
-        $invoice->save();
-
         event(new PaymentRecorded($payment, $invoice));
     }
 
@@ -56,7 +54,5 @@ final class PaymentObserver
             // only fallback if allowed
             $invoice->transitionTo(InvoiceStatus::Draft);
         }
-
-        $invoice->save();
     }
 }
