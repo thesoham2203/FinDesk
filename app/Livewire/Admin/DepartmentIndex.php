@@ -53,10 +53,10 @@ final class DepartmentIndex extends Component
         $this->authorize('delete', $department);
 
         if ($department->users()->count() > 0) {
-            session()->flash('error', sprintf('Cannot delete department with %s users. Please reassign users first.', $department->users()->count()));
+            $this->dispatch('flash', type: 'error', message: sprintf('Cannot delete department with %s users. Please reassign users first.', $department->users()->count()));
         } else {
             $department->delete();
-            session()->flash('success', 'Department deleted successfully');
+            $this->dispatch('flash', type: 'success', message: 'Department deleted successfully');
             $this->resetPage();
         }
     }

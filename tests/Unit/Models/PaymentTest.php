@@ -8,7 +8,7 @@ use App\Models\Payment;
 use App\Notifications\PaymentReceivedNotification;
 
 test('payment can be created with all required attributes', function (): void {
-    $invoice = Invoice::factory()->sent()->create();
+    $invoice = Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent]);
     $today = now()->format('Y-m-d');
 
     $payment = Payment::query()->create([
@@ -114,7 +114,7 @@ test('payment notes are optional', function (): void {
 });
 
 test('payment belongs to an invoice', function (): void {
-    $invoice = Invoice::factory()->sent()->create();
+    $invoice = Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent]);
     $payment = Payment::factory()->create(['invoice_id' => $invoice->id]);
 
     $retrievedInvoice = $payment->invoice;
@@ -136,7 +136,7 @@ test('invoice can have multiple payments', function (): void {
 });
 
 test('payment dates can span multiple dates', function (): void {
-    $invoice = Invoice::factory()->sent()->create();
+    $invoice = Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent]);
 
     $payment1 = Payment::factory()->create([
         'invoice_id' => $invoice->id,
@@ -184,7 +184,7 @@ test('payment can exceed full invoice amount (overpayment)', function (): void {
 
 test('payment attributes are cast to correct types', function (): void {
     $payment = Payment::query()->create([
-        'invoice_id' => Invoice::factory()->sent()->create()->id,
+        'invoice_id' => Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent])->id,
         'amount' => 50000,
         'payment_date' => '2025-01-15',
         'payment_method' => 'bank_transfer',
@@ -208,7 +208,7 @@ test('payment factory creates realistic random payments', function (): void {
 });
 
 test('multiple payments to same invoice in same day', function (): void {
-    $invoice = Invoice::factory()->sent()->create();
+    $invoice = Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent]);
     $today = now()->format('Y-m-d');
 
     $payment1 = Payment::factory()->create(['invoice_id' => $invoice->id, 'payment_date' => $today, 'amount' => 50000]);
@@ -288,7 +288,7 @@ test('formatted amount accessor returns correct string', function (): void {
 });
 
 test('payment received notification returns database channel', function (): void {
-    $invoice = Invoice::factory()->sent()->create();
+    $invoice = Invoice::factory()->create(['status' => App\Enums\InvoiceStatus::Sent]);
     $payment = Payment::factory()->create(['invoice_id' => $invoice->id]);
 
     $notification = new PaymentReceivedNotification($payment, $invoice);

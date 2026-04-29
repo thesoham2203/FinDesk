@@ -102,7 +102,7 @@ it('allows partial payments and balance reduces correctly', function (): void {
         'payment_method' => PaymentMethod::CreditCard->value,
     ]);
 
-    $totalPaid = Payment::where('invoice_id', $invoice->id)->sum('amount');
+    $totalPaid = Payment::query()->where('invoice_id', $invoice->id)->sum('amount');
     $remaining = $invoice->total - $totalPaid;
 
     expect($totalPaid)->toBe(30000)
@@ -114,7 +114,7 @@ it('allows partial payments and balance reduces correctly', function (): void {
         'payment_method' => PaymentMethod::CreditCard->value,
     ]);
 
-    $totalPaid = Payment::where('invoice_id', $invoice->id)->sum('amount');
+    $totalPaid = Payment::query()->where('invoice_id', $invoice->id)->sum('amount');
     expect($totalPaid)->toBe(80000);
 });
 
@@ -163,7 +163,7 @@ it('handles multiple partial payments in sequence', function (): void {
         ]);
     }
 
-    $totalPaid = Payment::where('invoice_id', $invoice->id)->sum('amount');
+    $totalPaid = Payment::query()->where('invoice_id', $invoice->id)->sum('amount');
     expect(count($payments))->toBe(4)
         ->and($totalPaid)->toBe(100000);
 });

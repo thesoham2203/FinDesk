@@ -8,7 +8,9 @@ use App\Enums\InvoiceStatus;
 use App\Models\Activity;
 use App\Models\Invoice;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 final class InvoiceDetail extends Component
@@ -16,8 +18,7 @@ final class InvoiceDetail extends Component
     #[Locked]
     public int $invoiceId;
 
-    public ?Invoice $invoice = null;
-
+    #[Validate('required|string|min:10|max:500')]
     public string $cancelReason = '';
 
     public bool $showCancelModal = false;
@@ -31,19 +32,24 @@ final class InvoiceDetail extends Component
     public function mount(Invoice $invoice): void
     {
         $this->authorize('view', $invoice);
-
         $this->invoiceId = $invoice->id;
-        $this->invoice = $invoice->load(['client', 'creator', 'lineItems', 'payments', 'activities']);
+    }
+
+    #[Computed]
+    public function invoice(): Invoice
+    {
+        return Invoice::query()
+            ->with(['client', 'creator', 'lineItems', 'payments', 'activities'])
+            ->findOrFail($this->invoiceId);
     }
 
     public function send(): void
     {
-        $this->authorize('update', $this->invoice);
+        $this->authorize('send', $this->invoice);
 
         $this->invoice->transitionTo(InvoiceStatus::Sent);
 
         $this->dispatch('flash', type: 'success', message: 'Invoice sent successfully.');
-        $this->invoice = $this->invoice->fresh(['client', 'creator', 'lineItems', 'payments', 'activities']);
     }
 
     /**
@@ -54,9 +60,9 @@ final class InvoiceDetail extends Component
         $this->showCancelModal = true;
     }
 
-    public function cancel(): void
+    public function cancelInvoice(): void
     {
-        $this->authorize('update', $this->invoice);
+        $this->authorize('cancel', $this->invoice);
 
         $this->validate([
             'cancelReason' => 'required|string|min:10|max:500',
@@ -75,11 +81,12 @@ final class InvoiceDetail extends Component
         $this->dispatch('flash', type: 'success', message: 'Invoice cancelled successfully.');
         $this->cancelReason = '';
         $this->showCancelModal = false;
-        $this->invoice = $this->invoice->fresh(['client', 'creator', 'lineItems', 'payments', 'activities']);
     }
 
     public function render(): View
     {
-        return view('livewire.invoices.invoice-detail');
+        return view('livewire.invoices.invoice-detail', [
+            'invoice' => $this->invoice,
+        ]);
     }
 }

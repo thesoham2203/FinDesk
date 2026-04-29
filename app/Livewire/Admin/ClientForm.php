@@ -98,6 +98,7 @@ final class ClientForm extends Component
             Client::query()->create([
                 'name' => $this->name,
                 'email' => $this->email,
+                'password' => bcrypt('password'), // Default password, should be changed by client
                 'phone' => $this->phone,
                 'address' => $this->address,
                 'tax_number' => $this->taxNumber,

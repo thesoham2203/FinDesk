@@ -60,7 +60,6 @@ final class TaxRateForm extends Component
 
     public function mount(?TaxRate $taxRate = null): void
     {
-        // TODO: Implement
         if ($taxRate instanceof TaxRate) {
             $this->taxRateId = $taxRate->id;
             $this->name = $taxRate->name;
@@ -95,7 +94,7 @@ final class TaxRateForm extends Component
             ]);
         }
 
-        session()->flash('success', 'Tax rate saved');
+        $this->dispatch('flash', type: 'success', message: 'Tax rate saved');
         $this->redirect(route('admin.tax-rates.index'), navigate: true);
     }
 

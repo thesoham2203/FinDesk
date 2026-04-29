@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use App\Enums\Currency;
 use App\Models\Organization;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+
+uses(RefreshDatabase::class);
 
 test('organization can be created with factory', function (): void {
     $org = Organization::factory()->create();

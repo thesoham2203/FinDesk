@@ -71,10 +71,10 @@ final class ExpenseCategoryIndex extends Component
         $category = ExpenseCategory::query()->findOrFail($id);
 
         if ($category->expenses()->count() > 0) {
-            session()->flash('error', sprintf('Cannot delete category with %s expenses', $category->expenses()->count()));
+            $this->dispatch('flash', type: 'error', message: sprintf('Cannot delete category with %s expenses', $category->expenses()->count()));
         } else {
             $category->delete();
-            session()->flash('success', 'Category deleted');
+            $this->dispatch('flash', type: 'success', message: 'Category deleted');
         }
     }
 

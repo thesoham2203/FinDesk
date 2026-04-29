@@ -184,6 +184,7 @@ it('handles different MIME types correctly', function (string $mimeType): void {
     $response = $this->get(route('attachments.download', $attachment));
 
     $response->assertStatus(200);
+
     expect($response->headers->get('content-type'))->toContain($mimeType);
 })->with([
     'application/pdf',

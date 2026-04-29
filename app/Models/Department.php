@@ -51,7 +51,7 @@ final class Department extends Model
         return $this->hasManyThrough(Expense::class, User::class);
     }
 
-    protected function formattedBudget(): Attribute
+    public function formattedBudget(): Attribute
     {
         return Attribute::make(
             get: fn (): string => '₹ '.number_format($this->monthly_budget / 100, 2),
@@ -61,22 +61,17 @@ final class Department extends Model
     /**
      * Scope that adds budget usage (current month's expenses) as a subquery.
      *
-     *
      * @param  Builder<Department>  $query
      * @return Builder<Department>
      */
-    protected function scopeWithBudgetUsage(Builder $query): Builder
+    public function scopeWithBudgetUsage(Builder $query): Builder
     {
-        // TODO: [Implement budget usage subquery]
-
-        $query->addSelect([
+        return $query->addSelect([
             'monthly_spent' => Expense::query()
-                ->whereBelongsTo($this)
+                ->whereColumn('expenses.department_id', 'departments.id')
                 ->whereYear('submitted_at', now()->year)
                 ->whereMonth('submitted_at', now()->month)
-                ->select(DB::raw('sum(amount)')),
+                ->select(DB::raw('COALESCE(sum(amount), 0)')),
         ]);
-
-        return $query;
     }
 }

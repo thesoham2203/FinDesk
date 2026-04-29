@@ -39,7 +39,7 @@ final class ExpenseCategory extends Model
         return $this->hasMany(Expense::class, 'category_id');
     }
 
-    protected function formattedMaxAmount(): Attribute
+    public function formattedMaxAmount(): Attribute
     {
         return Attribute::make(
             get: fn (): string => $this->max_amount === null

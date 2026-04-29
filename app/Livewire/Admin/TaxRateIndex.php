@@ -60,9 +60,9 @@ final class TaxRateIndex extends Component
         $taxRate->save();
 
         if (! $taxRate->is_active && $taxRate->is_default) {
-            session()->flash('warning', 'Default tax rate is now inactive');
+            $this->dispatch('flash', type: 'warning', message: 'Default tax rate is now inactive');
         } else {
-            session()->flash('success', 'Tax rate status updated');
+            $this->dispatch('flash', type: 'success', message: 'Tax rate status updated');
         }
     }
 
@@ -71,10 +71,10 @@ final class TaxRateIndex extends Component
         $taxRate = TaxRate::query()->findOrFail($id);
 
         if ($taxRate->lineItems()->count() > 0) {
-            session()->flash('error', sprintf('Cannot delete: used on %s invoices', $taxRate->lineItems()->count()));
+            $this->dispatch('flash', type: 'error', message: sprintf('Cannot delete: used on %s invoices', $taxRate->lineItems()->count()));
         } else {
             $taxRate->delete();
-            session()->flash('success', 'Tax rate deleted');
+            $this->dispatch('flash', type: 'success', message: 'Tax rate deleted');
         }
     }
 

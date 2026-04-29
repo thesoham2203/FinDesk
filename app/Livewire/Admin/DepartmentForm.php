@@ -73,14 +73,14 @@ final class DepartmentForm extends Component
                 'description' => $validated['description'],
                 'monthly_budget' => $budgetCents,
             ]);
-            session()->flash('success', 'Department updated successfully');
+            $this->dispatch('flash', type: 'success', message: 'Department updated successfully');
         } else {
             Department::query()->create([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'monthly_budget' => $budgetCents,
             ]);
-            session()->flash('success', 'Department created successfully');
+            $this->dispatch('flash', type: 'success', message: 'Department created successfully');
         }
 
         $this->redirect(route('admin.departments.index'), navigate: true);

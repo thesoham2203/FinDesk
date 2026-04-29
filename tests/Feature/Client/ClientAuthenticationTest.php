@@ -6,10 +6,13 @@ namespace Tests\Feature\Client;
 
 use App\Livewire\Actions\ClientLogout;
 use App\Models\Client;
+use Illuminate\Support\Str;
 use Livewire\Volt\Volt;
 
 test('clients can logout through the navigation component', function (): void {
-    $client = Client::factory()->create();
+    $client = Client::factory()->create([
+        'remember_token' => Str::random(10),
+    ]);
 
     $this->actingAs($client, 'client');
 
@@ -25,7 +28,9 @@ test('clients can logout through the navigation component', function (): void {
 });
 
 test('ClientLogout action logs out the client directly', function (): void {
-    $client = Client::factory()->create();
+    $client = Client::factory()->create([
+        'remember_token' => Str::random(10),
+    ]);
 
     $this->actingAs($client, 'client');
     $this->assertAuthenticatedAs($client, 'client');

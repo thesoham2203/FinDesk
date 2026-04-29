@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Event;
 
 uses(RefreshDatabase::class);
 
+beforeEach(fn () => Event::fake());
+
 it('marks invoices past due_date as overdue', function (): void {
     $invoice = Invoice::factory()->create([
         'due_date' => now()->subDay(),
@@ -103,7 +105,7 @@ it('processes multiple overdue invoices', function (): void {
 
     $this->artisan('invoices:check-overdue')->assertExitCode(0);
 
-    $overdueCount = Invoice::where('status', InvoiceStatus::Overdue)->count();
+    $overdueCount = Invoice::query()->where('status', InvoiceStatus::Overdue)->count();
     expect($overdueCount)->toBe(5);
 });
 
@@ -142,7 +144,7 @@ it('loads relationships to prevent N+1 queries', function (): void {
     $this->artisan('invoices:check-overdue')->assertExitCode(0);
 
     // All invoices should be marked as overdue
-    $overdueCount = Invoice::where('status', InvoiceStatus::Overdue)->count();
+    $overdueCount = Invoice::query()->where('status', InvoiceStatus::Overdue)->count();
     expect($overdueCount)->toBe(3);
 });
 
@@ -184,7 +186,7 @@ it('processes mixed statuses correctly', function (): void {
 
     $this->artisan('invoices:check-overdue');
 
-    expect(Invoice::where('status', InvoiceStatus::Overdue)->count())->toBe(2)
+    expect(Invoice::query()->where('status', InvoiceStatus::Overdue)->count())->toBe(2)
         ->and($shouldNotChange1->fresh()->status)->toBe(InvoiceStatus::Paid)
         ->and($shouldNotChange2->fresh()->status)->toBe(InvoiceStatus::Sent);
 });

@@ -176,3 +176,15 @@ test('line item can have very small unit price', function (): void {
 
     expect($lineItem->unit_price)->toBe(1);
 });
+
+test('line item has formatted line total accessor', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create(['line_total' => 125000]); // ₹1,250.00
+
+    expect($lineItem->formatted_line_total)->toBe('₹ 1,250.00');
+});
+
+test('line item has formatted unit price accessor', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create(['unit_price' => 50000]); // ₹500.00
+
+    expect($lineItem->formatted_unit_price)->toBe('₹ 500.00');
+});

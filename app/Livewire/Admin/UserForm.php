@@ -21,7 +21,7 @@ final class UserForm extends Component
     #[Validate('required|email|max:255')]
     public string $email = '';
 
-    #[Validate('required|string|min:8|confirmed')]
+    #[Validate('nullable|string|min:8|confirmed')]
     public string $password = '';
 
     public string $password_confirmation = '';
@@ -88,10 +88,10 @@ final class UserForm extends Component
         if ($this->userId) {
             $user = User::query()->findOrFail($this->userId);
             $user->update($data);
-            session()->flash('success', 'User updated successfully');
+            $this->dispatch('flash', type: 'success', message: 'User updated successfully');
         } else {
             User::query()->create($data);
-            session()->flash('success', 'User created successfully');
+            $this->dispatch('flash', type: 'success', message: 'User created successfully');
         }
 
         $this->redirect(route('admin.users.index'), navigate: true);

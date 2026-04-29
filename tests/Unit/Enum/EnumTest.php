@@ -12,10 +12,11 @@ use App\Enums\UserRole;
 // USER ROLE ENUM
 // ============================================================================
 
-test('UserRole has exactly 4 roles', function (): void {
+test('UserRole has exactly 5 roles', function (): void {
     // WHY: If someone adds or removes a role, this test catches it.
     // The HLD specifies exactly: Admin, Manager, Employee, Accountant.
-    expect(UserRole::cases())->toHaveCount(4);
+    // NOTE: Client was added as a 5th role.
+    expect(UserRole::cases())->toHaveCount(5);
 });
 
 test('UserRole has all required cases', function (): void {
@@ -23,7 +24,7 @@ test('UserRole has all required cases', function (): void {
     $values = array_map(fn (UserRole $role) => $role->value, UserRole::cases());
 
     // ASSERT: All four roles exist with correct backing values
-    expect($values)->toContain('admin', 'manager', 'employee', 'accountant');
+    expect($values)->toContain('admin', 'manager', 'employee', 'accountant', 'client');
 });
 
 test('UserRole label returns human-readable text', function (): void {
@@ -32,7 +33,8 @@ test('UserRole label returns human-readable text', function (): void {
     expect(UserRole::Admin->label())->toBe('Administrator')
         ->and(UserRole::Manager->label())->toBe('Manager')
         ->and(UserRole::Employee->label())->toBe('Employee')
-        ->and(UserRole::Accountant->label())->toBe('Accountant');
+        ->and(UserRole::Accountant->label())->toBe('Accountant')
+        ->and(UserRole::Client->label())->toBe('Client');
 });
 
 test('UserRole color returns a valid color string', function (): void {
@@ -41,7 +43,8 @@ test('UserRole color returns a valid color string', function (): void {
     expect(UserRole::Admin->color())->toBe('red')
         ->and(UserRole::Manager->color())->toBe('blue')
         ->and(UserRole::Employee->color())->toBe('green')
-        ->and(UserRole::Accountant->color())->toBe('purple');
+        ->and(UserRole::Accountant->color())->toBe('purple')
+        ->and(UserRole::Client->color())->toBe('gray');
 });
 
 // ============================================================================

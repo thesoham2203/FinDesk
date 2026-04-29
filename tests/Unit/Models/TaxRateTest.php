@@ -27,19 +27,19 @@ describe('TaxRate Model', function (): void {
             ->and($taxRate->percentage)->toBe(5.0);
     });
 
-    // test('tax rate is_default is cast to boolean', function (): void {
-    //     $taxRate = TaxRate::factory()->create(['is_default' => true]);
+    test('tax rate is_default is cast to boolean', function (): void {
+        $taxRate = TaxRate::factory()->create(['is_default' => true]);
 
-    //     expect($taxRate->is_default)->toBeBoolean()
-    //         ->and($taxRate->is_default)->toBeTrue();
-    // });
+        expect($taxRate->is_default)->toBeBool()
+            ->and($taxRate->is_default)->toBeTrue();
+    });
 
-    // test('tax rate is_active is cast to boolean', function (): void {
-    //     $taxRate = TaxRate::factory()->create(['is_active' => false]);
+    test('tax rate is_active is cast to boolean', function (): void {
+        $taxRate = TaxRate::factory()->create(['is_active' => false]);
 
-    //     expect($taxRate->is_active)->toBeBoolean()
-    //         ->and($taxRate->is_active)->toBeFalse();
-    // });
+        expect($taxRate->is_active)->toBeBool()
+            ->and($taxRate->is_active)->toBeFalse();
+    });
 
     test('tax rate has many line items', function (): void {
         $taxRate = TaxRate::factory()->create();
@@ -53,37 +53,37 @@ describe('TaxRate Model', function (): void {
             ->toContain($lineItem1->id, $lineItem2->id);
     });
 
-    // test('active scope filters to active tax rates only', function (): void {
-    //     $activeTaxRate = TaxRate::factory()->create(['is_active' => true]);
-    //     $inactiveTaxRate = TaxRate::factory()->create(['is_active' => false]);
+    test('active scope filters to active tax rates only', function (): void {
+        $activeTaxRate = TaxRate::factory()->create(['is_active' => true]);
+        $inactiveTaxRate = TaxRate::factory()->create(['is_active' => false]);
 
-    //     $activeTaxRates = TaxRate::active()->get();
+        $activeTaxRates = TaxRate::active()->get();
 
-    //     expect($activeTaxRates)->toContain($activeTaxRate)
-    //         ->and($activeTaxRates)->not->toContain($inactiveTaxRate);
-    // });
+        expect($activeTaxRates->pluck('id'))->toContain($activeTaxRate->id)
+            ->and($activeTaxRates->pluck('id'))->not->toContain($inactiveTaxRate->id);
+    });
 
-    // test('default scope filters to default tax rate', function (): void {
-    //     $defaultTaxRate = TaxRate::factory()->create(['is_default' => true]);
-    //     $nonDefaultTaxRate = TaxRate::factory()->create(['is_default' => false]);
+    test('default scope filters to default tax rate', function (): void {
+        $defaultTaxRate = TaxRate::factory()->create(['is_default' => true]);
+        $nonDefaultTaxRate = TaxRate::factory()->create(['is_default' => false]);
 
-    //     $defaultTaxRates = TaxRate::default()->get();
+        $defaultTaxRates = TaxRate::default()->get();
 
-    //     expect($defaultTaxRates)->toContain($defaultTaxRate)
-    //         ->and($defaultTaxRates)->not->toContain($nonDefaultTaxRate);
-    // });
+        expect($defaultTaxRates->pluck('id'))->toContain($defaultTaxRate->id)
+            ->and($defaultTaxRates->pluck('id'))->not->toContain($nonDefaultTaxRate->id);
+    });
 
-    // test('can combine active and default scopes', function (): void {
-    //     $activeDefault = TaxRate::factory()->create(['is_active' => true, 'is_default' => true]);
-    //     $inactiveDefault = TaxRate::factory()->create(['is_active' => false, 'is_default' => true]);
-    //     $activeNonDefault = TaxRate::factory()->create(['is_active' => true, 'is_default' => false]);
+    test('can combine active and default scopes', function (): void {
+        $activeDefault = TaxRate::factory()->create(['is_active' => true, 'is_default' => true]);
+        $inactiveDefault = TaxRate::factory()->create(['is_active' => false, 'is_default' => true]);
+        $activeNonDefault = TaxRate::factory()->create(['is_active' => true, 'is_default' => false]);
 
-    //     $result = TaxRate::active()->default()->get();
+        $result = TaxRate::active()->default()->get();
 
-    //     expect($result)->toContain($activeDefault)
-    //         ->and($result)->not->toContain($inactiveDefault)
-    //         ->and($result)->not->toContain($activeNonDefault);
-    // });
+        expect($result->pluck('id'))->toContain($activeDefault->id)
+            ->and($result->pluck('id'))->not->toContain($inactiveDefault->id)
+            ->and($result->pluck('id'))->not->toContain($activeNonDefault->id);
+    });
 
     test('tax rate with zero percentage', function (): void {
         $zeroTaxRate = TaxRate::factory()->create(['percentage' => 0.0]);

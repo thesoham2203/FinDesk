@@ -65,13 +65,13 @@ final class UserIndex extends Component
 
         // Prevent deleting the last admin user
         if ($user->role === UserRole::Admin && User::query()->where('role', UserRole::Admin->value)->count() <= 1) {
-            session()->flash('error', 'Cannot delete the last admin user');
+            $this->dispatch('flash', type: 'error', message: 'Cannot delete the last admin user');
 
             return;
         }
 
         $user->delete();
-        session()->flash('success', 'User deleted successfully');
+        $this->dispatch('flash', type: 'success', message: 'User deleted successfully');
         $this->resetPage();
     }
 

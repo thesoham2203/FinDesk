@@ -13,7 +13,7 @@ test('confirm password screen can be rendered', function (): void {
     $response = $this->actingAs($user)->get('/confirm-password');
 
     $response
-        ->assertSeeVolt('pages.auth.confirm-password')
+        ->assertSee('pages.auth.confirm-password')
         ->assertStatus(200);
 });
 

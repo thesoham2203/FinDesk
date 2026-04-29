@@ -72,23 +72,21 @@ final class OrganizationSettingsForm extends Component
             $logoPath = $this->logo->store('org-logos', 'public');
         }
 
-        $org = Organization::query()->first();
-        if (! $org) {
-            $org = new Organization();
-        }
-
-        $org->update([
-            'name' => $validated['name'],
-            'address' => $validated['address'],
-            'logo_path' => $logoPath,
-            'default_currency' => $validated['defaultCurrency'],
-            'fiscal_year_start' => $validated['fiscalYearStart'],
-        ]);
+        Organization::query()->updateOrCreate(
+            [], // Only one record
+            [
+                'name' => $validated['name'],
+                'address' => $validated['address'],
+                'logo_path' => $logoPath,
+                'default_currency' => $validated['defaultCurrency'],
+                'fiscal_year_start' => $validated['fiscalYearStart'],
+            ]
+        );
 
         // Clear the organization cache
         cache()->forget('organization');
 
-        session()->flash('success', 'Organization settings updated successfully');
+        $this->dispatch('flash', type: 'success', message: 'Organization settings updated successfully');
     }
 
     /**

@@ -85,8 +85,6 @@ final class ExpenseCategoryForm extends Component
 
     public function save(): void
     {
-        // TODO: Implement
-
         $this->validate();
 
         $maxAmountCents = $this->maxAmount !== '' && $this->maxAmount !== '0' ? (int) ((float) ($this->maxAmount) * 100) : null;
@@ -108,7 +106,7 @@ final class ExpenseCategoryForm extends Component
             ]);
         }
 
-        session()->flash('success', 'Category saved');
+        $this->dispatch('flash', type: 'success', message: 'Category saved');
         $this->redirect(route('admin.categories.index'), navigate: true);
     }
 
