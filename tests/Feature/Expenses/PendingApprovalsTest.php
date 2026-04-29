@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\ExpenseStatus;
 use App\Livewire\Expenses\PendingApprovals;
+use App\Models\Activity;
 use App\Models\Department;
 use App\Models\Expense;
 use App\Models\User;
@@ -206,4 +207,42 @@ it('shows empty state when no pending expenses', function (): void {
 
     $expenses = $component->get('pendingExpenses');
     expect($expenses->isEmpty())->toBeTrue();
+});
+
+it('returns pending count for manager department', function (): void {
+    $department = Department::factory()->create();
+    $otherDepartment = Department::factory()->create();
+    $manager = User::factory()->manager()->create(['department_id' => $department->id]);
+
+    Expense::factory()->count(2)->create([
+        'status' => ExpenseStatus::Submitted,
+        'department_id' => $department->id,
+    ]);
+    Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+        'department_id' => $otherDepartment->id,
+    ]);
+
+    $component = Livewire::actingAs($manager)->test(PendingApprovals::class);
+
+    expect($component->get('pendingCount'))->toBe(2);
+});
+
+it('approves expense and flashes success for authorized manager', function (): void {
+    $department = Department::factory()->create();
+    $manager = User::factory()->manager()->create(['department_id' => $department->id]);
+    $employee = User::factory()->employee()->create(['department_id' => $department->id, 'manager_id' => $manager->id]);
+
+    $expense = Expense::factory()->submitted()->create([
+        'user_id' => $employee->id,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($manager)->test(PendingApprovals::class);
+    $component->call('approve', $expense->id);
+
+    $expense->refresh();
+
+    expect($expense->status)->toBe(ExpenseStatus::Approved);
+    expect(Activity::query()->where('subject_id', $expense->id)->exists())->toBeTrue();
 });

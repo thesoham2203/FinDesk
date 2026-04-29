@@ -70,3 +70,11 @@ it('validates cancel reason is required', function () {
         ->call('cancelInvoice')
         ->assertHasErrors(['cancelReason' => 'required']);
 });
+
+it('opens cancel modal when requested', function () {
+    $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
+
+    Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
+        ->call('openCancelModal')
+        ->assertSet('showCancelModal', true);
+});

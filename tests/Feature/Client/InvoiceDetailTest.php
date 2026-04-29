@@ -45,3 +45,16 @@ test('client can mark a sent invoice as viewed', function (): void {
         ->and($activity->description)->toBe('Invoice marked as viewed by client')
         ->and($activity->properties['client_id'])->toBe($client->id);
 });
+
+test('client cannot mark a non-sent invoice as viewed', function (): void {
+    $client = Client::factory()->create();
+    $invoice = Invoice::factory()->for($client)->create(['status' => InvoiceStatus::Draft]);
+
+    Livewire::actingAs($client, 'client')
+        ->test(InvoiceDetail::class, ['invoice' => $invoice])
+        ->call('markAsViewed')
+        ->assertDispatched('flash', type: 'error');
+
+    $invoice->refresh();
+    expect($invoice->status)->toBe(InvoiceStatus::Draft);
+});

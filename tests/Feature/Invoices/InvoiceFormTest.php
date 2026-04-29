@@ -95,3 +95,46 @@ it('cannot update a non-draft invoice', function () {
     Livewire::test(InvoiceForm::class, ['invoice' => $invoice])
         ->assertStatus(403);
 });
+
+it('calculates line item tax when tax rate id is present', function () {
+    $taxRate = TaxRate::factory()->create(['percentage' => 18, 'is_active' => true]);
+
+    $component = Livewire::test(InvoiceForm::class)
+        ->set('lineItems.0.quantity', '2')
+        ->set('lineItems.0.unit_price', '100')
+        ->set('lineItems.0.tax_rate_id', (string) $taxRate->id);
+
+    $component->call('calculateLineItem', 0);
+
+    expect($component->get('lineItems.0.line_total'))->toBe(20000)
+        ->and($component->get('lineItems.0.tax_amount'))->toBe(3600);
+});
+
+it('returns expected currency symbols including default fallback', function () {
+    $component = Livewire::test(InvoiceForm::class);
+
+    $component->set('currency', 'USD');
+    expect($component->instance()->getCurrencySymbolProperty())->toBe('$');
+
+    $component->set('currency', 'EUR');
+    expect($component->instance()->getCurrencySymbolProperty())->toBe('€');
+
+    $component->set('currency', 'AUD');
+    expect($component->instance()->getCurrencySymbolProperty())->toBe('$');
+});
+
+it('returns default currency symbol on a plain invoice form instance', function () {
+    $component = new InvoiceForm();
+    $component->currency = 'AUD';
+
+    expect($component->getCurrencySymbolProperty())->toBe('$');
+});
+
+it('skips line item calculation for an invalid index', function () {
+    $component = Livewire::test(InvoiceForm::class);
+
+    $subtotal = $component->get('subtotal');
+    $component->call('calculateLineItem', 99);
+
+    expect($component->get('subtotal'))->toBe($subtotal);
+});

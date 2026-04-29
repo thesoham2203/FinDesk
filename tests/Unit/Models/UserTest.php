@@ -221,3 +221,26 @@ test('deleting a user cascades to their created invoices', function (): void {
     // ASSERT: Verify the invoice is also deleted (cascade)
     expect(Invoice::query()->find($invoiceId))->toBeNull();
 });
+
+test('user query can be filtered by role scope', function (): void {
+    User::factory()->create(['role' => UserRole::Admin]);
+    User::factory()->create(['role' => UserRole::Employee]);
+
+    $admins = User::query()->byRole(UserRole::Admin)->get();
+
+    expect($admins)->toHaveCount(1)
+        ->and($admins->first()->role)->toBe(UserRole::Admin);
+});
+
+test('user query can be filtered by department scope', function (): void {
+    $engineering = Department::factory()->create();
+    $finance = Department::factory()->create();
+
+    User::factory()->create(['department_id' => $engineering->id]);
+    User::factory()->create(['department_id' => $finance->id]);
+
+    $users = User::query()->inDepartment($engineering->id)->get();
+
+    expect($users)->toHaveCount(1)
+        ->and($users->first()->department_id)->toBe($engineering->id);
+});

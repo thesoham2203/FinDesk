@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
 use App\Models\TaxRate;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * ============================================================================
@@ -123,6 +124,12 @@ test('line item has many polymorphic attachments', function (): void {
     $lineItem = InvoiceLineItem::factory()->create();
 
     expect(method_exists($lineItem, 'attachments'))->toBeTrue();
+});
+
+test('line item attachments relationship returns morph many relation', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create();
+
+    expect($lineItem->attachments())->toBeInstanceOf(MorphMany::class);
 });
 
 test('line item can use different tax rates', function (): void {

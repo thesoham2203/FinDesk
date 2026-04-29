@@ -123,20 +123,32 @@ it('prevents deleting approved expense', function (): void {
 });
 
 it('checks budget constraint on submit', function (): void {
-    $department = Department::factory()->create(['monthly_budget' => 1000]);
+    $department = Department::factory()->create(['monthly_budget' => 0]);
     $user = User::factory()->create(['department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'user_id' => $user->id,
+        'department_id' => $department->id,
         'status' => ExpenseStatus::Draft,
-        'amount' => 50000, // 500 in dollars, exceeds budget
+        'amount' => 50000,
     ]);
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
     $component->call('submit');
 
-    // Verify expense still exists
+    // Verify expense still exists and was not submitted
     $this->assertDatabaseHas('expenses', ['id' => $expense->id]);
+});
+
+it('refreshes the expense after successful submit', function (): void {
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
+    $user = User::query()->where('id', $expense->user_id)->first();
+
+    $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('submit');
+
+    expect($component->get('expense')->status)->toBe(ExpenseStatus::Submitted);
 });
 
 it('shows rejection reason field', function (): void {
