@@ -40,3 +40,45 @@ test('ClientLogout action logs out the client directly', function (): void {
 
     $this->assertGuest('client');
 });
+
+test('clients can authenticate using the client login screen', function (): void {
+    $client = Client::factory()->create();
+
+    Volt::test('pages.auth.client-login')
+        ->set('form.email', $client->email)
+        ->set('form.password', 'password')
+        ->call('login')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('client.dashboard', absolute: false));
+
+    $this->assertAuthenticatedAs($client, 'client');
+});
+
+test('clients cannot authenticate with an invalid password', function (): void {
+    $client = Client::factory()->create();
+
+    Volt::test('pages.auth.client-login')
+        ->set('form.email', $client->email)
+        ->set('form.password', 'wrong-password')
+        ->call('login')
+        ->assertHasErrors('form.email')
+        ->assertNoRedirect();
+
+    $this->assertGuest('client');
+});
+
+test('client login requests are rate limited', function (): void {
+    $client = Client::factory()->create();
+
+    $component = Volt::test('pages.auth.client-login')
+        ->set('form.email', $client->email)
+        ->set('form.password', 'wrong-password');
+
+    for ($attempt = 0; $attempt < 6; $attempt++) {
+        $component->call('login');
+    }
+
+    $component
+        ->assertHasErrors('form.email')
+        ->assertNoRedirect();
+});

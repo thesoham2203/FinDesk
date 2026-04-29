@@ -66,4 +66,20 @@ describe('StoreInvoiceRequest', function (): void {
         // We only care about the errors added by withValidator here
         expect($validator->errors()->has('line_items'))->toBeFalse();
     });
+
+    it('has correct custom attributes', function (): void {
+        $request = new StoreInvoiceRequest();
+        $attributes = $request->attributes();
+
+        expect($attributes)->toHaveKeys([
+            'client_id',
+            'issue_date',
+            'due_date',
+            'line_items',
+        ]);
+        expect($attributes['client_id'])->toBe('client');
+        expect($attributes['issue_date'])->toBe('issue date');
+        expect($attributes['due_date'])->toBe('due date');
+        expect($attributes['line_items'])->toBe('line items');
+    });
 });

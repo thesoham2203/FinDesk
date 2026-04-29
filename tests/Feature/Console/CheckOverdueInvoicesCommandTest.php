@@ -190,3 +190,21 @@ it('processes mixed statuses correctly', function (): void {
         ->and($shouldNotChange1->fresh()->status)->toBe(InvoiceStatus::Paid)
         ->and($shouldNotChange2->fresh()->status)->toBe(InvoiceStatus::Sent);
 });
+
+it('dispatches InvoiceOverdue event for each overdue invoice', function (): void {
+    Event::fake();
+
+    $invoice1 = Invoice::factory()->create([
+        'due_date' => now()->subDay(),
+        'status' => InvoiceStatus::Sent,
+    ]);
+
+    $invoice2 = Invoice::factory()->create([
+        'due_date' => now()->subDay(),
+        'status' => InvoiceStatus::Viewed,
+    ]);
+
+    $this->artisan('invoices:check-overdue');
+
+    Event::assertDispatched(InvoiceOverdue::class, 2);
+});

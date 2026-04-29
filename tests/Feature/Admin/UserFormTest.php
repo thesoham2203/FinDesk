@@ -56,6 +56,17 @@ it('updates an existing user', function () {
     expect($user->name)->toBe('Updated Name');
 });
 
+it('requires a password when creating a new user', function () {
+    Livewire::test(UserForm::class)
+        ->set('name', 'New User')
+        ->set('email', 'new-user@example.com')
+        ->set('role', 'employee')
+        ->call('save')
+        ->assertHasErrors(['password']);
+
+    expect(User::query()->where('email', 'new-user@example.com')->exists())->toBeFalse();
+});
+
 it('validates required fields on create', function () {
     Livewire::test(UserForm::class)
         ->set('role', '')

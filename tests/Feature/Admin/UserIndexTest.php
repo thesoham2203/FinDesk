@@ -77,3 +77,21 @@ it('cannot delete the last admin user', function () {
     // Now only 1 admin left. We can't test "last admin" check easily because
     // the only admin left cannot delete themselves.
 });
+
+it('prevents deleting the last remaining admin record', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+    Gate::shouldReceive('check')->andReturnTrue();
+
+    User::query()->whereKey($this->admin->id)->delete();
+
+    $actor = User::factory()->create(['role' => UserRole::Employee]);
+    $targetAdmin = User::factory()->create(['role' => UserRole::Admin]);
+
+    $this->actingAs($actor);
+
+    Livewire::test(UserIndex::class)
+        ->call('delete', $targetAdmin->id)
+        ->assertDispatched('flash', type: 'error');
+
+    expect(User::query()->find($targetAdmin->id))->not->toBeNull();
+});

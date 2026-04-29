@@ -39,6 +39,16 @@ describe('StoreExpenseRequest - Authorization', function (): void {
         // In practice, this would be defined in a service provider or policy
         expect($request::class)->toEqual(StoreExpenseRequest::class);
     });
+
+    it('authorizes the request', function (): void {
+        Gate::shouldReceive('authorize')
+            ->once()
+            ->with('create-expenses');
+
+        $request = new StoreExpenseRequest();
+
+        expect($request->authorize())->toBeTrue();
+    });
 });
 
 describe('StoreExpenseRequest - Basic Validation', function (): void {
