@@ -84,8 +84,9 @@ it('prevents editing of non-draft expenses', function (): void {
     $user = User::factory()->create();
     $expense = Expense::factory()->submitted()->create(['user_id' => $user->id]);
 
-    expect(fn () => Livewire::actingAs($user)
-        ->test('expenses.expense-form', ['expense' => $expense])
+    expect(
+        fn () => Livewire::actingAs($user)
+            ->test('expenses.expense-form', ['expense' => $expense])
     )->toThrow(ViewException::class); // Livewire wraps InvalidArgumentException
 });
 
@@ -135,4 +136,43 @@ it('updates category requirements when category is set', function (): void {
         ->assertSet('requiresReceipt', true)
         ->set('categoryId', (string) $categoryNoReceipt->id)
         ->assertSet('requiresReceipt', false);
+});
+
+it('selectedCategory returns null when no category selected', function (): void {
+    $user = User::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test('expenses.expense-form')
+        ->set('categoryId', '');
+
+    expect($component->get('selectedCategory'))->toBeNull();
+});
+
+it('selectedCategory returns the chosen category', function (): void {
+    $user = User::factory()->create();
+    $category = ExpenseCategory::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test('expenses.expense-form')
+        ->set('categoryId', (string) $category->id);
+
+    $selected = $component->get('selectedCategory');
+
+    expect($selected)->not->toBeNull()
+        ->and($selected->id)->toBe($category->id);
+});
+
+it('returns early on save when no authenticated user exists', function (): void {
+    $category = ExpenseCategory::factory()->create();
+
+    Livewire::test('expenses.expense-form')
+        ->set('title', 'Guest Expense')
+        ->set('description', 'No auth user')
+        ->set('amount', '100')
+        ->set('categoryId', (string) $category->id)
+        ->set('currency', 'INR')
+        ->set('date', now()->format('Y-m-d'))
+        ->call('save');
+
+    expect(Expense::query()->where('title', 'Guest Expense')->exists())->toBeFalse();
 });

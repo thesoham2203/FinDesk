@@ -7,13 +7,19 @@ namespace App\Livewire\Invoices;
 use App\Actions\Payment\RecordPayment;
 use App\Enums\PaymentMethod;
 use App\Models\Invoice;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
+/**
+ * @property-read array<int, PaymentMethod> $paymentMethods
+ * @property-read int $invoiceTotal
+ * @property-read int $totalPaid
+ * @property-read int $remaining
+ */
 final class PaymentForm extends Component
 {
     #[Locked]
@@ -34,15 +40,6 @@ final class PaymentForm extends Component
     #[Validate('nullable|string|max:500')]
     public string $notes = '';
 
-    #[Computed]
-    public int $invoiceTotal = 0;
-
-    #[Computed]
-    public int $totalPaid = 0;
-
-    #[Computed]
-    public int $remaining = 0;
-
     /**
      * Mount the component and load invoice, calculate balances.
      */
@@ -50,7 +47,6 @@ final class PaymentForm extends Component
     {
         $this->invoiceId = $invoiceId;
         $this->paymentDate = now()->format('Y-m-d');
-        $this->refreshBalances();
     }
 
     /**
@@ -58,7 +54,7 @@ final class PaymentForm extends Component
      */
     public function save(): void
     {
-        // Validate form inputs
+        /** @var array{amount: string, paymentDate: string, paymentMethod: string, referenceNumber: ?string, notes: ?string} $validated */
         $validated = $this->validate();
 
         // Convert amount from dollars to cents
@@ -69,13 +65,21 @@ final class PaymentForm extends Component
 
         try {
             // Record the payment (Observer fires PaymentRecorded event)
-            new RecordPayment()->execute($invoice, [
+            $paymentData = [
                 'amount' => $amountInCents,
                 'payment_date' => $validated['paymentDate'],
                 'payment_method' => $validated['paymentMethod'],
-                'reference_number' => $validated['referenceNumber'] ?? null,
-                'notes' => $validated['notes'] ?? null,
-            ]);
+            ];
+
+            if ($validated['referenceNumber'] !== null && $validated['referenceNumber'] !== '') {
+                $paymentData['reference_number'] = $validated['referenceNumber'];
+            }
+
+            if ($validated['notes'] !== null && $validated['notes'] !== '') {
+                $paymentData['notes'] = $validated['notes'];
+            }
+
+            new RecordPayment()->execute($invoice, $paymentData);
 
             // Dispatch event to parent component to refresh invoice data
             $this->dispatch('payment-recorded');
@@ -83,7 +87,6 @@ final class PaymentForm extends Component
             // Reset form and refresh balances
             $this->reset(['amount', 'referenceNumber', 'notes']);
             $this->paymentDate = now()->format('Y-m-d');
-            $this->refreshBalances();
 
             $this->dispatch('flash', type: 'success', message: 'Payment recorded successfully.');
         } catch (InvalidArgumentException $invalidArgumentException) {
@@ -91,10 +94,32 @@ final class PaymentForm extends Component
         }
     }
 
+    #[Computed]
+    public function invoiceTotal(): int
+    {
+        $invoice = Invoice::query()->findOrFail($this->invoiceId);
+
+        return (int) $invoice->total;
+    }
+
+    #[Computed]
+    public function totalPaid(): int
+    {
+        $invoice = Invoice::query()->findOrFail($this->invoiceId);
+
+        return (int) $invoice->payments()->sum('amount');
+    }
+
+    #[Computed]
+    public function remaining(): int
+    {
+        return $this->invoiceTotal - $this->totalPaid;
+    }
+
     /**
      * Get available payment methods for dropdown.
      *
-     * @return list<PaymentMethod>
+     * @return array<int, PaymentMethod>
      */
     #[Computed]
     public function paymentMethods(): array
@@ -104,17 +129,10 @@ final class PaymentForm extends Component
 
     public function render(): View
     {
-        return view('livewire.invoices.payment-form');
-    }
-
-    /**
-     * Refresh calculated balance amounts from the database.
-     */
-    private function refreshBalances(): void
-    {
-        $invoice = Invoice::query()->findOrFail($this->invoiceId);
-        $this->invoiceTotal = $invoice->total;
-        $this->totalPaid = $invoice->payments()->sum('amount');
-        $this->remaining = $this->invoiceTotal - $this->totalPaid;
+        return view('livewire.invoices.payment-form', [
+            'invoiceTotal' => $this->invoiceTotal,
+            'totalPaid' => $this->totalPaid,
+            'remaining' => $this->remaining,
+        ]);
     }
 }

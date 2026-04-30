@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Http\Controllers\AttachmentController;
 use App\Livewire\Admin\ClientForm;
 use App\Livewire\Admin\ClientIndex;
+use App\Livewire\Admin\DepartmentForm;
+use App\Livewire\Admin\DepartmentIndex;
 use App\Livewire\Admin\ExpenseCategoryForm;
 use App\Livewire\Admin\ExpenseCategoryIndex;
 use App\Livewire\Admin\OrganizationSettingsForm;
@@ -127,6 +129,16 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('/users/{user}/edit', UserForm::class)
         ->name('users.edit');
+
+    // Departments
+    Route::get('/departments', DepartmentIndex::class)
+        ->name('departments.index');
+
+    Route::get('/departments/create', DepartmentForm::class)
+        ->name('departments.create');
+
+    Route::get('/departments/{department}/edit', DepartmentForm::class)
+        ->name('departments.edit');
 
     // Organization Settings
     Route::get('/organization', OrganizationSettingsForm::class)

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions\Expense;
 
+use App\Enums\Currency;
 use App\Enums\ExpenseStatus;
 use App\Models\Attachment;
 use App\Models\Expense;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
@@ -17,19 +20,34 @@ final class UpdateExpense
      * Update an existing draft expense.
      *
      * @param  Expense  $expense  The expense being edited
-     * @param  array<string, mixed>  $data  Validated expense data from the form layer
+     * @param  array{title: string, amount: int, currency: string, description?: string|null, date: string, category_id: int|string}  $data  Validated expense data from the form layer
      * @param  UploadedFile|null  $receipt  Optional replacement receipt file
      */
     public function execute(Expense $expense, array $data, ?UploadedFile $receipt = null): Expense
     {
         throw_if($expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be updated.');
 
-        $expense->title = $data['title'];
-        $expense->amount = $data['amount'];
-        $expense->description = $data['description'];
-        $expense->date = $data['date'];
+        /** @var string $title */
+        $title = $data['title'];
+        $expense->title = $title;
+
+        /** @var int $amount */
+        $amount = $data['amount'];
+        $expense->amount = $amount;
+
+        /** @var string|null $description */
+        $description = $data['description'] ?? null;
+        $expense->description = $description;
+
+        /** @var Carbon $date */
+        $date = Date::parse($data['date']);
+        $expense->date = $date;
+
         $expense->category_id = (int) $data['category_id'];
-        $expense->currency = $data['currency'];
+
+        /** @var string $currency */
+        $currency = $data['currency'];
+        $expense->currency = Currency::from($currency);
 
         if ($receipt instanceof UploadedFile) {
             // Delete old file from receipt_path if it exists
@@ -50,8 +68,7 @@ final class UpdateExpense
 
             // Store the file in 'receipts' as expected by tests
             $path = $receipt->store('receipts');
-            $expense->receipt_path = $path;
-
+            $expense->receipt_path = $path !== false ? $path : null;
             // Create new attachment record with captured metadata
             Attachment::query()->create([
                 'attachable_type' => Expense::class,

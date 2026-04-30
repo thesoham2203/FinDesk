@@ -10,6 +10,7 @@ use App\Events\ExpenseRejected;
 use App\Events\ExpenseSubmitted;
 use App\Models\Activity;
 use App\Models\Expense;
+use App\Models\User;
 
 final class LogExpenseActivity
 {
@@ -20,32 +21,56 @@ final class LogExpenseActivity
      */
     public function handle(object $event): void
     {
-        $action = null;
-        $description = null;
-        $properties = [];
-        $user = null;
-
         $expense = $event->expense;
+
         if ($event instanceof ExpenseSubmitted) {
             $action = 'submitted';
             $user = $expense->user;
-            $description = sprintf('Employee %s submitted expense: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
+
+            if (! $user instanceof User) {
+                return;
+            }
+
+            $description = sprintf(
+                'Employee %s submitted expense: %s (%s)',
+                $user->name,
+                $expense->title,
+                $expense->formatted_amount
+            );
+            $properties = [];
         } elseif ($event instanceof ExpenseApproved) {
             $action = 'approved';
             $user = $event->approver;
-            $description = sprintf('Manager %s approved expense: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
+            $description = sprintf(
+                'Manager %s approved expense: %s (%s)',
+                $event->approver->name,
+                $expense->title,
+                $expense->formatted_amount
+            );
+            $properties = [];
         } elseif ($event instanceof ExpenseRejected) {
             $action = 'rejected';
             $user = $event->rejector;
-            $description = sprintf('Manager %s rejected expense: %s (%s), Reason: %s', $user->name, $expense->title, $expense->formattedAmount, $event->reason);
-            $properties['rejection_reason'] = $event->reason;
+            $description = sprintf(
+                'Manager %s rejected expense: %s (%s), Reason: %s',
+                $event->rejector->name,
+                $expense->title,
+                $expense->formatted_amount,
+                $event->reason
+            );
+            $properties = ['rejection_reason' => $event->reason];
+            // @phpstan-ignore-next-line
         } elseif ($event instanceof ExpenseReimbursed) {
             $action = 'reimbursed';
             $user = $event->processor;
-            $description = sprintf('Accountant %s marked expense as reimbursed: %s (%s)', $user->name, $expense->title, $expense->formattedAmount);
-        }
-
-        if (! $user) {
+            $description = sprintf(
+                'Accountant %s marked expense as reimbursed: %s (%s)',
+                $event->processor->name,
+                $expense->title,
+                $expense->formatted_amount
+            );
+            $properties = [];
+        } else {
             return;
         }
 
@@ -56,6 +81,5 @@ final class LogExpenseActivity
             'description' => $description,
             'properties' => $properties,
         ]);
-
     }
 }

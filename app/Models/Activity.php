@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 final class Activity extends Model
 {
+    /** @use HasFactory<ActivityFactory> */
     use HasFactory;
 
     /**
@@ -25,14 +27,7 @@ final class Activity extends Model
     ];
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $casts = [
-        'properties' => 'array',
-    ];
-
-    /**
-     * @return BelongsTo<User, Activity>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -42,10 +37,20 @@ final class Activity extends Model
     /**
      * Get the parent model (Expense, Invoice, Payment, etc.) that this activity is for.
      *
-     * @return MorphTo<Model>
+     * @return MorphTo<Model, $this>
      */
     public function subject(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'properties' => 'array',
+        ];
     }
 }

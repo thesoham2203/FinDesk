@@ -34,7 +34,7 @@ final class InvoiceHeaderForm extends Form
         $this->clientId = (string) $invoice->client_id;
         $this->issueDate = $invoice->issue_date->toDateString();
         $this->dueDate = $invoice->due_date->toDateString();
-        $this->notes = $invoice->notes;
+        $this->notes = $invoice->notes ?? '';
         $this->currency = $invoice->currency->value;
     }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 use function in_array;
 
@@ -14,15 +15,16 @@ final class EnsureUserHasRole
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  list<string>  $roles
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
-        if ($user && in_array($user->role->value, $roles, true)) {
-            return $next($request);
+        if ($user instanceof User && in_array($user->role->value, $roles, true)) {
+            /** @var Response $response */
+            $response = $next($request);
+
+            return $response;
         }
 
         abort(403, 'Unauthorized role for this section');

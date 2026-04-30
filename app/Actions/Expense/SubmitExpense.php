@@ -21,7 +21,12 @@ final class SubmitExpense
 
         $expense->transitionTo(ExpenseStatus::Submitted);
         $expense->submitted_at = now();
-        $expense->department_id = $expense->user->department_id;
+
+        $user = $expense->user;
+        if ($user !== null) {
+            $expense->department_id = (int) $user->department_id;
+        }
+
         $expense->save();
 
         return $expense;

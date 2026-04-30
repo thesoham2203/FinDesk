@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
+use App\Models\Client;
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,19 +35,21 @@ final class InvoiceOverdueNotification extends Notification implements ShouldQue
     {
         // Calculate days overdue
         $daysOverdue = $this->invoice->due_date->diffInDays(now());
+        $client = $this->invoice->client;
+        $clientName = $client instanceof Client ? $client->name : 'Unknown client';
 
         return [
             'title' => 'Invoice Overdue',
             'message' => sprintf(
                 'Invoice %s for %s (₹%s) is %d days overdue (Due: %s)',
                 $this->invoice->invoice_number,
-                $this->invoice->client->name,
+                $clientName,
                 number_format($this->invoice->total / 100, 2),
                 $daysOverdue,
                 $this->invoice->due_date->format('M d, Y')
             ),
             'invoice_id' => $this->invoice->id,
-            'client_name' => $this->invoice->client->name,
+            'client_name' => $clientName,
             'invoice_amount' => $this->invoice->total,
             'due_date' => $this->invoice->due_date->toDateString(),
             'days_overdue' => $daysOverdue,

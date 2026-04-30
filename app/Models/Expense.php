@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\Currency;
 use App\Enums\ExpenseStatus;
+use Carbon\CarbonInterface;
+use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,8 +16,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use InvalidArgumentException;
 
+/**
+ * @property-read int $id
+ * @property string $user_id
+ * @property int $category_id
+ * @property int $department_id
+ * @property string $title
+ * @property string|null $description
+ * @property int $amount
+ * @property int $reimbursed_amount
+ * @property int $due_amount
+ * @property Currency $currency
+ * @property ExpenseStatus $status
+ * @property string|null $receipt_path
+ * @property CarbonInterface|null $submitted_at
+ * @property CarbonInterface|null $reviewed_at
+ * @property string|null $reviewed_by
+ * @property string|null $rejection_reason
+ * @property CarbonInterface|null $date
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ * @property-read string $formatted_amount
+ * @property-read string $formatted_reimbursed_amount
+ * @property-read string $formatted_due_amount
+ */
 final class Expense extends Model
 {
+    /** @use HasFactory<ExpenseFactory> */
     use HasFactory;
 
     /**
@@ -41,21 +68,26 @@ final class Expense extends Model
     ];
 
     /**
-     * @var array<string, mixed>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'status' => ExpenseStatus::class,
-        'currency' => Currency::class,
-        'amount' => 'integer',
-        'submitted_at' => 'datetime',
-        'reviewed_at' => 'datetime',
-        'date' => 'date',
-        'reimbursed_amount' => 'integer',
-        'due_amount' => 'integer',
-    ];
+    public function casts(): array
+    {
+        return [
+            'category_id' => 'integer',
+            'department_id' => 'integer',
+            'status' => ExpenseStatus::class,
+            'currency' => Currency::class,
+            'amount' => 'integer',
+            'submitted_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+            'date' => 'date',
+            'reimbursed_amount' => 'integer',
+            'due_amount' => 'integer',
+        ];
+    }
 
     /**
-     * @return BelongsTo<User, Expense>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -63,7 +95,7 @@ final class Expense extends Model
     }
 
     /**
-     * @return BelongsTo<ExpenseCategory, Expense>
+     * @return BelongsTo<ExpenseCategory, $this>
      */
     public function category(): BelongsTo
     {
@@ -71,7 +103,7 @@ final class Expense extends Model
     }
 
     /**
-     * @return BelongsTo<Department, Expense>
+     * @return BelongsTo<Department, $this>
      */
     public function department(): BelongsTo
     {
@@ -79,7 +111,7 @@ final class Expense extends Model
     }
 
     /**
-     * @return BelongsTo<User, Expense>
+     * @return BelongsTo<User, $this>
      */
     public function reviewer(): BelongsTo
     {
@@ -87,7 +119,7 @@ final class Expense extends Model
     }
 
     /**
-     * @return MorphMany<Attachment>
+     * @return MorphMany<Attachment, $this>
      */
     public function attachments(): MorphMany
     {
@@ -97,7 +129,7 @@ final class Expense extends Model
     /**
      * Get all activities (audit log) for this expense.
      *
-     * @return MorphMany<Activity>
+     * @return MorphMany<Activity, $this>
      */
     public function activities(): MorphMany
     {
@@ -105,8 +137,6 @@ final class Expense extends Model
     }
 
     /**
-     * Transition the expense to a new status, validating via the state machine.
-     *
      * @throws InvalidArgumentException if transition is invalid
      */
     public function transitionTo(ExpenseStatus $newStatus): void
@@ -124,6 +154,9 @@ final class Expense extends Model
         $this->status = $newStatus;
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedAmount(): Attribute
     {
         return Attribute::make(
@@ -131,6 +164,9 @@ final class Expense extends Model
         );
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedReimbursedAmount(): Attribute
     {
         return Attribute::make(
@@ -138,6 +174,9 @@ final class Expense extends Model
         );
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedDueAmount(): Attribute
     {
         return Attribute::make(

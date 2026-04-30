@@ -102,12 +102,17 @@ final class StoreExpenseRequest extends FormRequest
     {
         $validator->after(function (Validator $validator): void {
             $category = ExpenseCategory::query()->find($this->category_id);
-            if ($category->max_amount && $this->amount > $category->max_amount) {
-                $validator->errors()->add('amount', 'Exceeds category maximum...');
+
+            if (! $category instanceof ExpenseCategory) {
+                return;
+            }
+
+            if ($category->max_amount !== null && $this->amount > $category->max_amount) {
+                $validator->errors()->add('amount', 'Exceeds category maximum amount.');
             }
 
             if ($category->requires_receipt && ! $this->hasFile('receipt')) {
-                $validator->errors()->add('receipt', 'Receipt is required...');
+                $validator->errors()->add('receipt', 'Receipt is required for this category.');
             }
 
         });

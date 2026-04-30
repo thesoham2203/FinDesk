@@ -27,6 +27,7 @@ namespace App\Rules;
 use App\Models\TaxRate;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 final class TaxRateNotInUse implements ValidationRule
 {
@@ -35,15 +36,24 @@ final class TaxRateNotInUse implements ValidationRule
      *
      * @param  string  $attribute  The attribute being validated
      * @param  mixed  $value  The value being validated (tax rate ID)
-     * @param  Closure(string): void  $fail  Closure to fail validation
+     * @param  Closure(string, string|null=): PotentiallyTranslatedString  $fail  Closure to fail validation
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $taxRate = TaxRate::query()->withCount('lineItems')->find($value);
+        if (! is_int($value) && ! is_string($value)) {
+            $fail('Tax rate not found.');
+
+            return;
+        }
+
+        $taxRate = TaxRate::query()->find((int) $value);
+
         if (! $taxRate) {
             $fail('Tax rate not found.');
-        } elseif ($taxRate->line_items_count > 0) {
-            $fail(sprintf('This tax rate cannot be deleted because it is used on %s invoice line items.', $taxRate->line_items_count));
+        } elseif ($taxRate->lineItems()->exists()) {
+            $lineItemCount = $taxRate->lineItems()->count();
+
+            $fail(sprintf('This tax rate cannot be deleted because it is used on %s invoice line items.', $lineItemCount));
         }
     }
 }

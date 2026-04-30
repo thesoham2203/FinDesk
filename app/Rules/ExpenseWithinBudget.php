@@ -35,6 +35,7 @@ use App\Models\Department;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 final readonly class ExpenseWithinBudget implements ValidationRule
 {
@@ -54,7 +55,7 @@ final readonly class ExpenseWithinBudget implements ValidationRule
      *
      * @param  string  $attribute  The attribute being validated (usually 'amount')
      * @param  mixed  $value  The value being validated
-     * @param  Closure(string): void  $fail  Closure to fail validation
+     * @param  Closure(string, string|null=): PotentiallyTranslatedString  $fail  Closure to fail validation
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -68,14 +69,12 @@ final readonly class ExpenseWithinBudget implements ValidationRule
 
         // Using DB Facade for efficient aggregate query with complex WHERE conditions
         // to avoid multiple round-trips to the database
-        $currentTotal = DB::table('expenses')
+        $currentTotal = (int) DB::table('expenses')
             ->where('department_id', $this->departmentId)
             ->whereYear('date', now()->year)
             ->whereMonth('date', now()->month)
             ->whereIn('status', ['approved', 'submitted'])
             ->sum('amount');
-
-        $currentTotal ??= 0;
 
         if ($currentTotal + $this->amount > $department->monthly_budget) {
             $fail("This expense would cause the department's monthly total to exceed the budget.");

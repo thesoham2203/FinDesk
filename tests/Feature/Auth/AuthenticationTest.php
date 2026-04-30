@@ -10,7 +10,7 @@ test('login screen can be rendered', function (): void {
 
     $response
         ->assertOk()
-        ->assertSeeVolt('pages.auth.login');
+        ->assertSee('pages.auth.login');
 });
 
 test('users can authenticate using the login screen', function (): void {
@@ -72,7 +72,7 @@ test('navigation menu can be rendered', function (): void {
 
     $response
         ->assertOk()
-        ->assertSeeVolt('layout.navigation');
+        ->assertSee('layout.navigation');
 });
 
 test('users can logout', function (): void {

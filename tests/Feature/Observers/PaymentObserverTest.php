@@ -6,9 +6,61 @@ use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\User;
+use App\Observers\PaymentObserver;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+final readonly class FakePaymentObserverInvoiceStatus
+{
+    public function __construct(private array $transitions) {}
+
+    public function allowedTransitions(): array
+    {
+        return $this->transitions;
+    }
+}
+
+final readonly class FakePaymentObserverPayments
+{
+    public function __construct(private int $sum) {}
+
+    public function sum(): int
+    {
+        return $this->sum;
+    }
+}
+
+final class FakePaymentObserverInvoice
+{
+    public ?InvoiceStatus $transitionedTo = null;
+
+    public function __construct(
+        public object $status,
+        public int $total,
+        public ?CarbonInterface $due_date,
+        private readonly int $paymentsSum,
+    ) {}
+
+    public function payments(): FakePaymentObserverPayments
+    {
+        return new FakePaymentObserverPayments($this->paymentsSum);
+    }
+
+    public function transitionTo(InvoiceStatus $status): void
+    {
+        $this->transitionedTo = $status;
+    }
+}
+
+function paymentObserverPaymentWithInvoice(FakePaymentObserverInvoice $invoice): Payment
+{
+    $payment = Payment::factory()->make();
+    $payment->setRelation('invoice', $invoice);
+
+    return $payment;
+}
 
 describe('PaymentObserver', function (): void {
     it('can create a payment for an invoice', function (): void {
@@ -254,5 +306,277 @@ describe('PaymentObserver', function (): void {
         $invoice->refresh();
 
         expect($invoice->payments()->sum('amount'))->toBe(50000);
+    });
+
+    it('payment creation transitions invoice to overdue when unpaid and due date is past', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 100000,
+            'due_date' => now()->subDay(),
+        ]);
+        $invoice->forceFill(['status' => InvoiceStatus::Sent->value])->save();
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 0,
+        ]);
+
+        $invoice->refresh();
+        expect($invoice->status->value)->toBe(InvoiceStatus::Overdue->value);
+    });
+
+    it('paid amount is more than the total amount transitions to paid', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 100000,
+        ]);
+        $invoice->forceFill(['status' => InvoiceStatus::Sent->value])->save();
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 120000,
+        ]);
+
+        $invoice->refresh();
+        expect($invoice->status->value)->toBe(InvoiceStatus::Paid->value);
+    });
+
+    it('deleting a payment from a sent invoice can transition it to partially paid', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 100000,
+            'status' => InvoiceStatus::Sent,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 60000,
+        ]);
+
+        $paymentToDelete = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 40000,
+        ]);
+
+        /** @var User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $paymentToDelete->delete();
+
+        $invoice->refresh();
+        expect($invoice->status->value)->toBe(InvoiceStatus::Paid->value)
+            ->and($invoice->payments()->sum('amount'))->toBe(60000);
+    });
+
+    it('deleting payment keeps status when no transition is allowed', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 100000,
+            'status' => InvoiceStatus::Viewed,
+            'due_date' => now()->subDay(),
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 70000,
+        ]);
+
+        $paymentToDelete = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 30000,
+        ]);
+
+        /** @var User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $paymentToDelete->delete();
+
+        $invoice->refresh();
+        expect($invoice->payments()->sum('amount'))->toBe(70000)
+            ->and($invoice->status->value)->toBe(InvoiceStatus::Paid->value);
+    });
+
+    it('created with future due date', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'due_date' => now()->addMonth(),
+            'status' => InvoiceStatus::Sent,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 0,
+        ]);
+
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::Sent);
+    });
+
+    it('created with overdue but unallowed transition', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'due_date' => now()->subDay(),
+            'status' => InvoiceStatus::Paid,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 0,
+        ]);
+
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::Paid);
+    });
+
+    it('created with overpaid but unallowed transition', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'status' => InvoiceStatus::Cancelled,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 1500,
+        ]);
+
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::Cancelled);
+    });
+
+    it('deleted with future due date', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'due_date' => now()->addMonth(),
+            'status' => InvoiceStatus::Sent,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 500,
+        ]);
+
+        $payment2 = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 200,
+        ]);
+
+        $invoice->refresh();
+        // Sum = 700. Status = PartiallyPaid.
+        expect($invoice->status)->toBe(InvoiceStatus::PartiallyPaid);
+
+        // Manually reset to Sent so we can test the transition to PartiallyPaid on deletion
+        $invoice->status = InvoiceStatus::Sent;
+        $invoice->save();
+
+        // Refresh the payment's invoice relationship to ensure it sees the "Sent" status
+        $payment2->unsetRelation('invoice');
+
+        $payment2->delete();
+
+        // Sum = 500. totalPaid > 0. PartiallyPaid allowed from Sent.
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::PartiallyPaid);
+    });
+
+    it('deleted with total paid zero transitions to draft if allowed', function (): void {
+        $invoice = new FakePaymentObserverInvoice(
+            status: new FakePaymentObserverInvoiceStatus([InvoiceStatus::Draft]),
+            total: 1000,
+            due_date: null,
+            paymentsSum: 0,
+        );
+
+        new PaymentObserver()->deleted(paymentObserverPaymentWithInvoice($invoice));
+
+        expect($invoice->transitionedTo)->toBe(InvoiceStatus::Draft);
+    });
+
+    it('deleted with overdue transition allowed', function (): void {
+        $invoice = new FakePaymentObserverInvoice(
+            status: new FakePaymentObserverInvoiceStatus([InvoiceStatus::Overdue]),
+            total: 1000,
+            due_date: now()->subDay(),
+            paymentsSum: 500,
+        );
+
+        new PaymentObserver()->deleted(paymentObserverPaymentWithInvoice($invoice));
+
+        expect($invoice->transitionedTo)->toBe(InvoiceStatus::Overdue);
+    });
+
+    it('deleted with overdue but unallowed transition', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'due_date' => now()->subDay(),
+            'status' => InvoiceStatus::Sent,
+        ]);
+
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 500,
+        ]);
+
+        $payment2 = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 500,
+        ]);
+
+        $invoice->refresh();
+        expect($invoice->status)->toBe(InvoiceStatus::Paid);
+
+        $payment2->delete();
+
+        // sum = 500. isPast = true. Overdue transition from Paid is NOT allowed.
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::Paid);
+    });
+
+    it('deleted with paid transition allowed', function (): void {
+        $invoice = Invoice::factory()->create([
+            'total' => 1000,
+            'status' => InvoiceStatus::Sent,
+        ]);
+
+        // First payment makes it Paid
+        Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 1000,
+        ]);
+
+        $invoice->refresh();
+        expect($invoice->status)->toBe(InvoiceStatus::Paid);
+
+        // Second payment makes it overpaid (Total = 1500)
+        $payment2 = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'amount' => 500,
+        ]);
+
+        // Manually reset status to Sent in DB
+        $invoice->status = InvoiceStatus::Sent;
+        $invoice->save();
+
+        // Refresh the payment's invoice relationship to ensure it sees the "Sent" status
+        $payment2->unsetRelation('invoice');
+
+        // Delete the second payment.
+        // Sum becomes 1000. 1000 >= 1000.
+        // Status is Sent, so Paid transition is allowed.
+        $payment2->delete();
+
+        expect($invoice->fresh()->status)->toBe(InvoiceStatus::Paid);
+    });
+
+    it('returns early when created payment has no invoice', function (): void {
+        $payment = Payment::factory()->make(['invoice_id' => null]);
+        $payment->unsetRelation('invoice');
+
+        $observer = new PaymentObserver();
+        $observer->created($payment);
+
+        expect($payment->invoice)->toBeNull();
+    });
+
+    it('returns early when deleted payment has no invoice', function (): void {
+        $payment = Payment::factory()->make(['invoice_id' => null]);
+        $payment->unsetRelation('invoice');
+
+        $observer = new PaymentObserver();
+        $observer->deleted($payment);
+
+        expect($payment->invoice)->toBeNull();
     });
 });

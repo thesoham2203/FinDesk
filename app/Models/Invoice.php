@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\Currency;
 use App\Enums\InvoiceStatus;
+use Carbon\CarbonInterface;
+use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +18,29 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 
+/**
+ * @property-read int $id
+ * @property int $client_id
+ * @property string $created_by
+ * @property string $invoice_number
+ * @property InvoiceStatus $status
+ * @property CarbonInterface $issue_date
+ * @property CarbonInterface $due_date
+ * @property string|null $notes
+ * @property int $subtotal
+ * @property int $tax_total
+ * @property int $total
+ * @property Currency $currency
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ * @property-read string $formatted_subtotal
+ * @property-read string $formatted_tax_total
+ * @property-read string $formatted_total
+ * @property-read int $amount_due
+ */
 final class Invoice extends Model
 {
+    /** @use HasFactory<InvoiceFactory> */
     use HasFactory;
 
     /**
@@ -47,20 +70,7 @@ final class Invoice extends Model
     ];
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $casts = [
-        'status' => InvoiceStatus::class,
-        'currency' => Currency::class,
-        'subtotal' => 'integer',
-        'tax_total' => 'integer',
-        'total' => 'integer',
-        'issue_date' => 'date',
-        'due_date' => 'date',
-    ];
-
-    /**
-     * @return BelongsTo<Client, Invoice>
+     * @return BelongsTo<Client, $this>
      */
     public function client(): BelongsTo
     {
@@ -68,7 +78,7 @@ final class Invoice extends Model
     }
 
     /**
-     * @return BelongsTo<User, Invoice>
+     * @return BelongsTo<User, $this>
      */
     public function creator(): BelongsTo
     {
@@ -76,7 +86,7 @@ final class Invoice extends Model
     }
 
     /**
-     * @return HasMany<InvoiceLineItem>
+     * @return HasMany<InvoiceLineItem, $this>
      */
     public function lineItems(): HasMany
     {
@@ -84,7 +94,7 @@ final class Invoice extends Model
     }
 
     /**
-     * @return HasMany<Payment>
+     * @return HasMany<Payment, $this>
      */
     public function payments(): HasMany
     {
@@ -94,7 +104,7 @@ final class Invoice extends Model
     /**
      * Get the most recent payment for this invoice (Has One of Many).
      *
-     * @return HasOne<Payment>
+     * @return HasOne<Payment, $this>
      */
     public function latestPayment(): HasOne
     {
@@ -104,7 +114,7 @@ final class Invoice extends Model
     /**
      * Get all activities (audit log) for this invoice.
      *
-     * @return MorphMany<Activity>
+     * @return MorphMany<Activity, $this>
      */
     public function activities(): MorphMany
     {
@@ -143,8 +153,8 @@ final class Invoice extends Model
 
     public function recalculateTotals(): void
     {
-        $subtotal = $this->lineItems()->sum('line_total');
-        $taxTotal = $this->lineItems()->sum('tax_amount');
+        $subtotal = (int) $this->lineItems()->sum('line_total');
+        $taxTotal = (int) $this->lineItems()->sum('tax_amount');
         $total = $subtotal + $taxTotal;
 
         $this->update([
@@ -154,6 +164,25 @@ final class Invoice extends Model
         ]);
     }
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => InvoiceStatus::class,
+            'currency' => Currency::class,
+            'subtotal' => 'integer',
+            'tax_total' => 'integer',
+            'total' => 'integer',
+            'issue_date' => 'date',
+            'due_date' => 'date',
+        ];
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedSubtotal(): Attribute
     {
         return Attribute::make(
@@ -161,6 +190,9 @@ final class Invoice extends Model
         );
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedTaxTotal(): Attribute
     {
         return Attribute::make(
@@ -168,6 +200,9 @@ final class Invoice extends Model
         );
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedTotal(): Attribute
     {
         return Attribute::make(
@@ -184,7 +219,7 @@ final class Invoice extends Model
     protected function amountDue(): Attribute
     {
         return Attribute::make(
-            get: fn (): int => $this->total - $this->payments()->sum('amount'),
+            get: fn (): int => $this->total - (int) $this->payments()->sum('amount'),
         );
     }
 }

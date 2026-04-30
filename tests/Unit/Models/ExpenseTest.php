@@ -300,6 +300,49 @@ test('expense cannot transition from draft directly to approved', function (): v
         ->toThrow(InvalidArgumentException::class, 'Cannot transition from Draft to Approved');
 });
 
+test('expense query can be filtered by department scope', function (): void {
+    $departmentA = Department::factory()->create();
+    $departmentB = Department::factory()->create();
+
+    Expense::factory()->create(['department_id' => $departmentA->id]);
+    Expense::factory()->create(['department_id' => $departmentB->id]);
+
+    $expenses = Expense::query()->forDepartment($departmentA->id)->get();
+
+    expect($expenses)->toHaveCount(1)
+        ->and($expenses->first()->department_id)->toBe($departmentA->id);
+});
+
+test('expense query can be filtered by status scope', function (): void {
+    Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    Expense::factory()->create(['status' => ExpenseStatus::Draft]);
+
+    $expenses = Expense::query()->withStatus(ExpenseStatus::Submitted)->get();
+
+    expect($expenses)->toHaveCount(1)
+        ->and($expenses->first()->status)->toBe(ExpenseStatus::Submitted);
+});
+
+test('expense query can be filtered by submitted month scope', function (): void {
+    Expense::factory()->create(['status' => ExpenseStatus::Submitted, 'submitted_at' => '2026-03-12 10:00:00']);
+    Expense::factory()->create(['status' => ExpenseStatus::Submitted, 'submitted_at' => '2026-04-01 10:00:00']);
+
+    $expenses = Expense::query()->submittedInMonth(2026, 3)->get();
+
+    expect($expenses)->toHaveCount(1)
+        ->and($expenses->first()->submitted_at->format('Y-m'))->toBe('2026-03');
+});
+
+test('expense query can be filtered by pending scope', function (): void {
+    Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    Expense::factory()->create(['status' => ExpenseStatus::Approved]);
+
+    $expenses = Expense::query()->pending()->get();
+
+    expect($expenses)->toHaveCount(1)
+        ->and($expenses->first()->status)->toBe(ExpenseStatus::Submitted);
+});
+
 // ============================================================================
 // SECTION 6: SCOPES — QUERY FILTERING (TODO: Scopes need public methods)
 // ============================================================================

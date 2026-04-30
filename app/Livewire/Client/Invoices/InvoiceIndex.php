@@ -9,10 +9,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('layouts.client-app')]
 final class InvoiceIndex extends Component
 {
     use WithPagination;
@@ -24,7 +26,7 @@ final class InvoiceIndex extends Component
     public string $statusFilter = '';
 
     /**
-     * @return LengthAwarePaginator<Invoice>
+     * @return LengthAwarePaginator<int, Invoice>
      */
     #[Computed]
     public function invoices(): LengthAwarePaginator
@@ -41,6 +43,6 @@ final class InvoiceIndex extends Component
 
     public function render(): View
     {
-        return view('livewire.client.invoices.invoice-index')->layout('layouts.client-app');
+        return view('livewire.client.invoices.invoice-index');
     }
 }

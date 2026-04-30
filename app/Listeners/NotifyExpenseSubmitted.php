@@ -15,7 +15,12 @@ final class NotifyExpenseSubmitted implements ShouldQueue
      */
     public function handle(ExpenseSubmitted $event): void
     {
-        $manager = $event->expense->user->manager;
+        $user = $event->expense->user;
+        if ($user === null) {
+            return;
+        }
+
+        $manager = $user->manager;
         if ($manager) {
             $manager->notify(new ExpenseSubmittedNotification($event->expense));
         }

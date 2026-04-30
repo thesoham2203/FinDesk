@@ -117,11 +117,19 @@ final class StoreInvoiceRequest extends FormRequest
     {
         $validator->after(function (Validator $validator): void {
             $lineItems = $this->input('line_items', []);
+            if (! is_iterable($lineItems)) {
+                return;
+            }
+
             $hasValidLineItem = false;
 
             foreach ($lineItems as $item) {
-                $quantity = $item['quantity'] ?? 0;
-                $unitPrice = $item['unit_price'] ?? 0;
+                if (! is_array($item)) {
+                    continue;
+                }
+
+                $quantity = isset($item['quantity']) && is_numeric($item['quantity']) ? (float) $item['quantity'] : 0.0;
+                $unitPrice = isset($item['unit_price']) && is_numeric($item['unit_price']) ? (int) $item['unit_price'] : 0;
 
                 if ($quantity > 0 && $unitPrice > 0) {
                     $hasValidLineItem = true;

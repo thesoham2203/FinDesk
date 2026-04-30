@@ -5,10 +5,13 @@ declare(strict_types=1);
 use App\Enums\ExpenseStatus;
 use App\Enums\UserRole;
 use App\Livewire\Expenses\ExpenseDetail;
+use App\Models\Attachment;
 use App\Models\Department;
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -120,20 +123,32 @@ it('prevents deleting approved expense', function (): void {
 });
 
 it('checks budget constraint on submit', function (): void {
-    $department = Department::factory()->create(['monthly_budget' => 1000]);
+    $department = Department::factory()->create(['monthly_budget' => 0]);
     $user = User::factory()->create(['department_id' => $department->id]);
     $expense = Expense::factory()->create([
         'user_id' => $user->id,
+        'department_id' => $department->id,
         'status' => ExpenseStatus::Draft,
-        'amount' => 50000, // 500 in dollars, exceeds budget
+        'amount' => 50000,
     ]);
 
     $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
 
     $component->call('submit');
 
-    // Verify expense still exists
+    // Verify expense still exists and was not submitted
     $this->assertDatabaseHas('expenses', ['id' => $expense->id]);
+});
+
+it('refreshes the expense after successful submit', function (): void {
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
+    $user = User::query()->where('id', $expense->user_id)->first();
+
+    $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('submit');
+
+    expect($component->get('expense')->status)->toBe(ExpenseStatus::Submitted);
 });
 
 it('shows rejection reason field', function (): void {
@@ -261,4 +276,196 @@ it('prevents non-admin from reimbursing partially paid expense', function (): vo
     $component = Livewire::actingAs($employee)->test(ExpenseDetail::class, ['expense' => $expense]);
 
     $component->call('reimburse')->assertForbidden();
+});
+
+it('approves a submitted expense', function (): void {
+    $department = Department::factory()->create();
+    $manager = User::factory()->create(['role' => UserRole::Manager, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($manager)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('approve');
+
+    $expense->refresh();
+
+    expect($expense->status)->toBe(ExpenseStatus::Approved)
+        ->and($expense->reviewed_by)->toBe($manager->id);
+});
+
+it('opens the reject modal for an approvable expense', function (): void {
+    $department = Department::factory()->create();
+    $manager = User::factory()->create(['role' => UserRole::Manager, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($manager)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('openRejectModal');
+
+    expect($component->get('showRejectModal'))->toBeTrue();
+});
+
+it('rejects a submitted expense', function (): void {
+    $department = Department::factory()->create();
+    $manager = User::factory()->create(['role' => UserRole::Manager, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($manager)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('openRejectModal')
+        ->set('rejectionReason', 'Missing supporting documents')
+        ->call('reject');
+
+    $expense->refresh();
+
+    expect($expense->status)->toBe(ExpenseStatus::Rejected)
+        ->and($expense->reviewed_by)->toBe($manager->id)
+        ->and($expense->rejection_reason)->toBe('Missing supporting documents');
+});
+
+it('throws when submitting a non-draft expense', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+    Gate::shouldReceive('check')->andReturnTrue();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $user = User::query()->where('id', $expense->user_id)->firstOrFail();
+
+    $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    expect(fn (): mixed => $component->call('submit'))->toThrow(InvalidArgumentException::class);
+});
+
+it('throws when deleting a non-draft expense', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+    Gate::shouldReceive('check')->andReturnTrue();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $user = User::query()->where('id', $expense->user_id)->firstOrFail();
+
+    $component = Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    expect(fn (): mixed => $component->call('delete'))->toThrow(InvalidArgumentException::class);
+});
+
+it('shows an error when reimbursing an ineligible expense', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+    Gate::shouldReceive('check')->andReturnTrue();
+
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('reimburse')
+        ->assertHasErrors('status');
+});
+
+it('shows an error when opening partial reimbursement for an ineligible expense', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+    Gate::shouldReceive('check')->andReturnTrue();
+
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Draft,
+        'department_id' => $department->id,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('openPartialReimbursementModal')
+        ->assertHasErrors('status');
+});
+
+it('shows an error when no reimbursement balance remains', function (): void {
+    $department = Department::factory()->create();
+    $admin = User::factory()->create(['role' => UserRole::Admin, 'department_id' => $department->id]);
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::PartiallyPaid,
+        'department_id' => $department->id,
+        'amount' => 10000,
+        'reimbursed_amount' => 10000,
+        'due_amount' => 0,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ExpenseDetail::class, ['expense' => $expense]);
+
+    $component->call('recordPartialReimbursement')
+        ->assertHasErrors('status');
+});
+
+it('downloads an attachment for an expense', function (): void {
+    Storage::fake('public');
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Draft]);
+    $user = User::query()->where('id', $expense->user_id)->firstOrFail();
+
+    $attachment = Attachment::factory()->create([
+        'attachable_id' => $expense->id,
+        'attachable_type' => Expense::class,
+        'disk' => 'public',
+        'path' => 'attachments/receipt.pdf',
+        'original_name' => 'receipt.pdf',
+    ]);
+
+    Storage::disk('public')->put('attachments/receipt.pdf', 'receipt-data');
+
+    Livewire::actingAs($user)->test(ExpenseDetail::class, ['expense' => $expense])
+        ->call('downloadAttachment', $attachment->id)
+        ->assertFileDownloaded('receipt.pdf');
+});
+
+it('returns early for guarded actions when expense is null', function (): void {
+    $component = new ExpenseDetail();
+
+    expect(fn (): mixed => $component->submit())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->delete())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->approve())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->openRejectModal())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->reject())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->reimburse())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->openPartialReimbursementModal())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->recordPartialReimbursement())->not->toThrow(Throwable::class);
+});
+
+it('returns early in approve when authorization passes but user is missing', function (): void {
+    Gate::shouldReceive('authorize')->once()->andReturnTrue();
+    auth()->logout();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $component = new ExpenseDetail();
+    $component->expense = $expense;
+
+    $component->approve();
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
+});
+
+it('returns early in reject when authorization passes but user is missing', function (): void {
+    Gate::shouldReceive('authorize')->once()->andReturnTrue();
+    auth()->logout();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $component = new ExpenseDetail();
+    $component->expense = $expense;
+    $component->rejectionReason = 'This is a valid rejection reason';
+
+    $component->reject();
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
 });

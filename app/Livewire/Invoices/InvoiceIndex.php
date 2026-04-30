@@ -35,17 +35,7 @@ final class InvoiceIndex extends Component
     public string $dateTo = '';
 
     /**
-     * @var array<int, array{
-     * description: string,
-     *     quantity: string,
-     *     unit_price: string,
-     *     tax_rate_id: string,
-     *     line_total: mixed,
-     *     tax_amount: mixed
-     * }>
-     *
-     * @return Paginator<Invoice>
-     * @return LengthAwarePaginator<Invoice>
+     * @return LengthAwarePaginator<int, Invoice>
      */
     #[Computed]
     public function invoices(): LengthAwarePaginator
@@ -59,13 +49,14 @@ final class InvoiceIndex extends Component
             ->when($this->dateTo !== '', fn (Builder $query): Builder => $query->whereDate('issue_date', '<=', $this->dateTo))
             ->latest();
 
-        return $query->paginate(15);
+        /** @var LengthAwarePaginator<int, Invoice> $paginator */
+        $paginator = $query->paginate(15);
+
+        return $paginator;
     }
 
     /**
-     * TODO: Return all clients for filter dropdown.
-     *
-     * @return EloquentCollection<Client>
+     * @return EloquentCollection<int, Client>
      */
     #[Computed]
     public function clients(): EloquentCollection
@@ -75,6 +66,9 @@ final class InvoiceIndex extends Component
 
     public function render(): View
     {
-        return view('livewire.invoices.invoice-index');
+        return view('livewire.invoices.invoice-index', [
+            'invoices' => $this->invoices(),
+            'clients' => $this->clients(),
+        ]);
     }
 }

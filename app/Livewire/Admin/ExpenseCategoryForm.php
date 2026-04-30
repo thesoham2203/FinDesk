@@ -39,7 +39,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\ExpenseCategory;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -67,12 +67,15 @@ final class ExpenseCategoryForm extends Component
         if ($category instanceof ExpenseCategory) {
             $this->categoryId = $category->id;
             $this->name = $category->name;
-            $this->description = $category->description;
+            $this->description = $category->description ?? '';
             $this->maxAmount = $category->max_amount ? (string) ($category->max_amount / 100) : '';
             $this->requiresReceipt = $category->requires_receipt;
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function rules(): array
     {
         return [
@@ -85,8 +88,6 @@ final class ExpenseCategoryForm extends Component
 
     public function save(): void
     {
-        // TODO: Implement
-
         $this->validate();
 
         $maxAmountCents = $this->maxAmount !== '' && $this->maxAmount !== '0' ? (int) ((float) ($this->maxAmount) * 100) : null;
@@ -108,7 +109,7 @@ final class ExpenseCategoryForm extends Component
             ]);
         }
 
-        session()->flash('success', 'Category saved');
+        $this->dispatch('flash', type: 'success', message: 'Category saved');
         $this->redirect(route('admin.categories.index'), navigate: true);
     }
 

@@ -2,22 +2,14 @@
 
 declare(strict_types=1);
 
-/**
- * OrganizationSettingsForm Component
- *
- * WHAT: Livewire component for editing organization-wide settings.
- *       Only one Organization record should exist (singleton pattern).
- *
- * WHY: Admins need to configure: name, address, logo, default currency, fiscal year start.
- *      This form provides the UI for these settings.
- */
-
 namespace App\Livewire\Admin;
 
 use App\Enums\Currency;
 use App\Models\Organization;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -50,7 +42,7 @@ final class OrganizationSettingsForm extends Component
         $org = Organization::query()->first();
         if ($org) {
             $this->name = $org->name;
-            $this->address = $org->address;
+            $this->address = $org->address ?? '';
             $this->logoPath = $org->logo_path;
             $this->defaultCurrency = $org->default_currency->value;
             $this->fiscalYearStart = $org->fiscal_year_start;
@@ -64,37 +56,47 @@ final class OrganizationSettingsForm extends Component
     {
         $this->authorize('update', Organization::class);
 
-        $validated = $this->validate();
+        /** @var array{name: string, address: string|null, defaultCurrency: string, fiscalYearStart: int} $validated */
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'defaultCurrency' => 'required|string',
+            'fiscalYearStart' => 'required|integer|min:1|max:12',
+        ]);
 
         // Handle logo upload
         $logoPath = $this->logoPath;
-        if ($this->logo) {
+        if ($this->logo instanceof UploadedFile) {
             $logoPath = $this->logo->store('org-logos', 'public');
+            if ($logoPath === false) {
+                $logoPath = $this->logoPath;
+            }
         }
 
-        $org = Organization::query()->first();
-        if (! $org) {
-            $org = new Organization();
-        }
-
-        $org->update([
-            'name' => $validated['name'],
-            'address' => $validated['address'],
-            'logo_path' => $logoPath,
-            'default_currency' => $validated['defaultCurrency'],
-            'fiscal_year_start' => $validated['fiscalYearStart'],
-        ]);
+        Organization::query()->updateOrCreate(
+            [], // Only one record
+            [
+                'name' => $validated['name'],
+                'address' => $validated['address'],
+                'logo_path' => $logoPath,
+                'default_currency' => $validated['defaultCurrency'],
+                'fiscal_year_start' => $validated['fiscalYearStart'],
+            ]
+        );
 
         // Clear the organization cache
         cache()->forget('organization');
 
-        session()->flash('success', 'Organization settings updated successfully');
+        $this->dispatch('flash', type: 'success', message: 'Organization settings updated successfully');
     }
 
     /**
      * Get available currencies.
+     *
+     * @return Collection<string, string>
      */
-    public function getCurrenciesProperty(): Collection
+    #[Computed]
+    public function currencies(): Collection
     {
         return collect(Currency::cases())
             ->mapWithKeys(fn (Currency $currency): array => [$currency->value => $currency->label()]);
@@ -102,8 +104,11 @@ final class OrganizationSettingsForm extends Component
 
     /**
      * Get available months for fiscal year start.
+     *
+     * @return array<int, string>
      */
-    public function getMonthsProperty(): array
+    #[Computed]
+    public function months(): array
     {
         return [
             1 => 'January',
@@ -124,8 +129,8 @@ final class OrganizationSettingsForm extends Component
     public function render(): View
     {
         return view('livewire.admin.organization-settings-form', [
-            'currencies' => $this->currencies,
-            'months' => $this->months,
+            'currencies' => $this->currencies(),
+            'months' => $this->months(),
         ]);
     }
 }

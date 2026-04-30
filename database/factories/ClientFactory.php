@@ -39,7 +39,7 @@ final class ClientFactory extends Factory
             'name' => $this->faker->company(),
             'email' => $this->faker->companyEmail(),
             'password' => bcrypt('password'),
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => $this->faker->numerify('##########'),
             'address' => $this->faker->address(),
             'tax_number' => $this->faker->bothify('###########'),
             'notes' => $this->faker->optional()->sentence(),

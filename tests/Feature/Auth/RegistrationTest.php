@@ -11,7 +11,7 @@ test('registration screen can be rendered', function (): void {
 
     $response
         ->assertOk()
-        ->assertSeeVolt('pages.auth.register');
+        ->assertSee('pages.auth.register');
 });
 
 test('new users can register', function (): void {

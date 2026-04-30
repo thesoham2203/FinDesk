@@ -32,7 +32,12 @@ final class ClientLoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::guard('client')->attempt($this->only(['email', 'password']), $this->remember)) {
+        $credentials = [
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
+
+        if (! Auth::guard('client')->attempt($credentials, $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

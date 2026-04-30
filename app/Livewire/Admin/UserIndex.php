@@ -16,9 +16,9 @@ namespace App\Livewire\Admin;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -39,6 +39,9 @@ final class UserIndex extends Component
         $this->authorize('viewAny', User::class);
     }
 
+    /**
+     * @return LengthAwarePaginator<int, User>
+     */
     #[Computed]
     public function users(): LengthAwarePaginator
     {
@@ -55,7 +58,10 @@ final class UserIndex extends Component
             $query->where('role', $this->roleFilter);
         }
 
-        return $query->paginate(15);
+        /** @var LengthAwarePaginator<int, User> $paginator */
+        $paginator = $query->paginate(15);
+
+        return $paginator;
     }
 
     public function delete(string $id): void
@@ -65,20 +71,23 @@ final class UserIndex extends Component
 
         // Prevent deleting the last admin user
         if ($user->role === UserRole::Admin && User::query()->where('role', UserRole::Admin->value)->count() <= 1) {
-            session()->flash('error', 'Cannot delete the last admin user');
+            $this->dispatch('flash', type: 'error', message: 'Cannot delete the last admin user');
 
             return;
         }
 
         $user->delete();
-        session()->flash('success', 'User deleted successfully');
+        $this->dispatch('flash', type: 'success', message: 'User deleted successfully');
         $this->resetPage();
     }
 
     /**
      * Get available role filters.
+     *
+     * @return Collection<string, string>
      */
-    public function getRoleFiltersProperty(): Collection
+    #[Computed]
+    public function roleFilters(): Collection
     {
         return collect(UserRole::cases())
             ->mapWithKeys(fn (UserRole $role): array => [$role->value => $role->label()]);
@@ -87,7 +96,7 @@ final class UserIndex extends Component
     public function render(): View
     {
         return view('livewire.admin.user-index', [
-            'roleFilters' => $this->roleFilters,
+            'roleFilters' => $this->roleFilters(),
         ]);
     }
 }

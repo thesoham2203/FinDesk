@@ -105,7 +105,44 @@ test('department expenses excludes other departments', function (): void {
 });
 
 // ============================================================================
-// SECTION 4: FORMATTED ACCESSOR
+// SECTION 4: ACCESSORS & SCOPES
 // ============================================================================
-// NOTE: Accessor tests (formattedBudget) removed - private method can't be tested
-// TODO: Implement as public accessor or property before testing in UI
+
+test('department has formatted budget accessor', function (): void {
+    $department = Department::factory()->create(['monthly_budget' => 5000000]); // ₹50,000.00
+
+    expect($department->formatted_budget)->toBe('₹ 50,000.00');
+});
+
+test('department withBudgetUsage scope calculates monthly spent correctly', function (): void {
+    $department = Department::factory()->create();
+    $user = User::factory()->create(['department_id' => $department->id]);
+
+    // Expense in current month
+    Expense::factory()->create([
+        'user_id' => $user->id,
+        'department_id' => $department->id,
+        'amount' => 100000, // 1000
+        'submitted_at' => now(),
+    ]);
+
+    // Another expense in current month
+    Expense::factory()->create([
+        'user_id' => $user->id,
+        'department_id' => $department->id,
+        'amount' => 50000, // 500
+        'submitted_at' => now(),
+    ]);
+
+    // Expense in different month
+    Expense::factory()->create([
+        'user_id' => $user->id,
+        'department_id' => $department->id,
+        'amount' => 200000,
+        'submitted_at' => now()->subMonth(),
+    ]);
+
+    $result = Department::query()->withBudgetUsage()->find($department->id);
+
+    expect($result->monthly_spent)->toBe(150000);
+});

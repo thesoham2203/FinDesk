@@ -8,6 +8,7 @@ use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
@@ -39,5 +40,18 @@ describe('NotifyExpenseSubmitted Listener', function (): void {
         $listener = new NotifyExpenseSubmitted();
 
         expect($listener)->toBeInstanceOf(ShouldQueue::class);
+    });
+
+    it('returns early when expense has no user', function (): void {
+        Notification::fake();
+
+        $expense = new Expense();
+        $expense->setRelation('user', null);
+
+        $event = new ExpenseSubmitted($expense);
+        $listener = new NotifyExpenseSubmitted();
+
+        expect(fn () => $listener->handle($event))->not->toThrow(Exception::class);
+        Notification::assertNothingSent();
     });
 });

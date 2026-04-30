@@ -33,7 +33,10 @@ final class ExpensePartiallyPaid extends Notification implements ShouldQueue
     /**
      * Get the notification's database representation.
      */
-    public function toDatabase(mixed $notifiable): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(?object $notifiable): array
     {
         return [
             'title' => 'Expense Partially Paid',

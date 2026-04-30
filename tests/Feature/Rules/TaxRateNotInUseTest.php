@@ -48,6 +48,18 @@ describe('TaxRateNotInUse Rule', function (): void {
         expect($failed)->toBeTrue();
     });
 
+    it('fails when tax rate id is not int or string', function (): void {
+        $rule = new TaxRateNotInUse();
+        $failed = false;
+
+        $rule->validate('tax_rate_id', [], function (string $message) use (&$failed): void {
+            $failed = true;
+            expect($message)->toBe('Tax rate not found.');
+        });
+
+        expect($failed)->toBeTrue();
+    });
+
     it('implements validation rule interface', function (): void {
         $rule = new TaxRateNotInUse();
 

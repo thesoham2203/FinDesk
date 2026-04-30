@@ -7,9 +7,10 @@ namespace App\Livewire\Admin;
 use App\Enums\UserRole;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -21,7 +22,7 @@ final class UserForm extends Component
     #[Validate('required|email|max:255')]
     public string $email = '';
 
-    #[Validate('required|string|min:8|confirmed')]
+    #[Validate('nullable|string|min:8|confirmed')]
     public string $password = '';
 
     public string $password_confirmation = '';
@@ -70,6 +71,7 @@ final class UserForm extends Component
             return;
         }
 
+        /** @var array{name: string, email: string, password: string, role: string, departmentId: int|null, managerId: string|null} $validated */
         $validated = $this->validate();
 
         // For editing, password is optional (only set if provided)
@@ -81,17 +83,17 @@ final class UserForm extends Component
             'manager_id' => $validated['managerId'],
         ];
 
-        if ($validated['password']) {
+        if ($validated['password'] !== '') {
             $data['password'] = Hash::make($validated['password']);
         }
 
         if ($this->userId) {
             $user = User::query()->findOrFail($this->userId);
             $user->update($data);
-            session()->flash('success', 'User updated successfully');
+            $this->dispatch('flash', type: 'success', message: 'User updated successfully');
         } else {
             User::query()->create($data);
-            session()->flash('success', 'User created successfully');
+            $this->dispatch('flash', type: 'success', message: 'User created successfully');
         }
 
         $this->redirect(route('admin.users.index'), navigate: true);
@@ -99,22 +101,32 @@ final class UserForm extends Component
 
     /**
      * Get all departments for dropdown.
+     *
+     * @return Collection<int, string>
      */
-    public function getDepartmentsProperty(): Collection
+    #[Computed]
+    public function departments(): Collection
     {
-        return Department::query()->orderBy('name')->pluck('name', 'id');
+        return Department::query()
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name'])
+            ->mapWithKeys(fn (Department $department): array => [$department->id => $department->name]);
     }
 
     /**
      * Get available managers based on role.
      * Only show users who are in roles that can manage others (Manager, Admin).
+     *
+     * @return Collection<string, string>
      */
-    public function getManagersProperty(): Collection
+    #[Computed]
+    public function managers(): Collection
     {
         return User::query()
-            ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value])
-            ->orderBy('name')
-            ->pluck('name', 'id');
+            ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value], 'and', false)
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name'])
+            ->mapWithKeys(fn (User $user): array => [$user->id => $user->name]);
     }
 
     /**
@@ -136,8 +148,8 @@ final class UserForm extends Component
     public function render(): View
     {
         return view('livewire.admin.user-form', [
-            'departments' => $this->departments,
-            'managers' => $this->managers,
+            'departments' => $this->departments(),
+            'managers' => $this->managers(),
             'roles' => collect(UserRole::cases())->mapWithKeys(fn (UserRole $role): array => [$role->value => $role->label()]),
         ]);
     }

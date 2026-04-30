@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Database\Factories\TaxRateFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class TaxRate extends Model
 {
+    /** @use HasFactory<TaxRateFactory> */
     use HasFactory;
 
     /**
@@ -25,16 +26,7 @@ final class TaxRate extends Model
     ];
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $casts = [
-        'percentage' => 'float',
-        'is_default' => 'boolean',
-        'is_active' => 'boolean',
-    ];
-
-    /**
-     * @return HasMany<InvoiceLineItem>
+     * @return HasMany<InvoiceLineItem, $this>
      */
     public function lineItems(): HasMany
     {
@@ -42,11 +34,22 @@ final class TaxRate extends Model
     }
 
     /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'percentage' => 'float',
+            'is_default' => 'boolean',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    /**
      * @param  Builder<TaxRate>  $query
      * @return Builder<TaxRate>
      */
-    #[Scope(visible: false)]
-    protected function active(Builder $query): Builder
+    protected function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
@@ -55,8 +58,7 @@ final class TaxRate extends Model
      * @param  Builder<TaxRate>  $query
      * @return Builder<TaxRate>
      */
-    #[Scope(visible: false)]
-    protected function default(Builder $query): Builder
+    protected function scopeDefault(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }

@@ -38,7 +38,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\TaxRate;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -60,7 +60,6 @@ final class TaxRateForm extends Component
 
     public function mount(?TaxRate $taxRate = null): void
     {
-        // TODO: Implement
         if ($taxRate instanceof TaxRate) {
             $this->taxRateId = $taxRate->id;
             $this->name = $taxRate->name;
@@ -95,7 +94,7 @@ final class TaxRateForm extends Component
             ]);
         }
 
-        session()->flash('success', 'Tax rate saved');
+        $this->dispatch('flash', type: 'success', message: 'Tax rate saved');
         $this->redirect(route('admin.tax-rates.index'), navigate: true);
     }
 

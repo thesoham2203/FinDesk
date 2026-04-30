@@ -20,6 +20,9 @@ final class ReimburseExpense
         $expense->transitionTo(ExpenseStatus::Reimbursed);
         $expense->save();
 
-        return $expense->fresh();
+        /** @var Expense $expense */
+        $expense = $expense->fresh() ?? $expense;
+
+        return $expense;
     }
 }

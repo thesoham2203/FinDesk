@@ -4,12 +4,26 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Database\Factories\ClientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $tax_number
+ * @property string|null $notes
+ * @property string|null $remember_token
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ */
 final class Client extends Authenticatable
 {
     /** @use HasFactory<ClientFactory> */
@@ -51,7 +65,7 @@ final class Client extends Authenticatable
     }
 
     /**
-     * @return HasMany<Invoice>
+     * @return HasMany<Invoice, $this>
      */
     public function invoices(): HasMany
     {

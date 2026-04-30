@@ -67,7 +67,7 @@ final class InvoiceFactory extends Factory
     public function sent(): self
     {
         return $this->state(fn (array $attributes): array => [
-            'status' => 'approved',
+            'status' => 'sent',
         ]);
     }
 

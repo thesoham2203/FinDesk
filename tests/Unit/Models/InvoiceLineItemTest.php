@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
 use App\Models\TaxRate;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * ============================================================================
@@ -125,6 +126,12 @@ test('line item has many polymorphic attachments', function (): void {
     expect(method_exists($lineItem, 'attachments'))->toBeTrue();
 });
 
+test('line item attachments relationship returns morph many relation', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create();
+
+    expect($lineItem->attachments())->toBeInstanceOf(MorphMany::class);
+});
+
 test('line item can use different tax rates', function (): void {
     $taxRateA = TaxRate::factory()->create(['percentage' => 5.0]);
     $taxRateB = TaxRate::factory()->create(['percentage' => 18.0]);
@@ -175,4 +182,16 @@ test('line item can have very small unit price', function (): void {
     $lineItem = InvoiceLineItem::factory()->create(['unit_price' => 1]);
 
     expect($lineItem->unit_price)->toBe(1);
+});
+
+test('line item has formatted line total accessor', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create(['line_total' => 125000]); // ₹1,250.00
+
+    expect($lineItem->formatted_line_total)->toBe('₹ 1,250.00');
+});
+
+test('line item has formatted unit price accessor', function (): void {
+    $lineItem = InvoiceLineItem::factory()->create(['unit_price' => 50000]); // ₹500.00
+
+    expect($lineItem->formatted_unit_price)->toBe('₹ 500.00');
 });

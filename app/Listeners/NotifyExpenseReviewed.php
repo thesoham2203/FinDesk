@@ -20,6 +20,11 @@ final class NotifyExpenseReviewed implements ShouldQueue
     public function handle(object $event): void
     {
         $employee = $event->expense->user;
+
+        if ($employee === null) {
+            return;
+        }
+
         if ($event instanceof ExpenseApproved) {
             $employee->notify(new ExpenseApprovedNotification($event->expense, $event->approver));
         } elseif ($event instanceof ExpenseRejected) {

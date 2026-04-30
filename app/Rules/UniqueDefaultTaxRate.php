@@ -31,6 +31,7 @@ namespace App\Rules;
 use App\Models\TaxRate;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 final readonly class UniqueDefaultTaxRate implements ValidationRule
 {
@@ -48,19 +49,10 @@ final readonly class UniqueDefaultTaxRate implements ValidationRule
      *
      * @param  string  $attribute  The attribute being validated (usually 'is_default')
      * @param  mixed  $value  The value being validated (true/false)
-     * @param  Closure(string): void  $fail  Closure to fail validation
+     * @param  Closure(string, string|null=): PotentiallyTranslatedString  $fail  Closure to fail validation
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // TODO: Implement unique default logic:
-        //       1. If $value is false (not being set as default), pass (don't call $fail)
-        //       2. If $value is true, query: TaxRate::where('is_default', true)
-        //       3. If $this->excludeId is provided, add ->where('id', '!=', $this->excludeId)
-        //       4. If count > 0, $fail("Another tax rate is already set as default.")
-        //       5. Otherwise, validation passes
-        //
-        // HINT: Use ->exists() instead of ->count() for efficiency (stops at first match)
-        // HINT: Message could offer guidance: "Please unset the other default before setting this one."
         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN); // Ensure we have a boolean value
         if (! $value) {
             return;

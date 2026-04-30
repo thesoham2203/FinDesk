@@ -24,6 +24,9 @@ final class RejectExpense
         $expense->rejection_reason = $reason;
         $expense->save();
 
-        return $expense->fresh();
+        /** @var Expense $expense */
+        $expense = $expense->fresh() ?? $expense;
+
+        return $expense;
     }
 }

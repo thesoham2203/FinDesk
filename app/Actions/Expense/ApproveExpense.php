@@ -23,6 +23,9 @@ final class ApproveExpense
         $expense->reviewed_by = $approver->id;
         $expense->save();
 
-        return $expense->fresh();
+        /** @var Expense $expense */
+        $expense = $expense->fresh();
+
+        return $expense;
     }
 }

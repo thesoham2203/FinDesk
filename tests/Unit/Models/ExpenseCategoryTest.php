@@ -67,3 +67,11 @@ test('category has many expenses', function (): void {
         ->and($expenses->pluck('id')->toArray())
         ->toContain($expense1->id, $expense2->id);
 });
+
+test('category has formatted max amount accessor', function (): void {
+    $category1 = ExpenseCategory::factory()->create(['max_amount' => 500000]); // ₹5,000.00
+    $category2 = ExpenseCategory::factory()->create(['max_amount' => null]);
+
+    expect($category1->formatted_max_amount)->toBe('₹5,000.00')
+        ->and($category2->formatted_max_amount)->toBe('No limit');
+});

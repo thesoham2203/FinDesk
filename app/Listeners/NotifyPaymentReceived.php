@@ -16,8 +16,11 @@ final class NotifyPaymentReceived implements ShouldQueue
     public function handle(PaymentRecorded $event): void
     {
         // Notify the invoice creator
-        $event->invoice->creator->notify(
-            new PaymentReceivedNotification($event->payment, $event->invoice)
-        );
+        $creator = $event->invoice->creator;
+        if ($creator !== null) {
+            $creator->notify(
+                new PaymentReceivedNotification($event->payment, $event->invoice)
+            );
+        }
     }
 }
