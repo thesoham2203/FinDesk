@@ -33,6 +33,8 @@ final class ExpenseRejectedNotification extends Notification implements ShouldQu
 
     /**
      * Get the notification's database representation.
+     *
+     * @return array<string, int|string|null>
      */
     public function toDatabase(mixed $notifiable): array
     {

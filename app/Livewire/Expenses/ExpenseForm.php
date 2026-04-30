@@ -66,7 +66,7 @@ final class ExpenseForm extends Component
             $this->categoryId = (string) $expense->category_id;
             $this->currency = $expense->currency->value;
             $this->existingReceiptPath = $expense->receipt_path;
-            $this->date = $expense->date->format('Y-m-d');
+            $this->date = $expense->date?->format('Y-m-d') ?? now()->toDateString();
             $this->updatedCategoryId();
         }
     }
@@ -120,7 +120,7 @@ final class ExpenseForm extends Component
     #[Computed]
     public function categories(): Collection
     {
-        return ExpenseCategory::query()->orderBy('name')->get();
+        return ExpenseCategory::query()->orderBy('name', 'asc')->get();
     }
 
     #[Computed]

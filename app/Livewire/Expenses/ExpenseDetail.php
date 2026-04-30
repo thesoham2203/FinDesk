@@ -14,10 +14,12 @@ use App\Models\Attachment;
 use App\Models\Expense;
 use App\Models\User;
 use App\Rules\ExpenseWithinBudget;
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Translation\PotentiallyTranslatedString;
 use InvalidArgumentException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -65,9 +67,11 @@ final class ExpenseDetail extends Component
         // Check budget constraint
         $budgetExceeded = false;
         $budgetRule = new ExpenseWithinBudget($this->expense->department_id, $this->expense->amount);
-        $budgetRule->validate('amount', $this->expense->amount, function (string $message) use (&$budgetExceeded): void {
+        $budgetRule->validate('amount', $this->expense->amount, function (string $message, ?string $translation = null) use (&$budgetExceeded): PotentiallyTranslatedString {
             $budgetExceeded = true;
             $this->addError('budget', $message);
+
+            return new PotentiallyTranslatedString($message, resolve(Translator::class));
 
         });
 

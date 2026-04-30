@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Livewire\Notifications;
 
-use illuminate\View\View;
+use App\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -16,7 +18,9 @@ final class NotificationBell extends Component
     #[Computed]
     public function unreadCount(): int
     {
-        return auth()->check() ? auth()->user()->unreadNotifications()->count() : 0;
+        $user = Auth::user();
+
+        return $user instanceof User ? $user->unreadNotifications()->count() : 0;
     }
 
     public function render(): View

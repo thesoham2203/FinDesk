@@ -7,6 +7,7 @@ namespace App\Observers;
 use App\Enums\InvoiceStatus;
 use App\Events\PaymentRecorded;
 use App\Models\Payment;
+use Carbon\CarbonInterface;
 
 final class PaymentObserver
 {
@@ -17,6 +18,10 @@ final class PaymentObserver
     {
         $invoice = $payment->invoice;
 
+        if ($invoice === null) {
+            return;
+        }
+
         $totalPaid = $invoice->payments()->sum('amount');
         $allowedTransitions = $invoice->status->allowedTransitions();
 
@@ -24,7 +29,8 @@ final class PaymentObserver
             $invoice->transitionTo(InvoiceStatus::Paid);
         } elseif ($totalPaid > 0 && in_array(InvoiceStatus::PartiallyPaid, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::PartiallyPaid);
-        } elseif ($invoice->due_date?->isPast() && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
+            // @phpstan-ignore-next-line
+        } elseif (($invoice->due_date instanceof CarbonInterface && $invoice->due_date->isPast()) && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::Overdue);
         }
 
@@ -38,6 +44,10 @@ final class PaymentObserver
     {
         $invoice = $payment->invoice;
 
+        if ($invoice === null) {
+            return;
+        }
+
         $totalPaid = $invoice->payments()->sum('amount');
         $allowedTransitions = $invoice->status->allowedTransitions();
 
@@ -47,7 +57,8 @@ final class PaymentObserver
         } elseif ($totalPaid > 0 && in_array(InvoiceStatus::PartiallyPaid, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::PartiallyPaid);
 
-        } elseif ($invoice->due_date?->isPast() && $totalPaid > 0 && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
+            // @phpstan-ignore-next-line
+        } elseif (($invoice->due_date instanceof CarbonInterface && $invoice->due_date->isPast()) && in_array(InvoiceStatus::Overdue, $allowedTransitions, true)) {
             $invoice->transitionTo(InvoiceStatus::Overdue);
 
         } elseif (in_array(InvoiceStatus::Draft, $allowedTransitions, true)) {

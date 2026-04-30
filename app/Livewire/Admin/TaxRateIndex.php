@@ -16,7 +16,7 @@ final class TaxRateIndex extends Component
     use WithPagination;
 
     /**
-     * @return LengthAwarePaginator<TaxRate>
+     * @return LengthAwarePaginator<int, TaxRate>
      */
     #[Computed]
     public function taxRates(): LengthAwarePaginator
@@ -44,7 +44,7 @@ final class TaxRateIndex extends Component
         if ($taxRate->lineItems()->count() > 0) {
             $this->dispatch('flash', type: 'error', message: sprintf('Cannot delete: used on %s invoices', $taxRate->lineItems()->count()));
         } else {
-            $taxRate->delete();
+            TaxRate::query()->whereKey($taxRate->id)->delete();
             $this->dispatch('flash', type: 'success', message: 'Tax rate deleted');
         }
     }

@@ -67,12 +67,15 @@ final class ExpenseCategoryForm extends Component
         if ($category instanceof ExpenseCategory) {
             $this->categoryId = $category->id;
             $this->name = $category->name;
-            $this->description = $category->description;
+            $this->description = $category->description ?? '';
             $this->maxAmount = $category->max_amount ? (string) ($category->max_amount / 100) : '';
             $this->requiresReceipt = $category->requires_receipt;
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function rules(): array
     {
         return [

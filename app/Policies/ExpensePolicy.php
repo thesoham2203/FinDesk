@@ -14,10 +14,9 @@ final class ExpensePolicy
     /**
      * Determine if the user can view any expenses.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(): bool
     {
-        // TODO: All authenticated roles can view expense lists (but queries should scope differently)
-        return (bool) $user;
+        return true;
     }
 
     /**

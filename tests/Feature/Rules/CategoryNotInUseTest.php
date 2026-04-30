@@ -48,6 +48,18 @@ describe('CategoryNotInUse Rule', function (): void {
         expect($failed)->toBeTrue();
     });
 
+    it('fails when category id is not int or string', function (): void {
+        $rule = new CategoryNotInUse();
+        $failed = false;
+
+        $rule->validate('category_id', [], function (string $message) use (&$failed): void {
+            $failed = true;
+            expect($message)->toBe('Category not found.');
+        });
+
+        expect($failed)->toBeTrue();
+    });
+
     it('implements validation rule interface', function (): void {
         $rule = new CategoryNotInUse();
 

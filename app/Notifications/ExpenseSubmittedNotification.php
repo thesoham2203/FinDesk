@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -28,12 +29,17 @@ final class ExpenseSubmittedNotification extends Notification implements ShouldQ
 
     /**
      * Get the notification's database representation.
+     *
+     * @return array<string, int|string|null>
      */
     public function toDatabase(mixed $notifiable): array
     {
+        $submittedBy = $this->expense->user;
+        $submittedByName = $submittedBy instanceof User ? $submittedBy->name : 'Unknown';
+
         return [
             'title' => 'New Expense Submitted',
-            'message' => sprintf('%s submitted "%s" for %s', $this->expense->user->name, $this->expense->title, $this->expense->formattedAmount),
+            'message' => sprintf('%s submitted "%s" for %s', $submittedByName, $this->expense->title, $this->expense->formattedAmount),
             'expense_id' => $this->expense->id,
             'action_url' => route('expenses.show', $this->expense),
             'submitted_at' => $this->expense->submitted_at?->toDateTimeString(),

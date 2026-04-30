@@ -17,21 +17,16 @@ final class CreateExpense
      * Create a new draft expense.
      *
      * @param  User  $user  The authenticated user creating the expense
-     * @param  array<string, mixed>  $data  Validated expense data from the form layer
+     * @param  array{title: string, amount: int, currency: string|Currency, description?: string|null, date: string, category_id?: int|string|null}  $data  Validated expense data from the form layer
      * @param  UploadedFile|null  $receipt  Optional uploaded receipt file
      */
     public function execute(User $user, array $data, ?UploadedFile $receipt = null): Expense
     {
-        // TODO:
-        // 1. Create Expense with status = Draft, user_id = $user->id, department_id = $user->department_id
-        // 2. Map validated data into the expense fields
-        // 3. If a receipt exists, store it and assign receipt_path
-        // 4. Save the expense and return it
         /** @var string $title */
         $title = $data['title'];
         /** @var int $amount */
         $amount = $data['amount'];
-        /** @var string $currency */
+        /** @var string|Currency $currency */
         $currency = $data['currency'];
         /** @var string|null $description */
         $description = $data['description'] ?? null;
@@ -46,9 +41,10 @@ final class CreateExpense
             'amount' => $amount,
             'currency' => $currency instanceof Currency ? $currency : Currency::from($currency),
             'description' => $description,
-            'category_id' => (int) $data['category_id'],
+            'category_id' => isset($data['category_id']) ? (int) $data['category_id'] : null,
             'date' => $date,
         ]);
+
         if ($receipt instanceof UploadedFile) {
             // Capture metadata BEFORE storing the file
             $originalName = $receipt->getClientOriginalName();

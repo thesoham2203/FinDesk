@@ -32,3 +32,16 @@ it('creates activity for submitted expense event', function (): void {
         ->where('description', 'like', 'Employee % submitted expense:%')
         ->exists())->toBeTrue();
 });
+
+it('returns early when expense user is not a User model', function (): void {
+    $listener = new LogExpenseActivity();
+    $expense = Expense::factory()->create();
+
+    // Force user to be null (or not an instance of User)
+    $expense->setRelation('user', null);
+
+    $countBefore = Activity::query()->count();
+    $listener->handle(new ExpenseSubmitted($expense));
+
+    expect(Activity::query()->count())->toBe($countBefore);
+});

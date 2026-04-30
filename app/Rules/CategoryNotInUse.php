@@ -28,6 +28,7 @@ namespace App\Rules;
 use App\Models\ExpenseCategory;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 final class CategoryNotInUse implements ValidationRule
 {
@@ -36,15 +37,24 @@ final class CategoryNotInUse implements ValidationRule
      *
      * @param  string  $attribute  The attribute being validated
      * @param  mixed  $value  The value being validated (category ID)
-     * @param  Closure(string): void  $fail  Closure to fail validation
+     * @param  Closure(string, string|null=): PotentiallyTranslatedString  $fail  Closure to fail validation
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $category = ExpenseCategory::query()->withCount('expenses')->find($value);
+        if (! is_int($value) && ! is_string($value)) {
+            $fail('Category not found.');
+
+            return;
+        }
+
+        $category = ExpenseCategory::query()->find((int) $value);
+
         if (! $category) {
             $fail('Category not found.');
-        } elseif ($category->expenses_count > 0) {
-            $fail(sprintf('This category cannot be deleted because it has %s expenses.', $category->expenses_count));
+        } elseif ($category->expenses()->exists()) {
+            $expenseCount = $category->expenses()->count();
+
+            $fail(sprintf('This category cannot be deleted because it has %s expenses.', $expenseCount));
         }
     }
 }

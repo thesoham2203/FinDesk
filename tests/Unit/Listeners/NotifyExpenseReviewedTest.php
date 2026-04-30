@@ -66,7 +66,7 @@ describe('NotifyExpenseReviewed Listener', function (): void {
             [$employee],
             ExpenseApprovedNotification::class,
             fn (ExpenseApprovedNotification $notification): bool => $notification->expense->id === $expense->id &&
-                $notification->approver->id === $approver->id
+            $notification->approver->id === $approver->id
         );
     });
 
@@ -87,8 +87,8 @@ describe('NotifyExpenseReviewed Listener', function (): void {
             [$employee],
             ExpenseRejectedNotification::class,
             fn (ExpenseRejectedNotification $notification): bool => $notification->expense->id === $expense->id &&
-                $notification->rejector->id === $rejector->id &&
-                $notification->reason === $reason
+            $notification->rejector->id === $rejector->id &&
+            $notification->reason === $reason
         );
     });
 

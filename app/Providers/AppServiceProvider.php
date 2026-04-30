@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
 use App\Events\ExpenseApproved;
 use App\Events\ExpenseReimbursed;
 use App\Events\ExpenseRejected;
@@ -37,16 +38,16 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register Authorization Gates
-        Gate::define('access-admin', fn (User $user): bool => $user->role === 'admin');
-        Gate::define('manage-users', fn (User $user): bool => $user->role === 'admin');
-        Gate::define('manage-departments', fn (User $user): bool => $user->role === 'admin');
-        Gate::define('manage-categories', fn (User $user): bool => $user->role === 'admin');
-        Gate::define('manage-tax-rates', fn (User $user): bool => $user->role === 'admin');
-        Gate::define('approve-expenses', fn (User $user): bool => $user->role === 'manager');
-        Gate::define('manage-invoices', fn (User $user): bool => in_array($user->role, ['admin', 'manager', 'accountant'], true));
-        Gate::define('record-payments', fn (User $user): bool => in_array($user->role, ['admin', 'accountant'], true));
-        Gate::define('view-reports', fn (User $user): bool => in_array($user->role, ['admin', 'manager'], true));
-        Gate::define('create-expenses', fn (User $user): bool => $user->role === 'employee');
+        Gate::define('access-admin', fn (User $user): bool => $user->role === UserRole::Admin);
+        Gate::define('manage-users', fn (User $user): bool => $user->role === UserRole::Admin);
+        Gate::define('manage-departments', fn (User $user): bool => $user->role === UserRole::Admin);
+        Gate::define('manage-categories', fn (User $user): bool => $user->role === UserRole::Admin);
+        Gate::define('manage-tax-rates', fn (User $user): bool => $user->role === UserRole::Admin);
+        Gate::define('approve-expenses', fn (User $user): bool => $user->role === UserRole::Manager);
+        Gate::define('manage-invoices', fn (User $user): bool => in_array($user->role, [UserRole::Admin, UserRole::Manager, UserRole::Accountant], true));
+        Gate::define('record-payments', fn (User $user): bool => in_array($user->role, [UserRole::Admin, UserRole::Accountant], true));
+        Gate::define('view-reports', fn (User $user): bool => in_array($user->role, [UserRole::Admin, UserRole::Manager], true));
+        Gate::define('create-expenses', fn (User $user): bool => $user->role === UserRole::Employee);
 
         // Register Event-Listener Mappings
         Event::listen(ExpenseSubmitted::class, LogExpenseActivity::class);

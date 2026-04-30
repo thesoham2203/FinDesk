@@ -52,7 +52,7 @@ final class ExpenseCategoryIndex extends Component
     public string $search = '';
 
     /**
-     * @return LengthAwarePaginator<ExpenseCategory>
+     * @return LengthAwarePaginator<int, ExpenseCategory>
      */
     #[Computed]
     public function categories(): LengthAwarePaginator

@@ -128,8 +128,8 @@ final class StoreInvoiceRequest extends FormRequest
                     continue;
                 }
 
-                $quantity = (float) ($item['quantity'] ?? 0);
-                $unitPrice = (int) ($item['unit_price'] ?? 0);
+                $quantity = isset($item['quantity']) && is_numeric($item['quantity']) ? (float) $item['quantity'] : 0.0;
+                $unitPrice = isset($item['unit_price']) && is_numeric($item['unit_price']) ? (int) $item['unit_price'] : 0;
 
                 if ($quantity > 0 && $unitPrice > 0) {
                     $hasValidLineItem = true;

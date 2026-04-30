@@ -3,9 +3,13 @@
 declare(strict_types=1);
 
 use App\Enums\ExpenseStatus;
+use App\Events\ExpenseApproved;
+use App\Events\ExpenseRejected;
 use App\Models\Activity;
 use App\Models\Expense;
 use App\Models\User;
+use App\Observers\ExpenseObserver;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 
 test('deleting an expense with receipt deletes the receipt file', function (): void {
@@ -112,4 +116,50 @@ test('updating expense title without changing status works', function (): void {
 
     expect($expense->title)->toBe('New Title')
         ->and($expense->status)->toBe(ExpenseStatus::Draft);
+});
+
+test('created without author returns early', function (): void {
+    $expense = Expense::factory()->create();
+    $expense->setRelation('user', null);
+
+    $countBefore = Activity::query()->count();
+    new ExpenseObserver()->created($expense);
+
+    expect(Activity::query()->count())->toBe($countBefore);
+});
+
+test('updating to approved without reviewer falls back to current user', function (): void {
+    Event::fake([ExpenseApproved::class]);
+    $admin = User::factory()->create();
+    $this->actingAs($admin);
+
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+    ]);
+
+    $expense->update([
+        'status' => ExpenseStatus::Approved,
+        'reviewed_by' => null,
+    ]);
+
+    expect($expense->reviewed_by)->toBeNull();
+    Event::assertDispatched(ExpenseApproved::class, fn (ExpenseApproved $event): bool => $event->approver->id === $admin->id);
+});
+
+test('updating to rejected without reviewer falls back to current user', function (): void {
+    Event::fake([ExpenseRejected::class]);
+    $admin = User::factory()->create();
+    $this->actingAs($admin);
+
+    $expense = Expense::factory()->create([
+        'status' => ExpenseStatus::Submitted,
+    ]);
+
+    $expense->update([
+        'status' => ExpenseStatus::Rejected,
+        'reviewed_by' => null,
+    ]);
+
+    expect($expense->reviewed_by)->toBeNull();
+    Event::assertDispatched(ExpenseRejected::class, fn (ExpenseRejected $event): bool => $event->rejector->id === $admin->id);
 });

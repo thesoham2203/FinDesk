@@ -107,7 +107,10 @@ final class UserForm extends Component
     #[Computed]
     public function departments(): Collection
     {
-        return Department::query()->orderBy('name')->pluck('name', 'id');
+        return Department::query()
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name'])
+            ->mapWithKeys(fn (Department $department): array => [$department->id => $department->name]);
     }
 
     /**
@@ -120,9 +123,10 @@ final class UserForm extends Component
     public function managers(): Collection
     {
         return User::query()
-            ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value])
-            ->orderBy('name')
-            ->pluck('name', 'id');
+            ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value], 'and', false)
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name'])
+            ->mapWithKeys(fn (User $user): array => [$user->id => $user->name]);
     }
 
     /**

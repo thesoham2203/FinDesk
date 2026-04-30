@@ -64,29 +64,52 @@ final class ExpenseObserver
 {
     public function created(Expense $expense): void
     {
+        $author = $expense->user;
+
+        if ($author === null) {
+            return;
+        }
+
         Activity::query()->create([
             'user_id' => $expense->user_id,
             'subject_type' => Expense::class,
             'subject_id' => $expense->id,
 
-            'description' => sprintf('Employee %s created expense: %s', $expense->user->name, $expense->title),
-            'properties' => ['amount' => $expense->amount, 'currency' => $expense->currency?->value],
+            'description' => sprintf('Employee %s created expense: %s', $author->name, $expense->title),
+            'properties' => ['amount' => $expense->amount, 'currency' => $expense->currency->value],
         ]);
     }
 
     public function updating(Expense $expense): void
     {
         if ($expense->isDirty('status')) {
+            /** @var User|null $currentUser */
+            $currentUser = Auth::user();
+
+            if ($currentUser === null) {
+                return;
+            }
+
             if ($expense->status === ExpenseStatus::Submitted) {
                 Event::dispatch(new ExpenseSubmitted($expense));
             } elseif ($expense->status === ExpenseStatus::Approved) {
-                $approver = User::query()->find($expense->reviewed_by) ?: Auth::user();
+                $approver = User::query()->find($expense->reviewed_by);
+
+                if ($approver === null) {
+                    $approver = $currentUser;
+                }
+
                 Event::dispatch(new ExpenseApproved($expense, $approver));
             } elseif ($expense->status === ExpenseStatus::Rejected) {
-                $rejector = User::query()->find($expense->reviewed_by) ?: Auth::user();
+                $rejector = User::query()->find($expense->reviewed_by);
+
+                if ($rejector === null) {
+                    $rejector = $currentUser;
+                }
+
                 Event::dispatch(new ExpenseRejected($expense, $rejector, $expense->rejection_reason ?? 'No reason provided'));
             } elseif ($expense->status === ExpenseStatus::Reimbursed) {
-                Event::dispatch(new ExpenseReimbursed($expense, Auth::user()));
+                Event::dispatch(new ExpenseReimbursed($expense, $currentUser));
             }
         }
     }

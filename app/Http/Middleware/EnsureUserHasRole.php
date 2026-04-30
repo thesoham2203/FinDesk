@@ -21,7 +21,10 @@ final class EnsureUserHasRole
         $user = $request->user();
 
         if ($user instanceof User && in_array($user->role->value, $roles, true)) {
-            return $next($request);
+            /** @var Response $response */
+            $response = $next($request);
+
+            return $response;
         }
 
         abort(403, 'Unauthorized role for this section');

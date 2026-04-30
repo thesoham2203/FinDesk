@@ -56,7 +56,7 @@ final class OrganizationSettingsForm extends Component
     {
         $this->authorize('update', Organization::class);
 
-        /** @var array{name: string, address: string|null, defaultCurrency: string, fiscal_year_start: int} $validated */
+        /** @var array{name: string, address: string|null, defaultCurrency: string, fiscalYearStart: int} $validated */
         $validated = $this->validate([
             'name' => 'required|string|max:255',
             'address' => 'nullable|string|max:500',

@@ -2,25 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * GenerateInvoiceNumber Action
- *
- * WHAT: Generates the next sequential invoice number in format INV-YYYY-NNNN.
- *       For example: INV-2026-0001, INV-2026-0002, etc.
- *
- * WHY: Invoice numbers must be unique, sequential, and sequential per year.
- *      Most importantly: This must handle RACE CONDITIONS. If two users create
- *      invoices simultaneously, they must NOT get the same number.
- *      Solution: Database pessimistic locking with lockForUpdate().
- *
- * IMPLEMENT: Use DB::transaction() with lockForUpdate() to ensure a single,
- *            atomic increment operation across concurrent requests.
- *
- * REFERENCE:
- * - Pessimistic Locking: https://laravel.com/docs/13.x/queries#pessimistic-locking
- * - Database Transactions: https://laravel.com/docs/13.x/database#transactions
- */
-
 namespace App\Actions\Invoice;
 
 use App\Models\Invoice;
@@ -47,7 +28,7 @@ final class GenerateInvoiceNumber
             } else {
                 // Extract sequence number from existing invoice_number (e.g., '0042' from 'INV-2026-0042')
                 $parts = explode('-', (string) $lastInvoice->invoice_number);
-                $currentSequence = (int) $parts[2] ?? 0;
+                $currentSequence = isset($parts[2]) ? (int) $parts[2] : 0;
                 $nextNumber = $currentSequence + 1;
             }
 

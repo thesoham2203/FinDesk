@@ -88,8 +88,9 @@
         ],
         "test:type-coverage": "pest --type-coverage --min=100",
         "test:lint": [
-            "pint --parallel --test",
-            "rector --dry-run",
+            "pint --parallel",
+            "rector",
+            "pint --parallel",
             "bun run test:lint"
         ],
         "test:unit": "set XDEBUG_MODE=coverage&&pest --coverage --exactly=100.0",

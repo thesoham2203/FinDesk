@@ -559,4 +559,24 @@ describe('PaymentObserver', function (): void {
 
         expect($invoice->fresh()->status)->toBe(InvoiceStatus::Paid);
     });
+
+    it('returns early when created payment has no invoice', function (): void {
+        $payment = Payment::factory()->make(['invoice_id' => null]);
+        $payment->unsetRelation('invoice');
+
+        $observer = new PaymentObserver();
+        $observer->created($payment);
+
+        expect($payment->invoice)->toBeNull();
+    });
+
+    it('returns early when deleted payment has no invoice', function (): void {
+        $payment = Payment::factory()->make(['invoice_id' => null]);
+        $payment->unsetRelation('invoice');
+
+        $observer = new PaymentObserver();
+        $observer->deleted($payment);
+
+        expect($payment->invoice)->toBeNull();
+    });
 });
