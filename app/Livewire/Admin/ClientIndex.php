@@ -23,8 +23,8 @@ namespace App\Livewire\Admin;
 
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder as Bob;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -41,13 +41,13 @@ final class ClientIndex extends Component
      * Filter by: name or email containing search term.
      * Show: Name, Email, Phone, Tax Number, Invoice Count, Actions.
      *
-     * @return LengthAwarePaginator<Client>
+     * @return LengthAwarePaginator<int, Client>
      */
     #[Computed]
     public function clients(): LengthAwarePaginator
     {
         return Client::query()
-            ->when($this->search, fn (Bob $query) => $query->where('name', 'like', sprintf('%%%s%%', $this->search))
+            ->when($this->search, fn (Builder $query) => $query->where('name', 'like', sprintf('%%%s%%', $this->search))
                 ->orWhere('email', 'like', sprintf('%%%s%%', $this->search))
             )
             ->withCount('invoices')

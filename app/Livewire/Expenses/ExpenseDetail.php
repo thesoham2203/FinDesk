@@ -12,6 +12,7 @@ use App\Enums\ExpenseStatus;
 use App\Models\Activity;
 use App\Models\Attachment;
 use App\Models\Expense;
+use App\Models\User;
 use App\Rules\ExpenseWithinBudget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,10 @@ final class ExpenseDetail extends Component
 
     public function submit(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('update', $this->expense);
 
         throw_if($this->expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be submitted.');
@@ -72,12 +77,16 @@ final class ExpenseDetail extends Component
 
         resolve(SubmitExpense::class)->execute($this->expense);
         session()->flash('success', 'Expense submitted successfully.');
-        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']) ?? $this->expense;
 
     }
 
     public function delete(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         Gate::authorize('delete', $this->expense);
 
         throw_if($this->expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be deleted.');
@@ -89,21 +98,45 @@ final class ExpenseDetail extends Component
 
     public function approve(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('approve', $this->expense);
-        $this->expense = resolve(ApproveExpense::class)->execute($this->expense, Auth::user());
+
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            return;
+        }
+
+        $this->expense = resolve(ApproveExpense::class)->execute($this->expense, $user);
         session()->flash('success', 'Expense approved successfully.');
-        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']) ?? $this->expense;
     }
 
     public function openRejectModal(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('reject', $this->expense);
         $this->showRejectModal = true;
     }
 
     public function reject(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('reject', $this->expense);
+
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            return;
+        }
+
         $this->validate(
             ['rejectionReason' => 'required|string|min:10'],
             ['rejectionReason.required' => 'Please provide a valid reason'],
@@ -111,19 +144,23 @@ final class ExpenseDetail extends Component
         );
         $this->expense = resolve(RejectExpense::class)->execute(
             $this->expense,
-            Auth::user(),
+            $user,
             $this->rejectionReason
         );
 
         $this->rejectionReason = '';
         $this->showRejectModal = false;
         session()->flash('success', 'Expense rejected successfully');
-        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']) ?? $this->expense;
 
     }
 
     public function reimburse(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('reimburse', $this->expense);
 
         if ($this->expense->status !== ExpenseStatus::Approved && $this->expense->status !== ExpenseStatus::PartiallyPaid) {
@@ -135,11 +172,15 @@ final class ExpenseDetail extends Component
         $this->expense = resolve(ReimburseExpense::class)->execute($this->expense);
 
         session()->flash('success', 'Expense marked as reimbursed.');
-        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']) ?? $this->expense;
     }
 
     public function openPartialReimbursementModal(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('partiallyPaid', $this->expense);
 
         if (
@@ -156,6 +197,10 @@ final class ExpenseDetail extends Component
 
     public function recordPartialReimbursement(): void
     {
+        if (! $this->expense instanceof Expense) {
+            return;
+        }
+
         $this->authorize('partiallyPaid', $this->expense);
 
         $remainingDueAmount = $this->expense->due_amount ?? max(0, $this->expense->amount - $this->expense->reimbursed_amount);
@@ -203,7 +248,7 @@ final class ExpenseDetail extends Component
         $this->showPartialReimbursementModal = false;
 
         // Refresh expense data
-        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']);
+        $this->expense = $this->expense->fresh(['category', 'user', 'department', 'reviewer', 'activities']) ?? $this->expense;
     }
 
     public function downloadAttachment(Attachment $attachment): StreamedResponse

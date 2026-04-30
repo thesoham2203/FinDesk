@@ -6,7 +6,6 @@ use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
 use App\Models\Payment;
-use InvalidArgumentException;
 
 it('formats invoice amounts using currency symbol', function (): void {
     $invoice = Invoice::factory()->create([

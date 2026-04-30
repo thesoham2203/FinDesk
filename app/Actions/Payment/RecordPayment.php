@@ -39,8 +39,8 @@ final class RecordPayment
         }
 
         // Calculate remaining balance in cents
-        $totalPaid = $invoice->payments()->sum('amount');
-        $remaining = $invoice->total - $totalPaid;
+        $totalPaid = (int) $invoice->payments()->sum('amount');
+        $remaining = (int) $invoice->total - $totalPaid;
 
         // Prevent overpayment
         if ($data['amount'] > $remaining) {
@@ -54,6 +54,7 @@ final class RecordPayment
         }
 
         // Create the payment record
+        /** @var Payment $payment */
         $payment = Payment::query()->create([
             'invoice_id' => $invoice->id,
             'amount' => $data['amount'],

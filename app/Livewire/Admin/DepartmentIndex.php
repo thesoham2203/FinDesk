@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\Department;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -34,6 +34,9 @@ final class DepartmentIndex extends Component
         $this->authorize('viewAny', Department::class);
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Department>
+     */
     #[Computed]
     public function departments(): LengthAwarePaginator
     {
@@ -44,7 +47,10 @@ final class DepartmentIndex extends Component
                 ->orWhere('description', 'like', sprintf('%%%s%%', $this->search));
         }
 
-        return $query->paginate(15);
+        /** @var LengthAwarePaginator<int, Department> $paginator */
+        $paginator = $query->paginate(15);
+
+        return $paginator;
     }
 
     public function delete(int $id): void

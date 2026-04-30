@@ -7,7 +7,7 @@ namespace App\Livewire\Invoices;
 use App\Enums\InvoiceStatus;
 use App\Models\Activity;
 use App\Models\Invoice;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
@@ -45,9 +45,9 @@ final class InvoiceDetail extends Component
 
     public function send(): void
     {
-        $this->authorize('send', $this->invoice);
+        $this->authorize('send', $this->invoice());
 
-        $this->invoice->transitionTo(InvoiceStatus::Sent);
+        $this->invoice()->transitionTo(InvoiceStatus::Sent);
 
         $this->dispatch('flash', type: 'success', message: 'Invoice sent successfully.');
     }
@@ -62,19 +62,24 @@ final class InvoiceDetail extends Component
 
     public function cancelInvoice(): void
     {
-        $this->authorize('cancel', $this->invoice);
+        $this->authorize('cancel', $this->invoice());
 
         $this->validate([
             'cancelReason' => 'required|string|min:10|max:500',
         ]);
 
-        $this->invoice->transitionTo(InvoiceStatus::Cancelled);
+        $this->invoice()->transitionTo(InvoiceStatus::Cancelled);
+
+        $userId = auth()->id();
+        if ($userId === null) {
+            return;
+        }
 
         // Log the cancellation reason in activity
         Activity::query()->create([
-            'user_id' => auth()->id(),
+            'user_id' => $userId,
             'subject_type' => Invoice::class,
-            'subject_id' => $this->invoice->id,
+            'subject_id' => $this->invoice()->id,
             'description' => 'Invoice cancelled: '.$this->cancelReason,
         ]);
 
@@ -86,7 +91,7 @@ final class InvoiceDetail extends Component
     public function render(): View
     {
         return view('livewire.invoices.invoice-detail', [
-            'invoice' => $this->invoice,
+            'invoice' => $this->invoice(),
         ]);
     }
 }

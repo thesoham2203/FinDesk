@@ -264,6 +264,30 @@ describe('StoreExpenseRequest - Custom Validation', function (): void {
         expect($validator->fails())->toBeTrue();
         expect($validator->errors()->has('receipt'))->toBeTrue();
     });
+
+    it('returns early when category is not found in withValidator', function (): void {
+        $user = User::factory()->create();
+
+        $request = new StoreExpenseRequest();
+        $request->setUserResolver(fn () => $user);
+        $request->replace([
+            'title' => 'Flight ticket',
+            'amount' => 50000,
+            'category_id' => 999999,
+            'currency' => 'INR',
+        ]);
+
+        $validator = Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        $request->withValidator($validator);
+
+        expect($validator->errors()->has('amount'))->toBeFalse();
+        expect($validator->errors()->has('receipt'))->toBeFalse();
+        expect($validator->errors()->has('category_id'))->toBeTrue();
+    });
 });
 
 describe('StoreExpenseRequest - Error Messages', function (): void {

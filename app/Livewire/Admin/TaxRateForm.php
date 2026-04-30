@@ -38,7 +38,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\TaxRate;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 

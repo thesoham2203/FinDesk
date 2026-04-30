@@ -20,7 +20,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\Client;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -58,9 +58,9 @@ final class ClientForm extends Component
             $this->clientId = $client->id;
             $this->name = $client->name;
             $this->email = $client->email;
-            $this->phone = $client->phone;
-            $this->address = $client->address;
-            $this->taxNumber = $client->tax_number;
+            $this->phone = $client->phone ?? '';
+            $this->address = $client->address ?? '';
+            $this->taxNumber = $client->tax_number ?? '';
             $this->notes = $client->notes ?? '';
         }
     }

@@ -8,6 +8,7 @@ use App\Livewire\Invoices\InvoiceDetail;
 use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -77,4 +78,23 @@ it('opens cancel modal when requested', function (): void {
     Livewire::test(InvoiceDetail::class, ['invoice' => $invoice])
         ->call('openCancelModal')
         ->assertSet('showCancelModal', true);
+});
+
+it('returns early in cancelInvoice when user id is missing', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+
+    $invoice = Invoice::factory()->create(['status' => InvoiceStatus::Sent]);
+
+    $component = Livewire::actingAs($this->admin)->test(InvoiceDetail::class, ['invoice' => $invoice]);
+    auth()->logout();
+
+    $component->set('cancelReason', 'Customer asked to cancel this invoice.')
+        ->call('cancelInvoice');
+
+    $invoice->refresh();
+    expect($invoice->status)->toBe(InvoiceStatus::Cancelled);
+    $this->assertDatabaseMissing('activities', [
+        'subject_id' => $invoice->id,
+        'description' => 'Invoice cancelled: Customer asked to cancel this invoice.',
+    ]);
 });

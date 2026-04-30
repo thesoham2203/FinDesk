@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\DepartmentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 final class Department extends Model
 {
+    /** @use HasFactory<DepartmentFactory> */
     use HasFactory;
 
     /**
@@ -26,14 +28,7 @@ final class Department extends Model
     ];
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $casts = [
-        'monthly_budget' => 'integer',
-    ];
-
-    /**
-     * @return HasMany<User>
+     * @return HasMany<User, $this>
      */
     public function users(): HasMany
     {
@@ -44,13 +39,26 @@ final class Department extends Model
      * Get all expenses for users in this department (HasManyThrough).
      * This is a key relationship: Department → Users → Expenses.
      *
-     * @return HasManyThrough<Expense>
+     * @return HasManyThrough<Expense, User, $this>
      */
     public function expenses(): HasManyThrough
     {
         return $this->hasManyThrough(Expense::class, User::class);
     }
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'monthly_budget' => 'integer',
+        ];
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedBudget(): Attribute
     {
         return Attribute::make(

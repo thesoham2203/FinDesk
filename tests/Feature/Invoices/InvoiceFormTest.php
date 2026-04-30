@@ -131,6 +131,23 @@ it('returns default currency symbol on a plain invoice form instance', function 
     expect($component->getCurrencySymbolProperty())->toBe('$');
 });
 
+it('returns expected symbols from computed currencySymbol', function (): void {
+    $component = Livewire::test(InvoiceForm::class);
+
+    $component->set('currency', 'INR');
+
+    expect($component->instance()->currencySymbol())->toBe('₹');
+
+    $component->set('currency', 'USD');
+    expect($component->instance()->currencySymbol())->toBe('$');
+
+    $component->set('currency', 'EUR');
+    expect($component->instance()->currencySymbol())->toBe('€');
+
+    $component->set('currency', 'CAD');
+    expect($component->instance()->currencySymbol())->toBe('$');
+});
+
 it('skips line item calculation for an invalid index', function (): void {
     $component = Livewire::test(InvoiceForm::class);
 

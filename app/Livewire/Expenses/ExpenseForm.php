@@ -10,6 +10,7 @@ use App\Actions\Expense\UpdateExpense;
 use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -65,7 +66,7 @@ final class ExpenseForm extends Component
             $this->categoryId = (string) $expense->category_id;
             $this->currency = $expense->currency->value;
             $this->existingReceiptPath = $expense->receipt_path;
-            $this->date = (string) $expense->date;
+            $this->date = $expense->date->format('Y-m-d');
             $this->updatedCategoryId();
         }
     }
@@ -74,17 +75,23 @@ final class ExpenseForm extends Component
     {
         $this->validate();
 
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            return;
+        }
+
         $data = [
             'title' => $this->title,
             'description' => $this->description,
-            'amount' => (int) ($this->amount * 100),
+            'amount' => (int) (((float) $this->amount) * 100),
             'category_id' => (int) $this->categoryId,
             'currency' => $this->currency,
             'date' => $this->date,
         ];
         if ($this->expenseId === null) {
-            $expense = resolve(CreateExpense::class)->execute(Auth::user(), $data, $this->receipt);
+            $expense = resolve(CreateExpense::class)->execute($user, $data, $this->receipt);
         } else {
+            /** @var Expense $expense */
             $expense = Expense::query()->findOrFail($this->expenseId);
             $expense = resolve(UpdateExpense::class)->execute($expense, $data, $this->receipt);
         }
@@ -99,13 +106,17 @@ final class ExpenseForm extends Component
 
     public function updatedCategoryId(): void
     {
+        /** @var ExpenseCategory|null $category */
         $category = ExpenseCategory::query()->find((int) $this->categoryId);
         if ($category) {
-            $this->maxAmount = $category->max_amount ? ($category->max_amount / 100) : null;
+            $this->maxAmount = $category->max_amount ? ((float) $category->max_amount / 100) : null;
             $this->requiresReceipt = $category->requires_receipt;
         }
     }
 
+    /**
+     * @return Collection<int, ExpenseCategory>
+     */
     #[Computed]
     public function categories(): Collection
     {
@@ -120,7 +131,10 @@ final class ExpenseForm extends Component
             return null;
         }
 
-        return ExpenseCategory::query()->find((int) $this->categoryId);
+        /** @var ExpenseCategory|null $category */
+        $category = ExpenseCategory::query()->find((int) $this->categoryId);
+
+        return $category;
     }
 
     public function render(): View

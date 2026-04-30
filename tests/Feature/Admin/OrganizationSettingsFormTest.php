@@ -84,3 +84,26 @@ it('validates required fields', function (): void {
         ->call('save')
         ->assertHasErrors(['name' => 'required']);
 });
+
+it('keeps existing logo path when upload storage fails', function (): void {
+    $organization = Organization::factory()->create([
+        'logo_path' => 'org-logos/existing.png',
+        'default_currency' => Currency::USD->value,
+    ]);
+
+    $uploadedFile = Mockery::mock(UploadedFile::class);
+    $uploadedFile->shouldReceive('store')->once()->with('org-logos', 'public')->andReturn(false);
+
+    $component = Livewire::test(OrganizationSettingsForm::class)
+        ->set('name', 'Updated Org')
+        ->set('address', 'Updated Address')
+        ->set('defaultCurrency', Currency::USD->value)
+        ->set('fiscalYearStart', 3);
+
+    $component->instance()->logo = $uploadedFile;
+    $component->instance()->save();
+
+    $organization->refresh();
+
+    expect($organization->logo_path)->toBe('org-logos/existing.png');
+});

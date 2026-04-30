@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\InvoiceLineItemFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 final class InvoiceLineItem extends Model
 {
+    /** @use HasFactory<InvoiceLineItemFactory> */
     use HasFactory;
 
     /**
@@ -28,17 +30,7 @@ final class InvoiceLineItem extends Model
     ];
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $casts = [
-        'quantity' => 'float',
-        'unit_price' => 'integer',
-        'line_total' => 'integer',
-        'tax_amount' => 'integer',
-    ];
-
-    /**
-     * @return BelongsTo<Invoice, InvoiceLineItem>
+     * @return BelongsTo<Invoice, $this>
      */
     public function invoice(): BelongsTo
     {
@@ -46,7 +38,7 @@ final class InvoiceLineItem extends Model
     }
 
     /**
-     * @return BelongsTo<TaxRate, InvoiceLineItem>
+     * @return BelongsTo<TaxRate, $this>
      */
     public function taxRate(): BelongsTo
     {
@@ -56,13 +48,29 @@ final class InvoiceLineItem extends Model
     /**
      * Get all attachments (supporting documents) for this line item.
      *
-     * @return MorphMany<Attachment>
+     * @return MorphMany<Attachment, $this>
      */
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'quantity' => 'float',
+            'unit_price' => 'integer',
+            'line_total' => 'integer',
+            'tax_amount' => 'integer',
+        ];
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedLineTotal(): Attribute
     {
         return Attribute::make(
@@ -70,6 +78,9 @@ final class InvoiceLineItem extends Model
         );
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function formattedUnitPrice(): Attribute
     {
         return Attribute::make(

@@ -54,6 +54,7 @@ namespace App\Livewire\Expenses;
 use App\Actions\Expense\ApproveExpense;
 use App\Enums\ExpenseStatus;
 use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -67,15 +68,28 @@ final class PendingApprovals extends Component
 
     /**
      * Get paginated pending expenses for the manager's department.
+     *
+     * @return LengthAwarePaginator<int, Expense>
      */
     #[Computed]
     public function pendingExpenses(): LengthAwarePaginator
     {
-        return Expense::query()->where('status', ExpenseStatus::Submitted)
-            ->where('department_id', Auth::user()->department_id)
+        $user = Auth::user();
+        if (! $user instanceof User || ! $user->department_id) {
+            /** @var LengthAwarePaginator<int, Expense> $emptyPaginator */
+            $emptyPaginator = new LengthAwarePaginator([], 0, 10);
+
+            return $emptyPaginator;
+        }
+
+        /** @var LengthAwarePaginator<int, Expense> $paginator */
+        $paginator = Expense::query()->where('status', ExpenseStatus::Submitted)
+            ->where('department_id', $user->department_id)
             ->with(['user', 'category'])
             ->oldest('submitted_at')
             ->paginate(10);
+
+        return $paginator;
     }
 
     /**
@@ -84,8 +98,13 @@ final class PendingApprovals extends Component
     #[Computed]
     public function pendingCount(): int
     {
+        $user = Auth::user();
+        if (! $user instanceof User || ! $user->department_id) {
+            return 0;
+        }
+
         return Expense::query()->where('status', ExpenseStatus::Submitted)
-            ->where('department_id', Auth::user()->department_id)
+            ->where('department_id', $user->department_id)
             ->count();
     }
 
@@ -96,13 +115,22 @@ final class PendingApprovals extends Component
     {
         $expense = Expense::query()->findOrFail($expenseId);
         $this->authorize('approve', $expense);
-        resolve(ApproveExpense::class)->execute($expense, Auth::user());
+
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            return;
+        }
+
+        resolve(ApproveExpense::class)->execute($expense, $user);
         session()->flash('success', 'Expense approved successfully.');
         $this->resetPage();
     }
 
     public function render(): View
     {
-        return view('livewire.expenses.pending-approvals');
+        return view('livewire.expenses.pending-approvals', [
+            'pendingExpenses' => $this->pendingExpenses(),
+            'pendingCount' => $this->pendingCount(),
+        ]);
     }
 }

@@ -18,14 +18,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property-read string $id
- * @property-read string $name
- * @property-read string $email
- * @property-read CarbonInterface|null $email_verified_at
- * @property-read string $password
- * @property-read string|null $remember_token
- * @property-read CarbonInterface $created_at
- * @property-read CarbonInterface $updated_at
+ * @property string $id
+ * @property string $name
+ * @property string $email
+ * @property CarbonInterface|null $email_verified_at
+ * @property string $password
+ * @property string|null $remember_token
+ * @property UserRole $role
+ * @property int|null $department_id
+ * @property string|null $manager_id
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
  */
 final class User extends Authenticatable implements MustVerifyEmail
 {
@@ -74,7 +77,7 @@ final class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * @return BelongsTo<Department, User>
+     * @return BelongsTo<Department, $this>
      */
     public function department(): BelongsTo
     {
@@ -82,7 +85,7 @@ final class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * @return BelongsTo<User, User>
+     * @return BelongsTo<User, $this>
      */
     public function manager(): BelongsTo
     {
@@ -90,7 +93,7 @@ final class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * @return HasMany<User>
+     * @return HasMany<User, $this>
      */
     public function subordinates(): HasMany
     {
@@ -98,7 +101,7 @@ final class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * @return HasMany<Expense>
+     * @return HasMany<Expense, $this>
      */
     public function expenses(): HasMany
     {
@@ -108,7 +111,7 @@ final class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get all invoices created by this user.
      *
-     * @return HasMany<Invoice>
+     * @return HasMany<Invoice, $this>
      */
     public function createdInvoices(): HasMany
     {
@@ -121,7 +124,7 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @param  Builder<User>  $query
      * @return Builder<User>
      */
-    #[Scope(visible: false)]
+    #[Scope]
     protected function byRole(Builder $query, UserRole $role): Builder
     {
         return $query->where('role', $role);
@@ -133,7 +136,7 @@ final class User extends Authenticatable implements MustVerifyEmail
      * @param  Builder<User>  $query
      * @return Builder<User>
      */
-    #[Scope(visible: false)]
+    #[Scope]
     protected function inDepartment(Builder $query, int $departmentId): Builder
     {
         return $query->where('department_id', $departmentId);

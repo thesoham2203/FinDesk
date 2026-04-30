@@ -2,43 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * TaxRateIndex Component
- *
- * WHAT: Livewire component that lists all tax rates. Shows which one is default,
- *       which are active/inactive, and a count of invoice line items using each rate.
- *
- * WHY: Tax rates are configured by admins. This CRUD interface manages them with
- *      special behaviors:
- *      1. Only one tax rate can be default (for invoice pre-selection)
- *      2. Tax rates can be deactivated (not deleted) to preserve invoice history
- *      3. Cannot delete a rate in use on any invoice
- *
- * IMPLEMENT:
- *      1. Set up pagination trait
- *      2. Create #[Computed] taxRates() method:
- *         - Query TaxRate::withCount('lineItems')
- *         - Order by is_default desc, then name asc
- *         - Paginate with 15 per page
- *      3. Create toggleActive(int $id) method:
- *         - Find tax rate, toggle is_active, save
- *         - Optional: if deactivating and it's default, flash warning
- *      4. Create delete(int $id) method:
- *         - Check if rate has line items (use TaxRateNotInUse rule or direct check)
- *         - If in use: flash error with count
- *         - If not in use: delete and flash success
- *
- * KEY CONCEPTS:
- * - Toggle actions: wire:click to update boolean flags
- * - Status badges: visual indicators for default/active/inactive
- * - Referential integrity: check relationships before deleting
- */
-
 namespace App\Livewire\Admin;
 
 use App\Models\TaxRate;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -47,6 +15,9 @@ final class TaxRateIndex extends Component
 {
     use WithPagination;
 
+    /**
+     * @return LengthAwarePaginator<TaxRate>
+     */
     #[Computed]
     public function taxRates(): LengthAwarePaginator
     {

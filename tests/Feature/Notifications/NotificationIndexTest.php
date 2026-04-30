@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Livewire\Notifications\NotificationIndex;
-use App\Models\Client;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\Notification;
 use Livewire\Livewire;
@@ -39,10 +39,10 @@ final class NotificationIndexTestNotification extends Notification
 }
 
 test('notification index renders unread notifications', function (): void {
-    $client = Client::factory()->create();
-    $client->notify(new NotificationIndexTestNotification('Unread notice', 'Needs attention'));
+    $user = User::factory()->create();
+    $user->notify(new NotificationIndexTestNotification('Unread notice', 'Needs attention'));
 
-    Livewire::actingAs($client, 'client')
+    Livewire::actingAs($user)
         ->test(NotificationIndex::class)
         ->assertStatus(200)
         ->assertSee('Unread notice')
@@ -50,30 +50,30 @@ test('notification index renders unread notifications', function (): void {
 });
 
 test('marking a notification with an action url redirects to the action', function (): void {
-    $client = Client::factory()->create();
-    $client->notify(new NotificationIndexTestNotification(
+    $user = User::factory()->create();
+    $user->notify(new NotificationIndexTestNotification(
         'Open invoice',
         'Invoice ready',
-        route('client.dashboard', absolute: false),
+        route('dashboard', absolute: false),
     ));
 
-    $notification = $client->notifications()->firstOrFail();
+    $notification = $user->notifications()->firstOrFail();
 
-    Livewire::actingAs($client, 'client')
+    Livewire::actingAs($user)
         ->test(NotificationIndex::class)
         ->call('markAsRead', $notification->id)
-        ->assertRedirect(route('client.dashboard', absolute: false));
+        ->assertRedirect(route('dashboard', absolute: false));
 
     expect($notification->fresh()->read_at)->not->toBeNull();
 });
 
 test('marking a notification without an action url flashes a message', function (): void {
-    $client = Client::factory()->create();
-    $client->notify(new NotificationIndexTestNotification('Reminder', 'Check the portal'));
+    $user = User::factory()->create();
+    $user->notify(new NotificationIndexTestNotification('Reminder', 'Check the portal'));
 
-    $notification = $client->notifications()->firstOrFail();
+    $notification = $user->notifications()->firstOrFail();
 
-    Livewire::actingAs($client, 'client')
+    Livewire::actingAs($user)
         ->test(NotificationIndex::class)
         ->call('markAsRead', $notification->id)
         ->assertDispatched('flash', type: 'success');
@@ -82,14 +82,14 @@ test('marking a notification without an action url flashes a message', function 
 });
 
 test('mark all as read updates every unread notification', function (): void {
-    $client = Client::factory()->create();
-    $client->notify(new NotificationIndexTestNotification('One', 'First'));
-    $client->notify(new NotificationIndexTestNotification('Two', 'Second'));
+    $user = User::factory()->create();
+    $user->notify(new NotificationIndexTestNotification('One', 'First'));
+    $user->notify(new NotificationIndexTestNotification('Two', 'Second'));
 
-    Livewire::actingAs($client, 'client')
+    Livewire::actingAs($user)
         ->test(NotificationIndex::class)
         ->call('markAllAsRead')
         ->assertDispatched('flash', type: 'success');
 
-    expect($client->fresh()->unreadNotifications()->count())->toBe(0);
+    expect($user->fresh()->unreadNotifications()->count())->toBe(0);
 });

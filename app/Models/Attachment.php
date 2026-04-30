@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\AttachmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 final class Attachment extends Model
 {
+    /** @use HasFactory<AttachmentFactory> */
     use HasFactory;
 
     /**
@@ -28,7 +30,7 @@ final class Attachment extends Model
     ];
 
     /**
-     * @return MorphTo<Model>
+     * @return MorphTo<Model, $this>
      */
     public function attachable(): MorphTo
     {
@@ -36,7 +38,7 @@ final class Attachment extends Model
     }
 
     /**
-     * @return BelongsTo<User, Attachment>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

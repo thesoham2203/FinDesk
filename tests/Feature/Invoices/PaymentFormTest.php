@@ -89,3 +89,24 @@ it('validates required fields', function (): void {
         ->call('save')
         ->assertHasErrors(['amount' => 'required', 'paymentMethod' => 'required']);
 });
+
+it('records optional reference number and notes when provided', function (): void {
+    $invoice = Invoice::factory()->create([
+        'status' => InvoiceStatus::Sent,
+        'total' => 10000,
+    ]);
+
+    Livewire::test(PaymentForm::class, ['invoiceId' => $invoice->id])
+        ->set('amount', '50.00')
+        ->set('paymentMethod', PaymentMethod::Cash->value)
+        ->set('referenceNumber', 'TXN-1001')
+        ->set('notes', 'Partial payment received')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('payments', [
+        'invoice_id' => $invoice->id,
+        'reference_number' => 'TXN-1001',
+        'notes' => 'Partial payment received',
+    ]);
+});

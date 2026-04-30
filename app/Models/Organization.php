@@ -5,9 +5,20 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Currency;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $address
+ * @property string|null $logo_path
+ * @property Currency $default_currency
+ * @property int $fiscal_year_start
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ */
 final class Organization extends Model
 {
     use HasFactory;

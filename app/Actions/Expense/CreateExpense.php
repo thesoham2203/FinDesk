@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Expense;
 
+use App\Enums\Currency;
 use App\Enums\ExpenseStatus;
 use App\Models\Attachment;
 use App\Models\Expense;
@@ -26,16 +27,27 @@ final class CreateExpense
         // 2. Map validated data into the expense fields
         // 3. If a receipt exists, store it and assign receipt_path
         // 4. Save the expense and return it
+        /** @var string $title */
+        $title = $data['title'];
+        /** @var int $amount */
+        $amount = $data['amount'];
+        /** @var string $currency */
+        $currency = $data['currency'];
+        /** @var string|null $description */
+        $description = $data['description'] ?? null;
+        /** @var string $date */
+        $date = $data['date'];
+
         $expense = Expense::query()->create([
-            'title' => $data['title'],
+            'title' => $title,
             'user_id' => $user->id,
             'department_id' => $user->department_id,
             'status' => ExpenseStatus::Draft,
-            'amount' => $data['amount'],
-            'currency' => $data['currency'],
-            'description' => $data['description'],
+            'amount' => $amount,
+            'currency' => $currency instanceof Currency ? $currency : Currency::from($currency),
+            'description' => $description,
             'category_id' => (int) $data['category_id'],
-            'date' => $data['date'],
+            'date' => $date,
         ]);
         if ($receipt instanceof UploadedFile) {
             // Capture metadata BEFORE storing the file

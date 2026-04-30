@@ -93,7 +93,7 @@
             "bun run test:lint"
         ],
         "test:unit": "set XDEBUG_MODE=coverage&&pest --coverage --exactly=100.0",
-        "test:types": "phpstan --memory-limit=2G",
+        "test:types": "phpstan",
         "test": [
             "@test:type-coverage",
             "@test:unit",

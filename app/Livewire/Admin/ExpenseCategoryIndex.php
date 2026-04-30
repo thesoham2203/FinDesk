@@ -37,11 +37,10 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Models\ExpenseCategory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -52,6 +51,9 @@ final class ExpenseCategoryIndex extends Component
     #[Url]
     public string $search = '';
 
+    /**
+     * @return LengthAwarePaginator<ExpenseCategory>
+     */
     #[Computed]
     public function categories(): LengthAwarePaginator
     {
@@ -65,7 +67,6 @@ final class ExpenseCategoryIndex extends Component
         return $query->paginate(15);
     }
 
-    #[Validate]
     public function delete(int $id): void
     {
         $category = ExpenseCategory::query()->findOrFail($id);

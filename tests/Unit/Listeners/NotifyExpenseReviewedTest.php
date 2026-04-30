@@ -97,4 +97,19 @@ describe('NotifyExpenseReviewed Listener', function (): void {
 
         expect($listener instanceof ShouldQueue)->toBeTrue();
     });
+
+    it('returns early when expense has no employee', function (): void {
+        Notification::fake();
+
+        $approver = User::factory()->create();
+        $expense = new Expense();
+        $expense->setRelation('user', null);
+
+        $event = new ExpenseApproved($expense, $approver);
+        $listener = new NotifyExpenseReviewed();
+
+        $listener->handle($event);
+
+        Notification::assertNothingSent();
+    });
 });

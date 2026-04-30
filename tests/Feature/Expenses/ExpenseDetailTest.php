@@ -427,3 +427,45 @@ it('downloads an attachment for an expense', function (): void {
         ->call('downloadAttachment', $attachment->id)
         ->assertFileDownloaded('receipt.pdf');
 });
+
+it('returns early for guarded actions when expense is null', function (): void {
+    $component = new ExpenseDetail();
+
+    expect(fn (): mixed => $component->submit())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->delete())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->approve())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->openRejectModal())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->reject())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->reimburse())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->openPartialReimbursementModal())->not->toThrow(Throwable::class);
+    expect(fn (): mixed => $component->recordPartialReimbursement())->not->toThrow(Throwable::class);
+});
+
+it('returns early in approve when authorization passes but user is missing', function (): void {
+    Gate::shouldReceive('authorize')->once()->andReturnTrue();
+    auth()->logout();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $component = new ExpenseDetail();
+    $component->expense = $expense;
+
+    $component->approve();
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
+});
+
+it('returns early in reject when authorization passes but user is missing', function (): void {
+    Gate::shouldReceive('authorize')->once()->andReturnTrue();
+    auth()->logout();
+
+    $expense = Expense::factory()->create(['status' => ExpenseStatus::Submitted]);
+    $component = new ExpenseDetail();
+    $component->expense = $expense;
+    $component->rejectionReason = 'This is a valid rejection reason';
+
+    $component->reject();
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
+});

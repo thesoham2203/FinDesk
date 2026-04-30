@@ -67,6 +67,35 @@ describe('StoreInvoiceRequest', function (): void {
         expect($validator->errors()->has('line_items'))->toBeFalse();
     });
 
+    it('returns early when line_items is not iterable', function (): void {
+        $request = new StoreInvoiceRequest();
+
+        $request->merge([
+            'line_items' => 'invalid',
+        ]);
+
+        $validator = Validator::make($request->all(), $request->rules());
+        $request->withValidator($validator);
+
+        expect($validator->errors()->has('line_items'))->toBeTrue();
+    });
+
+    it('skips non-array items while validating line items', function (): void {
+        $request = new StoreInvoiceRequest();
+
+        $request->merge([
+            'line_items' => [
+                'invalid-item',
+            ],
+        ]);
+
+        $validator = Validator::make($request->all(), $request->rules());
+        $request->withValidator($validator);
+
+        expect($validator->errors()->has('line_items'))->toBeTrue();
+        expect($validator->errors()->first('line_items'))->toBe('At least one line item must have a quantity and unit price greater than zero.');
+    });
+
     it('has correct custom attributes', function (): void {
         $request = new StoreInvoiceRequest();
         $attributes = $request->attributes();

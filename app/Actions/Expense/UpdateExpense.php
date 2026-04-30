@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Expense;
 
+use App\Enums\Currency;
 use App\Enums\ExpenseStatus;
 use App\Models\Attachment;
 use App\Models\Expense;
@@ -24,12 +25,27 @@ final class UpdateExpense
     {
         throw_if($expense->status !== ExpenseStatus::Draft, InvalidArgumentException::class, 'Only draft expenses can be updated.');
 
-        $expense->title = $data['title'];
-        $expense->amount = $data['amount'];
-        $expense->description = $data['description'];
-        $expense->date = $data['date'];
+        /** @var string $title */
+        $title = $data['title'];
+        $expense->title = $title;
+
+        /** @var int $amount */
+        $amount = $data['amount'];
+        $expense->amount = $amount;
+
+        /** @var string|null $description */
+        $description = $data['description'] ?? null;
+        $expense->description = $description;
+
+        /** @var string $date */
+        $date = $data['date'];
+        $expense->date = $date;
+
         $expense->category_id = (int) $data['category_id'];
-        $expense->currency = $data['currency'];
+
+        /** @var string $currency */
+        $currency = $data['currency'];
+        $expense->currency = Currency::from($currency);
 
         if ($receipt instanceof UploadedFile) {
             // Delete old file from receipt_path if it exists

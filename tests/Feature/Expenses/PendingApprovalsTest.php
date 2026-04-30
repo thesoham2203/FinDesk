@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -245,4 +246,34 @@ it('approves expense and flashes success for authorized manager', function (): v
 
     expect($expense->status)->toBe(ExpenseStatus::Approved);
     expect(Activity::query()->where('subject_id', $expense->id)->exists())->toBeTrue();
+});
+
+it('returns empty paginator when user has no department', function (): void {
+    $userWithoutDepartment = User::factory()->create(['department_id' => null]);
+
+    $component = Livewire::actingAs($userWithoutDepartment)->test(PendingApprovals::class);
+
+    expect($component->get('pendingExpenses')->total())->toBe(0);
+});
+
+it('returns zero pending count when user has no department', function (): void {
+    $userWithoutDepartment = User::factory()->create(['department_id' => null]);
+
+    $component = Livewire::actingAs($userWithoutDepartment)->test(PendingApprovals::class);
+
+    expect($component->get('pendingCount'))->toBe(0);
+});
+
+it('returns early in approve when authorization passes but user is missing', function (): void {
+    Gate::shouldReceive('authorize')->andReturnTrue();
+
+    $expense = Expense::factory()->submitted()->create();
+
+    $component = Livewire::actingAs(User::factory()->create())->test(PendingApprovals::class);
+    auth()->logout();
+
+    $component->call('approve', $expense->id);
+
+    $expense->refresh();
+    expect($expense->status)->toBe(ExpenseStatus::Submitted);
 });

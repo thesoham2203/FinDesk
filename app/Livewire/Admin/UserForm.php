@@ -7,9 +7,10 @@ namespace App\Livewire\Admin;
 use App\Enums\UserRole;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -70,6 +71,7 @@ final class UserForm extends Component
             return;
         }
 
+        /** @var array{name: string, email: string, password: string, role: string, departmentId: int|null, managerId: string|null} $validated */
         $validated = $this->validate();
 
         // For editing, password is optional (only set if provided)
@@ -81,7 +83,7 @@ final class UserForm extends Component
             'manager_id' => $validated['managerId'],
         ];
 
-        if ($validated['password']) {
+        if ($validated['password'] !== '') {
             $data['password'] = Hash::make($validated['password']);
         }
 
@@ -99,8 +101,11 @@ final class UserForm extends Component
 
     /**
      * Get all departments for dropdown.
+     *
+     * @return Collection<int, string>
      */
-    public function getDepartmentsProperty(): Collection
+    #[Computed]
+    public function departments(): Collection
     {
         return Department::query()->orderBy('name')->pluck('name', 'id');
     }
@@ -108,8 +113,11 @@ final class UserForm extends Component
     /**
      * Get available managers based on role.
      * Only show users who are in roles that can manage others (Manager, Admin).
+     *
+     * @return Collection<string, string>
      */
-    public function getManagersProperty(): Collection
+    #[Computed]
+    public function managers(): Collection
     {
         return User::query()
             ->whereIn('role', [UserRole::Manager->value, UserRole::Admin->value])
@@ -136,8 +144,8 @@ final class UserForm extends Component
     public function render(): View
     {
         return view('livewire.admin.user-form', [
-            'departments' => $this->departments,
-            'managers' => $this->managers,
+            'departments' => $this->departments(),
+            'managers' => $this->managers(),
             'roles' => collect(UserRole::cases())->mapWithKeys(fn (UserRole $role): array => [$role->value => $role->label()]),
         ]);
     }

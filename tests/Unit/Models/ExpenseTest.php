@@ -10,7 +10,6 @@ use App\Models\Department;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\User;
-use InvalidArgumentException;
 
 test('expense can be created with factory defaults', function (): void {
     // ARRANGE & ACT: Create an expense using the factory
